@@ -1,0 +1,28 @@
+{
+    "name": "stroker/cache",
+    "description": "Provides a full page cache solution for ZF2",
+    "type": "library",
+    "keywords": [
+        "zf2",
+        "cache"
+    ],
+    "homepage": "https://github.com/bramstroker/zf2-fullpage-cache",
+    "authors": [
+        {
+            "name": "Bram Gerritsen",
+            "email": "bgerritsen@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "StrokerCache": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}

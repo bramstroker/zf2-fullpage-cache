@@ -18,10 +18,12 @@
 
 namespace StrokerCache\Service;
 
+use Zend\ServiceManager\FactoryInterface;
+use Zend\Cache\StorageFactory;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use StrokerCache\Strategy\Factory;
 
-class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
+class CacheStorageFactory implements FactoryInterface
 {
 
     /**
@@ -32,22 +34,11 @@ class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $cacheStorage = $serviceLocator->get('strokercache_storage');
-        /** @var $options \StrokerCache\Options\ModuleOptions */
-        $options = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
-
-        $cacheListener = new \StrokerCache\Listener\CacheListener(
-            $cacheStorage,
-            $options
-        );
-
-        $strategies = $options->getStrategies();
-        foreach($strategies as $class => $strategyOptions)
-        {
-            $strategy = Factory::createStrategy($class, $strategyOptions);
-            $cacheListener->addStrategy($strategy);
+        $options = $serviceLocator->get('Config');
+        if (!isset($options['strokercache']['storage_adapter'])) {
+            throw new ServiceNotCreatedException('No key "storage_adapter" found in configuration');
         }
-
-        return $cacheListener;
+        $adapterOptions = array('adapter' => $options['strokercache']['storage_adapter']);
+        return StorageFactory::factory($adapterOptions);
     }
 }

@@ -1,6 +1,9 @@
 <?php
 return array(
     'strokercache' => array(
+        'storage_adapter' => array(
+            'name' => 'Zend\Cache\Storage\Adapter\FileSystem'
+        ),
         'strategies' => array(
             'routeName' => array(
                 'routes' => array(

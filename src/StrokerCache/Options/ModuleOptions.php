@@ -27,6 +27,14 @@ class ModuleOptions extends AbstractOptions
      */
     private $strategies;
 
+    /**
+     * {@inheritDoc}
+     */
+    public function setFromArray($options)
+    {
+        unset($options['storage_adapter']);
+        parent::setFromArray($options);
+    }
 
     /**
      * @return array

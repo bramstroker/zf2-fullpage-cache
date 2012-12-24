@@ -16,51 +16,33 @@
 * and is licensed under the MIT license.
 */
 
-namespace StrokerCache\Options;
+namespace StrokerCache\Strategy;
 
-use Zend\Stdlib\AbstractOptions;
+use Zend\ServiceManager\AbstractPluginManager;
+use StrokerCache\Exception;
 
-class ModuleOptions extends AbstractOptions
+class PluginManager extends AbstractPluginManager
 {
     /**
-     * @var array
+     * Validate the plugin
+     *
+     * Checks that the helper loaded is an instance of Helper\HelperInterface.
+     *
+     * @param  mixed $plugin
+     * @return void
+     * @throws Exception\InvalidStrategyException if invalid
      */
-    private $strategies;
-
-    /**
-     * @var array
-     */
-    private $storageAdapter;
-
-    /**
-     * @return array
-     */
-    public function getStrategies()
+    public function validatePlugin($plugin)
     {
-        return $this->strategies;
-    }
+        if ($plugin instanceof StrategyInterface) {
+            // we're okay
+            return;
+        }
 
-    /**
-     * @param array $strategies
-     */
-    public function setStrategies($strategies)
-    {
-        $this->strategies = $strategies;
-    }
-
-    /**
-     * @return array
-     */
-    public function getStorageAdapter()
-    {
-        return $this->storageAdapter;
-    }
-
-    /**
-     * @param array $storageAdapter
-     */
-    public function setStorageAdapter($storageAdapter)
-    {
-        $this->storageAdapter = $storageAdapter;
+        throw new Exception\InvalidStrategyException(sprintf(
+            'Plugin of type %s is invalid; must implement %s\StrategyInterface',
+            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
+            __NAMESPACE__
+        ));
     }
 }

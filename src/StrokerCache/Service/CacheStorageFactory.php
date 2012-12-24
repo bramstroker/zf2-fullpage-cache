@@ -34,11 +34,9 @@ class CacheStorageFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $options = $serviceLocator->get('Config');
-        if (!isset($options['strokercache']['storage_adapter'])) {
-            throw new ServiceNotCreatedException('No key "storage_adapter" found in configuration');
-        }
-        $adapterOptions = array('adapter' => $options['strokercache']['storage_adapter']);
+        /** @var $options \StrokerCache\Options\ModuleOptions */
+        $options = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
+        $adapterOptions = array('adapter' => $options->getStorageAdapter());
         return StorageFactory::factory($adapterOptions);
     }
 }

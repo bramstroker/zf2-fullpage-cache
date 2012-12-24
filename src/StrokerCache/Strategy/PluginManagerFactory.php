@@ -16,11 +16,12 @@
 * and is licensed under the MIT license.
 */
 
-namespace StrokerCache\Service;
+namespace StrokerCache\Strategy;
 
+use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
+class PluginManagerFactory implements FactoryInterface
 {
 
     /**
@@ -31,29 +32,9 @@ class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $cacheStorage = $serviceLocator->get('strokercache_storage');
-
-        /** @var $options \StrokerCache\Options\ModuleOptions */
-        $options = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
-
-        $cacheListener = new \StrokerCache\Listener\CacheListener(
-            $cacheStorage,
-            $options
+        $config = $serviceLocator->get('Config');
+        return new \StrokerCache\Strategy\PluginManager(
+            new \Zend\ServiceManager\Config($config['strokercache']['strategies']['plugin_manager'])
         );
-
-        // Register enabled strategies on the cacheListener
-        $strategies = $options->getStrategies();
-        if (isset($strategies['enabled'])) {
-            /** @var $strategyPluginManager \StrokerCache\Strategy\PluginManager */
-            $strategyPluginManager = $serviceLocator->get('StrokerCache\Strategy\PluginManager');
-
-            foreach ($strategies['enabled'] as $key => $options)
-            {
-                $strategy = $strategyPluginManager->get($key);
-                $cacheListener->addStrategy($strategy);
-            }
-        }
-
-        return $cacheListener;
     }
 }

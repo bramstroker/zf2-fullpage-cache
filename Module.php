@@ -84,6 +84,7 @@ class Module implements
             'factories' => array(
                 'StrokerCache\Listener\CacheListener' => 'StrokerCache\Service\CacheListenerFactory',
                 'StrokerCache\Options\ModuleOptions' => 'StrokerCache\Service\ModuleOptionsFactory',
+                'StrokerCache\Strategy\PluginManager' => 'StrokerCache\Strategy\PluginManagerFactory',
                 'strokercache_storage' => 'StrokerCache\Service\CacheStorageFactory'
             )
         );

@@ -16,51 +16,9 @@
 * and is licensed under the MIT license.
 */
 
-namespace StrokerCache\Options;
+namespace StrokerCache\Exception;
 
-use Zend\Stdlib\AbstractOptions;
-
-class ModuleOptions extends AbstractOptions
+class InvalidStrategyException extends \Exception
 {
-    /**
-     * @var array
-     */
-    private $strategies;
 
-    /**
-     * @var array
-     */
-    private $storageAdapter;
-
-    /**
-     * @return array
-     */
-    public function getStrategies()
-    {
-        return $this->strategies;
-    }
-
-    /**
-     * @param array $strategies
-     */
-    public function setStrategies($strategies)
-    {
-        $this->strategies = $strategies;
-    }
-
-    /**
-     * @return array
-     */
-    public function getStorageAdapter()
-    {
-        return $this->storageAdapter;
-    }
-
-    /**
-     * @param array $storageAdapter
-     */
-    public function setStorageAdapter($storageAdapter)
-    {
-        $this->storageAdapter = $storageAdapter;
-    }
 }

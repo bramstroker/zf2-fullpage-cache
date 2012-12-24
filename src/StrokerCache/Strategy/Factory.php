@@ -18,21 +18,50 @@
 
 namespace StrokerCache\Strategy;
 
-class Factory
+use Zend\ServiceManager\AbstractFactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
+class Factory implements AbstractFactoryInterface
 {
     /**
-     * @param $className
-     * @param array $options
-     * @return StrategyInterface
+     * Determine if we can create a service with name
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
      * @throws \RuntimeException
+     * @return bool
      */
-    public static function createStrategy($className, $options = array())
+    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        $className = 'StrokerCache\\Strategy\\' . ucfirst($className);
-        if (!class_exists($className)) {
-            throw new \RuntimeException($className . ' Not found');
+        return (bool)strstr($requestedName, 'StrokerCache\\Strategy');
+    }
+
+    /**
+     * Create service with name
+     *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param $name
+     * @param $requestedName
+     * @throws \RuntimeException
+     * @return mixed
+     */
+    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    {
+        /** @var $options \StrokerCache\Options\ModuleOptions */
+        $options = $serviceLocator->getServiceLocator()->get('StrokerCache\Options\ModuleOptions');
+
+        if (!class_exists($requestedName)) {
+            throw new \RuntimeException($requestedName . ' Not found');
         }
-        $strategy = new $className($options);
+
+        $strategyOptions = array();
+        $strategies = $options->getStrategies();
+        if (isset($strategies['enabled'][$requestedName])) {
+            $strategyOptions = $strategies['enabled'][$requestedName];
+        }
+
+        $strategy = new $requestedName($strategyOptions);
         return $strategy;
     }
 }

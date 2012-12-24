@@ -19,6 +19,7 @@
 namespace StrokerCache\Listener;
 
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\Cache\Storage\TaggableInterface;
 use StrokerCache\Strategy\StrategyInterface;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -87,6 +88,10 @@ class CacheListener implements ListenerAggregateInterface
         }
     }
 
+    /**
+     * @param \Zend\Mvc\MvcEvent $e
+     * @return \Zend\Stdlib\ResponseInterface
+     */
     public function load(MvcEvent $e)
     {
         $id = $this->createId();
@@ -98,12 +103,30 @@ class CacheListener implements ListenerAggregateInterface
         }
     }
 
+    /**
+     * @param \Zend\Mvc\MvcEvent $e
+     */
     public function save(MvcEvent $e)
     {
         $id = $this->createId();
-        if (!$this->cache->hasItem($id) && $this->shouldCacheRequest($e)) {
-            $content = $e->getResponse()->getContent();
-            $this->cache->setItem($id, $content);
+        if (!$this->cache->hasItem($id)) {
+            $shouldCache = false;
+            $tags = array();
+            /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
+            foreach ($this->getStrategies() as $strategy) {
+                if ($strategy->shouldCache($e)) {
+                    $shouldCache = true;
+                    $tags = array_merge($tags, $strategy->getTags($e));
+                }
+            }
+
+            if ($shouldCache) {
+                $content = $e->getResponse()->getContent();
+                $this->cache->setItem($id, $content);
+                if ($this->cache instanceof TaggableInterface) {
+                    $this->cache->setTags($id, $tags);
+                }
+            }
         }
     }
 
@@ -122,17 +145,6 @@ class CacheListener implements ListenerAggregateInterface
         $requestUri = $_SERVER['REQUEST_URI'];
         return md5($requestUri);
     }
-
-    protected function shouldCacheRequest(MvcEvent $e)
-    {
-        foreach ($this->getStrategies() as $strategy) {
-            if ($strategy->shouldCache($e)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     /**
      * Make an id depending on REQUEST_URI and superglobal arrays (depending on options)

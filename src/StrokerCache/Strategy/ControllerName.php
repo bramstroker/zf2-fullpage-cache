@@ -36,8 +36,20 @@ class ControllerName extends AbstractOptions implements StrategyInterface
      */
     public function shouldCache(MvcEvent $event)
     {
-        $controller = $event->getRouteMatch()->getParam('controller');
-        return in_array($controller, $this->getControllers());
+        return in_array($event->getControllerClass(), $this->getControllers());
+    }
+
+    /**
+     * Cache tags to use for this page
+     *
+     * @param \Zend\Mvc\MvcEvent $event
+     * @return array
+     */
+    public function getTags(MvcEvent $event)
+    {
+        return array(
+            'strokercache_controller_' . $event->getControllerClass()
+        );
     }
 
     /**

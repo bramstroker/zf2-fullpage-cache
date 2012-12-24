@@ -46,6 +46,17 @@ class Url extends AbstractOptions implements StrategyInterface
     }
 
     /**
+     * Cache tags to use for this page
+     *
+     * @param \Zend\Mvc\MvcEvent $event
+     * @return array
+     */
+    public function getTags(MvcEvent $event)
+    {
+        return array();
+    }
+
+    /**
      * @return array
      */
     public function getRegexpes()

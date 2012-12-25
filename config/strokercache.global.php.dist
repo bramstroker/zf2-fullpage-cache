@@ -6,18 +6,14 @@ return array(
                 'StrokerCache\Strategy\RouteName' => array(
                     'routes' => array(
                         'home',
-                        'leaderboard',
-                        'match/list'
                     ),
                 ),
                 /*'StrokerCache\Strategy\ControllerName' => array(
                     'controllers' => array(
-                        'StrokerToto\Controller\User'
                     )
                 ),
                 'StrokerCache\Strategy\Url' => array(
                     'regexpes' => array(
-                        '/^\/user/'
                     )
                 )*/
             ),

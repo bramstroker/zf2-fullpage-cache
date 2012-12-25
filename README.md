@@ -32,7 +32,7 @@ Copy the file `strokercache.local.php.dist` to your config/autoload directory an
 
 The module provides several strategies to determine if a page should be cached.
 
-- By routename and params
+- By routename
 - By controller classname
 - By regex on the URI
 
@@ -72,8 +72,23 @@ return array(
         'strategies' => array(
             'plugin_manager' => array(
                 'invokables' => array(
-                    'MyNamespace\MyCustomStrategy
+                    'MyNamespace\MyCustomStrategy'
                 ),
+            ),
+        ),
+    ),
+);
+```
+
+Next you need to enable the strategy
+
+```php
+<?php
+return array(
+    'strokercache' => array(
+        'strategies' => array(
+            'enabled' => array(
+                'MyNamespace\MyCustomStrategy'
             ),
         ),
     ),

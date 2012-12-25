@@ -57,6 +57,23 @@ return array(
 );
 ```
 
+## Change storage adapter
+
+Storage adapter can be changed by configuration. Configuration structure is the same a StorageFactory consumes. See the [ZF2 reference guide](http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html).
+By default filesystem storage is used.
+
+Example using APC:
+```php
+<?php
+return array(
+    'strokercache' => array(
+        'storage_adapter' => array(
+            'apc'
+        ),
+    ),
+);
+```
+
 ## Clearing the cache
 
 Todo

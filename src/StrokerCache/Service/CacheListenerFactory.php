@@ -47,9 +47,12 @@ class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
             /** @var $strategyPluginManager \StrokerCache\Strategy\PluginManager */
             $strategyPluginManager = $serviceLocator->get('StrokerCache\Strategy\PluginManager');
 
-            foreach ($strategies['enabled'] as $key => $options)
+            foreach ($strategies['enabled'] as $alias => $options)
             {
-                $strategy = $strategyPluginManager->get($key);
+                if (is_numeric($alias)) {
+                    $alias = $options;
+                }
+                $strategy = $strategyPluginManager->get($alias);
                 $cacheListener->addStrategy($strategy);
             }
         }

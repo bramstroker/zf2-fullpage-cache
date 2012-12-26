@@ -1,6 +1,7 @@
 INSTALL.txt
 LICENSE.txt
 README.txt
-demos/
-extras/documentation
-
+vendor
+.idea
+composer.lock
+composer.phar

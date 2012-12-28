@@ -18,13 +18,12 @@
 
 namespace StrokerCacheTest\Strategy;
 
-use StrokerCache\Strategy\ControllerName;
 use StrokerCache\Strategy\RouteName;
 
 class RouteNameTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ControllerName
+     * @var RouteName
      */
     private $strategy;
 

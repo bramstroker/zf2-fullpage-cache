@@ -37,8 +37,13 @@ class RouteName extends AbstractOptions implements StrategyInterface
     public function shouldCache(MvcEvent $event)
     {
         foreach($this->getRoutes() as $routeOptions) {
-            $route = (isset($routeOptions['name'])) ? $routeOptions['name'] : $routeOptions;
-            $params = (isset($routeOptions['params'])) ? $routeOptions['params'] : array();
+            if (is_string($routeOptions)) {
+                $route = $routeOptions;
+                $params = array();
+            } else {
+                $route = $routeOptions['name'];
+                $params = isset($routeOptions['params']) ? $routeOptions['params'] : array();
+            }
 
             if (
                 $route == $event->getRouteMatch()->getMatchedRouteName() &&
@@ -48,9 +53,6 @@ class RouteName extends AbstractOptions implements StrategyInterface
             }
         }
         return false;
-
-
-        return in_array($routeName, $this->getRoutes());
     }
 
     /**

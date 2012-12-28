@@ -1,5 +1,7 @@
 # StrokerCache
 
+[![Build Status](https://travis-ci.org/bramstroker/zf2-fullpage-cache.png?branch=master)](https://travis-ci.org/bramstroker/zf2-fullpage-cache)
+
 This module provides a full page cache solution for Zend Framework 2.
 
 ## Installation

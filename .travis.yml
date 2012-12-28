@@ -4,4 +4,5 @@ php:
   - 5.4
   - 5.3
 
-composer install
+before_install:
+ - composer install

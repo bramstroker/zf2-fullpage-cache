@@ -36,8 +36,45 @@ class RouteName extends AbstractOptions implements StrategyInterface
      */
     public function shouldCache(MvcEvent $event)
     {
-        $routeName = $event->getRouteMatch()->getMatchedRouteName();
+        foreach($this->getRoutes() as $routeOptions) {
+            $route = (isset($routeOptions['name'])) ? $routeOptions['name'] : $routeOptions;
+            $params = (isset($routeOptions['params'])) ? $routeOptions['params'] : array();
+
+            if (
+                $route == $event->getRouteMatch()->getMatchedRouteName() &&
+                $this->matchParams($event->getRouteMatch()->getParams(), $params)
+            ) {
+                return true;
+            }
+        }
+        return false;
+
+
         return in_array($routeName, $this->getRoutes());
+    }
+
+    /**
+     * @param array $params
+     * @param $ruleParams
+     * @return bool
+     */
+    protected function matchParams(array $params, $ruleParams)
+    {
+        foreach($ruleParams as $param => $value) {
+            if (isset($params[$param])) {
+                // Regex matching
+                if (preg_match('/^\/.*\//', $value)) {
+                    $regex = $value;
+                    if (!preg_match($regex, $params[$param])) {
+                        return false;
+                    }
+                // Literal matching
+                } elseif ($value != $params[$param]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

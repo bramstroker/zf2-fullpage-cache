@@ -8,6 +8,7 @@
 namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\ControllerName;
+use Zend\Mvc\Router\RouteMatch;
 
 class ControllerNameTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,6 +48,7 @@ class ControllerNameTest extends \PHPUnit_Framework_TestCase
         $this->strategy->setControllers($controllers);
         $mvcEvent = new \Zend\Mvc\MvcEvent();
         $mvcEvent->setControllerClass($requestedController);
+        $mvcEvent->setRouteMatch(new RouteMatch(array('controller' => $requestedController)));
         $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
     }
 }

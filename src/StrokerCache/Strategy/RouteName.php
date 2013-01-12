@@ -69,24 +69,6 @@ class RouteName extends AbstractOptions implements StrategyInterface
     }
 
     /**
-     * Cache tags to use for this page
-     *
-     * @param \Zend\Mvc\MvcEvent $event
-     * @return array
-     */
-    public function getTags(MvcEvent $event)
-    {
-        $routeName = $event->getRouteMatch()->getMatchedRouteName();
-        $tags = array(
-            'strokercache_route_' . $routeName
-        );
-        foreach($event->getRouteMatch()->getParams() as $key => $value) {
-            $tags[] = 'strokercache_route_' . $routeName . '_p:' . $key . '_' . $value;
-        }
-        return $tags;
-    }
-
-    /**
      * @return array
      */
     public function getRoutes()

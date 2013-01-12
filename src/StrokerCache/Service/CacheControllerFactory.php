@@ -8,11 +8,11 @@
 namespace StrokerCache\Service;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
-use StrokerCache\Listener\CacheListener;
+use StrokerCache\Controller\CacheController;
+use Zend\ServiceManager\FactoryInterface;
 
-class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
+class CacheControllerFactory implements FactoryInterface
 {
-
     /**
      * Create service
      *
@@ -21,7 +21,10 @@ class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $cacheService = $serviceLocator->get('StrokerCache\Service\CacheService');
-        return new CacheListener($cacheService);
+        $locator = $serviceLocator->getServiceLocator();
+        return new CacheController(
+            $locator->get('StrokerCache\Service\CacheService'),
+            $locator->get('Console')
+        );
     }
 }

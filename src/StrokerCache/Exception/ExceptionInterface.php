@@ -7,6 +7,6 @@
 
 namespace StrokerCache\Exception;
 
-class InvalidStrategyException extends \Exception implements ExceptionInterface
+interface ExceptionInterface
 {
 }

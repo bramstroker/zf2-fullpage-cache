@@ -18,12 +18,4 @@ interface StrategyInterface
      * @return boolean
      */
     public function shouldCache(MvcEvent $event);
-
-    /**
-     * Cache tags to use for this page
-     *
-     * @param \Zend\Mvc\MvcEvent $event
-     * @return array
-     */
-    public function getTags(MvcEvent $event);
 }

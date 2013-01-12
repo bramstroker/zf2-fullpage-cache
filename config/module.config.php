@@ -11,5 +11,20 @@ return array(
                 )
             ),
         )
+    ),
+    'console' => array(
+        'router' => array(
+            'routes' => array(
+                'strokercache-clear' => array(
+                    'options' => array(
+                        'route' => 'strokercache clear <tags>',
+                        'defaults' => array(
+                            'controller' => 'StrokerCache\Controller\Cache',
+                            'action' => 'clear',
+                        )
+                    ),
+                ),
+            ),
+        ),
     )
 );

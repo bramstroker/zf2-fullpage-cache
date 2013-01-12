@@ -19,6 +19,7 @@
 namespace StrokerCache;
 
 use Zend\Mvc\ModuleRouteListener;
+use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
 use Zend\EventManager\EventInterface;
@@ -29,7 +30,8 @@ class Module implements
     ConfigProviderInterface,
     AutoloaderProviderInterface,
     BootstrapListenerInterface,
-    ServiceProviderInterface
+    ServiceProviderInterface,
+    ControllerProviderInterface
 {
 
     /**
@@ -83,9 +85,25 @@ class Module implements
         return array(
             'factories' => array(
                 'StrokerCache\Listener\CacheListener' => 'StrokerCache\Service\CacheListenerFactory',
+                'strokerCache\Service\CacheService' => 'StrokerCache\Service\CacheServiceFactory',
                 'StrokerCache\Options\ModuleOptions' => 'StrokerCache\Service\ModuleOptionsFactory',
                 'StrokerCache\Strategy\PluginManager' => 'StrokerCache\Strategy\PluginManagerFactory',
                 'strokercache_storage' => 'StrokerCache\Service\CacheStorageFactory'
+            )
+        );
+    }
+
+    /**
+     * Expected to return \Zend\ServiceManager\Config object or array to seed
+     * such an object.
+     *
+     * @return array|\Zend\ServiceManager\Config
+     */
+    public function getControllerConfig()
+    {
+        return array(
+            'factories' => array(
+                'StrokerCache\Controller\Cache' => 'StrokerCache\Service\CacheControllerFactory'
             )
         );
     }

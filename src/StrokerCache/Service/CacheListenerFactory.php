@@ -16,12 +16,13 @@ class CacheListenerFactory implements \Zend\ServiceManager\FactoryInterface
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $cacheService = $serviceLocator->get('StrokerCache\Service\CacheService');
+
         return new CacheListener($cacheService);
     }
 }

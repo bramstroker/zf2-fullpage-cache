@@ -20,13 +20,14 @@ class ControllerName extends AbstractOptions implements StrategyInterface
     /**
      * True if the request should be cached
      *
-     * @param MvcEvent $event
+     * @param  MvcEvent $event
      * @return boolean
      */
     public function shouldCache(MvcEvent $event)
     {
         $routeMatch = $event->getRouteMatch();
         $controller = $routeMatch->getParam('controller');
+
         return in_array($controller, $this->getControllers());
     }
 

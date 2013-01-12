@@ -20,12 +20,12 @@ class RouteName extends AbstractOptions implements StrategyInterface
     /**
      * True if the request should be cached
      *
-     * @param MvcEvent $event
+     * @param  MvcEvent $event
      * @return boolean
      */
     public function shouldCache(MvcEvent $event)
     {
-        foreach($this->getRoutes() as $routeOptions) {
+        foreach ($this->getRoutes() as $routeOptions) {
             if (is_string($routeOptions)) {
                 $route = $routeOptions;
                 $params = array();
@@ -41,6 +41,7 @@ class RouteName extends AbstractOptions implements StrategyInterface
                 return true;
             }
         }
+
         return false;
     }
 
@@ -51,20 +52,19 @@ class RouteName extends AbstractOptions implements StrategyInterface
      */
     protected function matchParams(array $params, $ruleParams)
     {
-        foreach($ruleParams as $param => $value) {
+        foreach ($ruleParams as $param => $value) {
             if (isset($params[$param])) {
-                // Regex matching
                 if (preg_match('/^\/.*\//', $value)) {
                     $regex = $value;
                     if (!preg_match($regex, $params[$param])) {
                         return false;
                     }
-                // Literal matching
                 } elseif ($value != $params[$param]) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 

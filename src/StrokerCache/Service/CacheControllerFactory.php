@@ -16,12 +16,13 @@ class CacheControllerFactory implements FactoryInterface
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $locator = $serviceLocator->getServiceLocator();
+
         return new CacheController(
             $locator->get('StrokerCache\Service\CacheService'),
             $locator->get('Console')

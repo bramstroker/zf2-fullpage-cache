@@ -91,9 +91,9 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $routes
-     * @param string $route
-     * @param array $params
+     * @param array   $routes
+     * @param string  $route
+     * @param array   $params
      * @param boolean $expectedResult
      * @dataProvider shouldCacheProvider
      */

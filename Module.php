@@ -18,7 +18,6 @@
 
 namespace StrokerCache;
 
-use Zend\Mvc\ModuleRouteListener;
 use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ModuleManager\Feature\BootstrapListenerInterface;
@@ -63,7 +62,7 @@ class Module implements
     /**
      * Listen to the bootstrap event
      *
-     * @param EventInterface $e
+     * @param  EventInterface $e
      * @return array
      */
     public function onBootstrap(EventInterface $e)

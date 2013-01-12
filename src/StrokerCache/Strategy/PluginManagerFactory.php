@@ -16,12 +16,13 @@ class PluginManagerFactory implements FactoryInterface
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('Config');
+
         return new \StrokerCache\Strategy\PluginManager(
             new \Zend\ServiceManager\Config($config['strokercache']['strategies']['plugin_manager'])
         );

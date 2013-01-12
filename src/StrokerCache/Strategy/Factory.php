@@ -23,7 +23,7 @@ class Factory implements AbstractFactoryInterface
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        return (bool)strstr($requestedName, 'StrokerCache\\Strategy');
+        return (bool) strstr($requestedName, 'StrokerCache\\Strategy');
     }
 
     /**
@@ -51,6 +51,7 @@ class Factory implements AbstractFactoryInterface
         }
 
         $strategy = new $requestedName($strategyOptions);
+
         return $strategy;
     }
 }

@@ -96,5 +96,3 @@ class CacheController extends AbstractActionController
         $this->console = $console;
     }
 }
-
-

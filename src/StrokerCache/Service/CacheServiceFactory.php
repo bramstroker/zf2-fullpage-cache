@@ -15,7 +15,7 @@ class CacheServiceFactory implements \Zend\ServiceManager\FactoryInterface
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
@@ -36,8 +36,7 @@ class CacheServiceFactory implements \Zend\ServiceManager\FactoryInterface
             /** @var $strategyPluginManager \StrokerCache\Strategy\PluginManager */
             $strategyPluginManager = $serviceLocator->get('StrokerCache\Strategy\PluginManager');
 
-            foreach ($strategies['enabled'] as $alias => $options)
-            {
+            foreach ($strategies['enabled'] as $alias => $options) {
                 if (is_numeric($alias)) {
                     $alias = $options;
                 }

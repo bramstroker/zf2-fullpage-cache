@@ -14,7 +14,7 @@ interface StrategyInterface
     /**
      * True if the request should be cached
      *
-     * @param MvcEvent $event
+     * @param  MvcEvent $event
      * @return boolean
      */
     public function shouldCache(MvcEvent $event);

@@ -20,17 +20,18 @@ class Url extends AbstractOptions implements StrategyInterface
     /**
      * True if the request should be cached
      *
-     * @param MvcEvent $event
+     * @param  MvcEvent $event
      * @return boolean
      */
     public function shouldCache(MvcEvent $event)
     {
         $uri = $event->getRequest()->getUri();
-        foreach($this->getRegexpes() as $regex) {
+        foreach ($this->getRegexpes() as $regex) {
             if (preg_match($regex, $uri->getPath())) {
                 return true;
             }
         }
+
         return false;
     }
 

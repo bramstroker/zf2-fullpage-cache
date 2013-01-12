@@ -39,7 +39,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Zend\Mvc\MvcEvent
+     * @return MvcEvent
      */
     protected function getMvcEvent()
     {
@@ -48,6 +48,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             $this->mvcEvent->setRouteMatch(new \Zend\Mvc\Router\Http\RouteMatch(array()));
             $this->mvcEvent->setResponse(new \Zend\Http\Response());
         }
+
         return $this->mvcEvent;
     }
 

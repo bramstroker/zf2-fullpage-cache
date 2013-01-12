@@ -38,8 +38,8 @@ class ControllerNameTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $controllers
-     * @param string $requestedController
+     * @param array   $controllers
+     * @param string  $requestedController
      * @param boolean $expectedResult
      * @dataProvider shouldCacheProvider
      */

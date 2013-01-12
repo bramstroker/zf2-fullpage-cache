@@ -36,7 +36,7 @@ class CacheService
      * Default constructor
      *
      * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
-     * @param \StrokerCache\Options\ModuleOptions $options
+     * @param \StrokerCache\Options\ModuleOptions  $options
      */
     public function __construct(StorageInterface $cacheStorage, ModuleOptions $options)
     {
@@ -53,6 +53,7 @@ class CacheService
         if ($this->getCacheStorage()->hasItem($id)) {
             return $this->getCacheStorage()->getItem($id);
         }
+
         return null;
     }
 
@@ -112,13 +113,14 @@ class CacheService
         }
 
         $requestUri = $_SERVER['REQUEST_URI'];
+
         return md5($requestUri);
     }
 
     /**
      * Cache tags to use for this page
      *
-     * @param \Zend\Mvc\MvcEvent $event
+     * @param  \Zend\Mvc\MvcEvent $event
      * @return array
      */
     public function getTags(MvcEvent $event)
@@ -127,13 +129,14 @@ class CacheService
         $tags = array(
             self::TAG_PREFIX . 'route_' . $routeName
         );
-        foreach($event->getRouteMatch()->getParams() as $key => $value) {
+        foreach ($event->getRouteMatch()->getParams() as $key => $value) {
             if ($key == 'controller') {
                 $tags[] = self::TAG_PREFIX . 'controller_' . $value;
             } else {
                 $tags[] = self::TAG_PREFIX . 'route_' . $routeName . '_p:' . $key . '_' . $value;
             }
         }
+
         return $tags;
     }
 

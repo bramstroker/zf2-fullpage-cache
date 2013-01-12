@@ -17,7 +17,7 @@ class PluginManager extends AbstractPluginManager
      *
      * Checks that the helper loaded is an instance of Helper\HelperInterface.
      *
-     * @param  mixed $plugin
+     * @param  mixed                              $plugin
      * @return void
      * @throws Exception\InvalidStrategyException if invalid
      */

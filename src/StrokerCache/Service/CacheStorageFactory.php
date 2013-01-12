@@ -9,7 +9,6 @@ namespace StrokerCache\Service;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\Cache\StorageFactory;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CacheStorageFactory implements FactoryInterface
@@ -18,7 +17,7 @@ class CacheStorageFactory implements FactoryInterface
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
@@ -26,6 +25,7 @@ class CacheStorageFactory implements FactoryInterface
         /** @var $options \StrokerCache\Options\ModuleOptions */
         $options = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
         $adapterOptions = array('adapter' => $options->getStorageAdapter());
+
         return StorageFactory::factory($adapterOptions);
     }
 }

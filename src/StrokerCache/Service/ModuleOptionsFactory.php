@@ -16,12 +16,13 @@ class ModuleOptionsFactory implements \Zend\ServiceManager\FactoryInterface
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('Config');
+
         return new ModuleOptions(isset($config['strokercache']) ? $config['strokercache'] : array());
     }
 }

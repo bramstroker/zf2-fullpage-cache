@@ -66,7 +66,7 @@ class CacheListener implements ListenerAggregateInterface
     /**
      * Load the page contents from the cache and set the response.
      *
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param  \Zend\Mvc\MvcEvent             $e
      * @return \Zend\Stdlib\ResponseInterface
      */
     public function onRoute(MvcEvent $e)
@@ -78,6 +78,7 @@ class CacheListener implements ListenerAggregateInterface
         if ($data !== null) {
             $response = $e->getResponse();
             $response->setContent($data);
+
             return $response;
         }
     }

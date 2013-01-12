@@ -61,26 +61,24 @@ class CacheService
      */
     public function save(MvcEvent $e)
     {
-        $id = $this->createId();
-        if (!$this->getCacheStorage()->hasItem($id)) {
-            $shouldCache = false;
-            $tags = array();
-            /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
-            foreach ($this->getStrategies() as $strategy) {
-                if ($strategy->shouldCache($e)) {
-                    $shouldCache = true;
-                    if ($this->getCacheStorage() instanceof TaggableInterface) {
-                        $tags = array_merge($tags, $this->getTags($e));
-                    }
+        $shouldCache = false;
+        $tags = array();
+        /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
+        foreach ($this->getStrategies() as $strategy) {
+            if ($strategy->shouldCache($e)) {
+                $shouldCache = true;
+                if ($this->getCacheStorage() instanceof TaggableInterface) {
+                    $tags = array_merge($tags, $this->getTags($e));
                 }
             }
+        }
 
-            if ($shouldCache) {
-                $content = $e->getResponse()->getContent();
-                $this->getCacheStorage()->setItem($id, $content);
-                if ($this->getCacheStorage() instanceof TaggableInterface) {
-                    $this->getCacheStorage()->setTags($id, $tags);
-                }
+        if ($shouldCache) {
+            $id = $this->createId();
+            $content = $e->getResponse()->getContent();
+            $this->getCacheStorage()->setItem($id, $content);
+            if ($this->getCacheStorage() instanceof TaggableInterface) {
+                $this->getCacheStorage()->setTags($id, $tags);
             }
         }
     }

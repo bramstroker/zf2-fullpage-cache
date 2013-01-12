@@ -51,7 +51,6 @@ class CacheService
     {
         $id = $this->createId();
         if ($this->getCacheStorage()->hasItem($id)) {
-            var_dump('from cache');
             return $this->getCacheStorage()->getItem($id);
         }
         return null;
@@ -64,7 +63,6 @@ class CacheService
     {
         $id = $this->createId();
         if (!$this->getCacheStorage()->hasItem($id)) {
-            var_dump('write cache');
             $shouldCache = false;
             $tags = array();
             /** @var $strategy \StrokerCache\Strategy\StrategyInterface */

@@ -78,7 +78,23 @@ return array(
 
 ## Clearing the cache
 
-Todo
+You can invalidate cache items using the provided console route. 
+Alternatively you could pull `StrokerCache\Service\CacheService` from the servicelocator and call `clearByTags` directly from you application (i.e. from an event listener).
+
+Run the following command from your project root:
+`php public/index.php strokercache clear <tags>`
+
+Multiple tags can be seperated by a `,`.
+Every page which is cached by StrokerCache is identified using the following tags:
+- `route_<routename>`: Contains the matched routename of the page
+- `controller_<controllername>`: Contains the controllername
+- `param_<paramname>_<paramvalue>`: One tag for every route param
+
+To clear every page renderered by the `someAction` in `MyNamespace\MyController` do the following:
+`php public/index.php strokercache clear controller_MyNamespace\MyController,param_action:some`
+
+To clear the route with alias `player` but only for the player with id 60. 
+`php public/index.php strokercache clear route_player,param_id_60`
 
 ## Custom strategies
 

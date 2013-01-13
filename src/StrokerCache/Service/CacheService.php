@@ -86,17 +86,18 @@ class CacheService
 
     /**
      * @param array $tags
+     * @return bool
      */
     public function clearByTags(array $tags = array())
     {
         if (!$this->getCacheStorage() instanceof TaggableInterface) {
-            return;
+            return false;
         }
         $tags = array_map(
             function ($tag) { return self::TAG_PREFIX . $tag; },
             $tags
         );
-        $this->getCacheStorage()->clearByTags($tags);
+        return $this->getCacheStorage()->clearByTags($tags);
     }
 
     /**

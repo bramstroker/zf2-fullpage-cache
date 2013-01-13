@@ -133,7 +133,7 @@ class CacheService
             if ($key == 'controller') {
                 $tags[] = self::TAG_PREFIX . 'controller_' . $value;
             } else {
-                $tags[] = self::TAG_PREFIX . 'route_' . $routeName . '_p:' . $key . '_' . $value;
+                $tags[] = self::TAG_PREFIX . 'param_' . $key . '_' . $value;
             }
         }
 

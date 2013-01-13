@@ -136,7 +136,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $expectedTags = array(
             'strokercache_route_home',
             'strokercache_controller_myTestController',
-            'strokercache_route_home_p:someParam_someValue'
+            'strokercache_param_someParam_someValue'
         );
 
         $this->getMvcEvent()->getRouteMatch()->setMatchedRouteName('home');

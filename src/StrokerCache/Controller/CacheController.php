@@ -43,11 +43,14 @@ class CacheController extends AbstractActionController
     {
         $this->guardConsole();
         $tags = $this->getRequest()->getParam('tags');
-        if ($tags !== null) {
-            $tags = explode(',', $tags);
-            $this->console->writeLine('Clearing cache');
-            $this->getCacheService()->clearByTags($tags);
+        if ($tags === null) {
+            $this->getConsole()->writeLine('You should provide tags');
+            return;
         }
+
+        $tags = explode(',', $tags);
+        $result = $this->getCacheService()->clearByTags($tags);
+        $this->getConsole()->writeLine('Cache invalidation ' . $result ? 'succesfull' : 'failed');
     }
 
     /**

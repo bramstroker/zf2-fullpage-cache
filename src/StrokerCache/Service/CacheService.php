@@ -96,7 +96,6 @@ class CacheService
             function ($tag) { return self::TAG_PREFIX . $tag; },
             $tags
         );
-        var_dump($tags);
         $this->getCacheStorage()->clearByTags($tags);
     }
 

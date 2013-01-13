@@ -79,7 +79,7 @@ return array(
 ## Clearing the cache
 
 You can invalidate cache items using the provided console route. 
-Alternatively you could pull `StrokerCache\Service\CacheService` from the servicelocator and call `clearByTags` directly from you application (i.e. from an event listener).
+Alternatively you could pull `strokercache_service` from the servicelocator and call `clearByTags` directly from you application (i.e. from an event listener).
 
 Run the following command from your project root:
 `php public/index.php strokercache clear <tags>`

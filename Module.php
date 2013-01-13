@@ -88,6 +88,9 @@ class Module implements
                 'StrokerCache\Options\ModuleOptions' => 'StrokerCache\Service\ModuleOptionsFactory',
                 'StrokerCache\Strategy\PluginManager' => 'StrokerCache\Strategy\PluginManagerFactory',
                 'strokercache_storage' => 'StrokerCache\Service\CacheStorageFactory'
+            ),
+            'aliases' => array(
+                'strokercache_service' => 'StrokerCache\Service\CacheService'
             )
         );
     }

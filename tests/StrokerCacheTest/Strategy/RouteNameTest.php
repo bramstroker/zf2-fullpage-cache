@@ -106,4 +106,13 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
         $mvcEvent->setRouteMatch($routeMatch);
         $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
     }
+
+    /**
+     * testShouldCacheReturnsFalseOnNoRouteMatchObject
+     */
+    public function testShouldCacheReturnsFalseWhenNoRouteMatchIsSet()
+    {
+        $mvcEvent = new \Zend\Mvc\MvcEvent();
+        $this->assertFalse($this->strategy->shouldCache($mvcEvent));
+    }
 }

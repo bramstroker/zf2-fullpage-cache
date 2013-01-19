@@ -25,6 +25,9 @@ class RouteName extends AbstractOptions implements StrategyInterface
      */
     public function shouldCache(MvcEvent $event)
     {
+        if ($event->getRouteMatch() === null) {
+            return false;
+        }
         foreach ($this->getRoutes() as $routeOptions) {
             if (is_string($routeOptions)) {
                 $route = $routeOptions;

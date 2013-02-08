@@ -26,6 +26,11 @@ class CacheListener implements ListenerAggregateInterface
     protected $cacheService;
 
     /**
+     * @var bool
+     */
+    protected $loadedFromCache = false;
+
+    /**
      * Default constructor
      *
      * @param \StrokerCache\Service\CacheService $cacheService
@@ -76,9 +81,9 @@ class CacheListener implements ListenerAggregateInterface
         }
         $data = $this->getCacheService()->load();
         if ($data !== null) {
+            $this->loadedFromCache = true;
             $response = $e->getResponse();
             $response->setContent($data);
-
             return $response;
         }
     }
@@ -90,7 +95,7 @@ class CacheListener implements ListenerAggregateInterface
      */
     public function onFinish(MvcEvent $e)
     {
-        if (!$e->getRequest() instanceof HttpRequest) {
+        if (!$e->getRequest() instanceof HttpRequest || $this->loadedFromCache) {
             return;
         }
         $this->getCacheService()->save($e);

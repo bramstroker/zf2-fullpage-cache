@@ -50,7 +50,7 @@ class CacheController extends AbstractActionController
 
         $tags = explode(',', $tags);
         $result = $this->getCacheService()->clearByTags($tags);
-        $this->getConsole()->writeLine('Cache invalidation ' . $result ? 'succesfull' : 'failed');
+        $this->getConsole()->writeLine('Cache invalidation ' . ($result ? 'succesfull' : 'failed'));
     }
 
     /**

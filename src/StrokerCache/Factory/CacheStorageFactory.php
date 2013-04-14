@@ -5,20 +5,16 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Service;
+namespace StrokerCache\Factory;
 
-use Zend\ServiceManager\FactoryInterface;
 use Zend\Cache\StorageFactory;
+use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CacheStorageFactory implements FactoryInterface
 {
-
     /**
-     * Create service
-     *
-     * @param  ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * {@inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {

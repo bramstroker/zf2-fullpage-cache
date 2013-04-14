@@ -5,30 +5,24 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Service;
+namespace StrokerCache\Factory;
 
+use StrokerCache\Service\CacheService;
+use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class CacheServiceFactory implements \Zend\ServiceManager\FactoryInterface
+class CacheServiceFactory implements FactoryInterface
 {
-
     /**
-     * Create service
-     *
-     * @param  ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * {@inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $cacheStorage = $serviceLocator->get('strokercache_storage');
-
         /** @var $options \StrokerCache\Options\ModuleOptions */
         $options = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
 
-        $cacheService = new CacheService(
-            $cacheStorage,
-            $options
-        );
+        $cacheStorage = $serviceLocator->get('StrokerCache\Storage\CacheStorage');
+        $cacheService = new CacheService($cacheStorage, $options);
 
         // Register enabled strategies on the cacheListener
         $strategies = $options->getStrategies();

@@ -32,7 +32,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @param array $strategies
      */
-    public function setStrategies($strategies)
+    public function setStrategies(array $strategies)
     {
         $this->strategies = $strategies;
     }
@@ -48,7 +48,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @param array $storageAdapter
      */
-    public function setStorageAdapter($storageAdapter)
+    public function setStorageAdapter(array $storageAdapter)
     {
         $this->storageAdapter = $storageAdapter;
     }

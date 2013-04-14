@@ -7,10 +7,10 @@
 
 namespace StrokerCache\Listener;
 
-use Zend\EventManager\ListenerAggregateInterface;
 use StrokerCache\Service\CacheService;
-use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\ListenerAggregateInterface;
+use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 
 class CacheListener implements ListenerAggregateInterface
@@ -33,7 +33,7 @@ class CacheListener implements ListenerAggregateInterface
     /**
      * Default constructor
      *
-     * @param \StrokerCache\Service\CacheService $cacheService
+     * @param CacheService $cacheService
      */
     public function __construct(CacheService $cacheService)
     {
@@ -41,12 +41,7 @@ class CacheListener implements ListenerAggregateInterface
     }
 
     /**
-     * Attach one or more listeners
-     *
-     * Implementors may add an optional $priority argument; the EventManager
-     * implementation will pass this to the aggregate.
-     *
-     * @param EventManagerInterface $events
+     * {@inheritDoc}
      */
     public function attach(EventManagerInterface $events)
     {
@@ -55,9 +50,7 @@ class CacheListener implements ListenerAggregateInterface
     }
 
     /**
-     * Detach all previously attached listeners
-     *
-     * @param EventManagerInterface $events
+     * {@inheritDoc}
      */
     public function detach(EventManagerInterface $events)
     {
@@ -71,19 +64,23 @@ class CacheListener implements ListenerAggregateInterface
     /**
      * Load the page contents from the cache and set the response.
      *
-     * @param  \Zend\Mvc\MvcEvent             $e
-     * @return \Zend\Stdlib\ResponseInterface
+     * @param  MvcEvent $e
+     * @return \Zend\Stdlib\ResponseInterface|void
      */
     public function onRoute(MvcEvent $e)
     {
         if (!$e->getRequest() instanceof HttpRequest) {
             return;
         }
+
         $data = $this->getCacheService()->load();
+
         if ($data !== null) {
             $this->loadedFromCache = true;
+
             $response = $e->getResponse();
             $response->setContent($data);
+
             return $response;
         }
     }
@@ -91,18 +88,20 @@ class CacheListener implements ListenerAggregateInterface
     /**
      * Save page contents to the cache
      *
-     * @param \Zend\Mvc\MvcEvent $e
+     * @param  MvcEvent $e
+     * @return void
      */
     public function onFinish(MvcEvent $e)
     {
         if (!$e->getRequest() instanceof HttpRequest || $this->loadedFromCache) {
             return;
         }
+
         $this->getCacheService()->save($e);
     }
 
     /**
-     * @return \StrokerCache\Service\CacheService
+     * @return CacheService
      */
     public function getCacheService()
     {

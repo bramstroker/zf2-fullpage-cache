@@ -7,19 +7,13 @@
 
 namespace StrokerCache\Strategy;
 
-use Zend\ServiceManager\AbstractPluginManager;
 use StrokerCache\Exception;
+use Zend\ServiceManager\AbstractPluginManager;
 
-class PluginManager extends AbstractPluginManager
+class CacheStrategyPluginManager extends AbstractPluginManager
 {
     /**
-     * Validate the plugin
-     *
-     * Checks that the helper loaded is an instance of Helper\HelperInterface.
-     *
-     * @param  mixed                              $plugin
-     * @return void
-     * @throws Exception\InvalidStrategyException if invalid
+     * {@inheritDoc}
      */
     public function validatePlugin($plugin)
     {

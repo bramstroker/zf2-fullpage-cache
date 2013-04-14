@@ -7,10 +7,8 @@
 
 namespace StrokerCache\Controller;
 
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\Request as ConsoleRequest;
-use StrokerCache\Exception\RuntimeException;
 use StrokerCache\Service\CacheService;
+use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class CacheController extends AbstractActionController
@@ -30,72 +28,39 @@ class CacheController extends AbstractActionController
      *
      * @param CacheService $cacheService
      */
-    public function __construct(CacheService $cacheService, Console $console)
-    {
-        $this->setCacheService($cacheService);
-        $this->setConsole($console);
-    }
-
-    /**
-     * Clear items from the cache
-     */
-    public function clearAction()
-    {
-        $this->guardConsole();
-        $tags = $this->getRequest()->getParam('tags');
-        if ($tags === null) {
-            $this->getConsole()->writeLine('You should provide tags');
-            return;
-        }
-
-        $tags = explode(',', $tags);
-        $result = $this->getCacheService()->clearByTags($tags);
-        $this->getConsole()->writeLine('Cache invalidation ' . ($result ? 'succesfull' : 'failed'));
-    }
-
-    /**
-     * Make sure actions in this controller are only runned from the console
-     */
-    protected function guardConsole()
-    {
-        $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
-            throw new RuntimeException(sprintf(
-                '%s can only be run from the console',
-                __METHOD__
-            ));
-        }
-    }
-
-    /**
-     * @return \StrokerCache\Service\CacheService
-     */
-    public function getCacheService()
-    {
-        return $this->cacheService;
-    }
-
-    /**
-     * @param \StrokerCache\Service\CacheService $cacheService
-     */
-    public function setCacheService($cacheService)
+    public function __construct(CacheService $cacheService)
     {
         $this->cacheService = $cacheService;
     }
 
     /**
-     * @return \Zend\Console\Adapter\AdapterInterface
+     * Clear items from the cache
+     *
+     * @return string
      */
-    public function getConsole()
+    public function clearAction()
     {
-        return $this->console;
+        $tags = $this->getRequest()->getParam('tags');
+        if (null === $tags) {
+            return "\n\nYou should provide tags";
+        }
+
+        $tags   = explode(',', $tags);
+        $result = $this->getCacheService()->clearByTags($tags);
+
+        return sprintf(
+            "\n\nCache invalidation %s\n\n",
+            $result ? 'succeeded' : 'failed'
+        );
     }
 
     /**
-     * @param \Zend\Console\Adapter\AdapterInterface $console
+     * Get the cache service
+     *
+     * @return CacheService
      */
-    public function setConsole($console)
+    public function getCacheService()
     {
-        $this->console = $console;
+        return $this->cacheService;
     }
 }

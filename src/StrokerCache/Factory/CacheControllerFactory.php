@@ -5,27 +5,21 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Service;
+namespace StrokerCache\Factory;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
 use StrokerCache\Controller\CacheController;
 use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 class CacheControllerFactory implements FactoryInterface
 {
     /**
-     * Create service
-     *
-     * @param  ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * {@inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $locator = $serviceLocator->getServiceLocator();
 
-        return new CacheController(
-            $locator->get('StrokerCache\Service\CacheService'),
-            $locator->get('Console')
-        );
+        return new CacheController($locator->get('StrokerCache\Service\CacheService'));
     }
 }

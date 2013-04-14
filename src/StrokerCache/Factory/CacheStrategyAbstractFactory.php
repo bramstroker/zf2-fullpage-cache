@@ -5,12 +5,12 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Strategy;
+namespace StrokerCache\Factory;
 
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class Factory implements AbstractFactoryInterface
+class CacheStrategyAbstractFactory implements AbstractFactoryInterface
 {
     /**
      * {@inheritDoc}

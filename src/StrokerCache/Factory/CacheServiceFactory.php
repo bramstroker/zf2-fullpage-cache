@@ -27,8 +27,8 @@ class CacheServiceFactory implements FactoryInterface
         // Register enabled strategies on the cacheListener
         $strategies = $options->getStrategies();
         if (isset($strategies['enabled'])) {
-            /** @var $strategyPluginManager \StrokerCache\Strategy\PluginManager */
-            $strategyPluginManager = $serviceLocator->get('StrokerCache\Strategy\PluginManager');
+            /** @var $strategyPluginManager \StrokerCache\Strategy\CacheStrategyPluginManager */
+            $strategyPluginManager = $serviceLocator->get('StrokerCache\Strategy\CacheStrategyPluginManager');
 
             foreach ($strategies['enabled'] as $alias => $options) {
                 if (is_numeric($alias)) {

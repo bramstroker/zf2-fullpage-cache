@@ -10,7 +10,7 @@ namespace StrokerCache\Strategy;
 use StrokerCache\Exception;
 use Zend\ServiceManager\AbstractPluginManager;
 
-class PluginManager extends AbstractPluginManager
+class CacheStrategyPluginManager extends AbstractPluginManager
 {
     /**
      * {@inheritDoc}

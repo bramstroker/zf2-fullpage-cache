@@ -5,13 +5,14 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Strategy;
+namespace StrokerCache\Factory;
 
+use StrokerCache\Strategy\CacheStrategyPluginManager;
 use Zend\ServiceManager\Config as ServiceManagerConfig;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class PluginManagerFactory implements FactoryInterface
+class CacheStrategyPluginManagerFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
@@ -20,7 +21,7 @@ class PluginManagerFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('Config');
 
-        return new PluginManager(
+        return new CacheStrategyPluginManager(
             new ServiceManagerConfig($config['strokercache']['strategies']['plugin_manager'])
         );
     }

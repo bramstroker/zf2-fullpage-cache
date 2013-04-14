@@ -2,11 +2,11 @@
 return array(
     'service_manager' => array(
         'factories' => array(
-            'StrokerCache\Listener\CacheListener' => 'StrokerCache\Factory\CacheListenerFactory',
-            'StrokerCache\Options\ModuleOptions'  => 'StrokerCache\Factory\ModuleOptionsFactory',
-            'strokerCache\Service\CacheService'   => 'StrokerCache\Factory\CacheServiceFactory',
-            'StrokerCache\Storage\CacheStorage'   => 'StrokerCache\Factory\CacheStorageFactory',
-            'StrokerCache\Strategy\PluginManager' => 'StrokerCache\Factory\PluginManagerFactory',
+            'StrokerCache\Listener\CacheListener'              => 'StrokerCache\Factory\CacheListenerFactory',
+            'StrokerCache\Options\ModuleOptions'               => 'StrokerCache\Factory\ModuleOptionsFactory',
+            'strokerCache\Service\CacheService'                => 'StrokerCache\Factory\CacheServiceFactory',
+            'StrokerCache\Storage\CacheStorage'                => 'StrokerCache\Factory\CacheStorageFactory',
+            'StrokerCache\Strategy\CacheStrategyPluginManager' => 'StrokerCache\Factory\CacheStrategyPluginManagerFactory',
         ),
         'aliases' => array(
             'strokercache_service' => 'StrokerCache\Service\CacheService'
@@ -42,7 +42,7 @@ return array(
         'strategies' => array(
             'plugin_manager' => array(
                 'abstract_factories' => array(
-                    'StrokerCache\Strategy\Factory',
+                    'StrokerCache\Factory\CacheStrategyAbstractFactory',
                 )
             ),
         )

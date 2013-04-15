@@ -18,16 +18,14 @@ class RouteName extends AbstractOptions implements StrategyInterface
     private $routes;
 
     /**
-     * True if the request should be cached
-     *
-     * @param  MvcEvent $event
-     * @return boolean
+     * {@inheritDoc}
      */
     public function shouldCache(MvcEvent $event)
     {
         if ($event->getRouteMatch() === null) {
             return false;
         }
+
         foreach ($this->getRoutes() as $routeOptions) {
             if (is_string($routeOptions)) {
                 $route = $routeOptions;
@@ -49,8 +47,8 @@ class RouteName extends AbstractOptions implements StrategyInterface
     }
 
     /**
-     * @param array $params
-     * @param $ruleParams
+     * @param  array $params
+     * @param  array $ruleParams
      * @return bool
      */
     protected function matchParams(array $params, $ruleParams)
@@ -82,7 +80,7 @@ class RouteName extends AbstractOptions implements StrategyInterface
     /**
      * @param array $routes
      */
-    public function setRoutes($routes)
+    public function setRoutes(array $routes)
     {
         $this->routes = $routes;
     }

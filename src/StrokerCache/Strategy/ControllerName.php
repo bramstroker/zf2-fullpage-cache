@@ -18,10 +18,7 @@ class ControllerName extends AbstractOptions implements StrategyInterface
     private $controllers;
 
     /**
-     * True if the request should be cached
-     *
-     * @param  MvcEvent $event
-     * @return boolean
+     * {@inheritDoc}
      */
     public function shouldCache(MvcEvent $event)
     {
@@ -42,7 +39,7 @@ class ControllerName extends AbstractOptions implements StrategyInterface
     /**
      * @param array $controllers
      */
-    public function setControllers($controllers)
+    public function setControllers(array $controllers)
     {
         $this->controllers = $controllers;
     }

@@ -8,8 +8,8 @@
 namespace StrokerCacheTest\Service;
 
 use StrokerCache\Service\CacheService;
-use Zend\Mvc\MvcEvent;
 use StrokerCache\Options\ModuleOptions;
+use Zend\Mvc\MvcEvent;
 
 class CacheServiceTest extends \PHPUnit_Framework_TestCase
 {

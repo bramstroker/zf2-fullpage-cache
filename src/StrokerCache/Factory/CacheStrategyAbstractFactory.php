@@ -5,21 +5,15 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Strategy;
+namespace StrokerCache\Factory;
 
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class Factory implements AbstractFactoryInterface
+class CacheStrategyAbstractFactory implements AbstractFactoryInterface
 {
     /**
-     * Determine if we can create a service with name
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
-     * @throws \RuntimeException
-     * @return bool
+     * {@inheritDoc}
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
@@ -27,13 +21,7 @@ class Factory implements AbstractFactoryInterface
     }
 
     /**
-     * Create service with name
-     *
-     * @param ServiceLocatorInterface $serviceLocator
-     * @param $name
-     * @param $requestedName
-     * @throws \RuntimeException
-     * @return mixed
+     * {@inheritDoc}
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {

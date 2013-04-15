@@ -18,25 +18,20 @@
 
 namespace StrokerCache;
 
-use Zend\ModuleManager\Feature\ControllerProviderInterface;
-use Zend\ModuleManager\Feature\ServiceProviderInterface;
-use Zend\ModuleManager\Feature\BootstrapListenerInterface;
+use Zend\Console\Adapter\AdapterInterface;
 use Zend\EventManager\EventInterface;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
+use Zend\ModuleManager\Feature;
 
 class Module implements
-    ConfigProviderInterface,
-    AutoloaderProviderInterface,
-    BootstrapListenerInterface,
-    ServiceProviderInterface,
-    ControllerProviderInterface
+    Feature\ConfigProviderInterface,
+    Feature\ConsoleBannerProviderInterface,
+    Feature\ConsoleUsageProviderInterface,
+    Feature\AutoloaderProviderInterface,
+    Feature\BootstrapListenerInterface
 {
 
     /**
-     * Returns configuration to merge with application configuration
-     *
-     * @return array|\Traversable
+     * {@inheritDoc}
      */
     public function getConfig()
     {
@@ -44,9 +39,7 @@ class Module implements
     }
 
     /**
-     * Return an array for passing to Zend\Loader\AutoloaderFactory.
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getAutoloaderConfig()
     {
@@ -60,53 +53,35 @@ class Module implements
     }
 
     /**
-     * Listen to the bootstrap event
-     *
-     * @param  EventInterface $e
-     * @return array
+     * {@inheritDoc}
      */
     public function onBootstrap(EventInterface $e)
     {
         /** @var $application \Zend\Mvc\Application */
         $application = $e->getParam('application');
-        $listener = $application->getServiceManager()->get('StrokerCache\Listener\CacheListener');
+        $listener    = $application->getServiceManager()->get('StrokerCache\Listener\CacheListener');
+
         $application->getEventManager()->attach($listener);
     }
 
     /**
-     * Expected to return \Zend\ServiceManager\Config object or array to
-     * seed such an object.
-     *
-     * @return array|\Zend\ServiceManager\Config
+     * {@inheritDoc}
      */
-    public function getServiceConfig()
+    public function getConsoleBanner(AdapterInterface $console)
     {
-        return array(
-            'factories' => array(
-                'StrokerCache\Listener\CacheListener' => 'StrokerCache\Service\CacheListenerFactory',
-                'strokerCache\Service\CacheService' => 'StrokerCache\Service\CacheServiceFactory',
-                'StrokerCache\Options\ModuleOptions' => 'StrokerCache\Service\ModuleOptionsFactory',
-                'StrokerCache\Strategy\PluginManager' => 'StrokerCache\Strategy\PluginManagerFactory',
-                'strokercache_storage' => 'StrokerCache\Service\CacheStorageFactory'
-            ),
-            'aliases' => array(
-                'strokercache_service' => 'StrokerCache\Service\CacheService'
-            )
-        );
+        return 'StrokerCache ' . Version::VERSION;
     }
 
     /**
-     * Expected to return \Zend\ServiceManager\Config object or array to seed
-     * such an object.
-     *
-     * @return array|\Zend\ServiceManager\Config
+     * {@inheritDoc}
      */
-    public function getControllerConfig()
+    public function getConsoleUsage(AdapterInterface $console)
     {
         return array(
-            'factories' => array(
-                'StrokerCache\Controller\Cache' => 'StrokerCache\Service\CacheControllerFactory'
-            )
+            'Usage:',
+            'strokercache clear <tags>' => 'Invalidate cache items by tags',
+
+            array('<tags>' => 'List of tags, optionally separated by commas')
         );
     }
 }

@@ -5,26 +5,22 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Strategy;
+namespace StrokerCache\Factory;
 
+use StrokerCache\Options\ModuleOptions;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class PluginManagerFactory implements FactoryInterface
+class ModuleOptionsFactory implements FactoryInterface
 {
-
     /**
-     * Create service
-     *
-     * @param  ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * {@inheritDoc}
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $config = $serviceLocator->get('Config');
+        $config = isset($config['strokercache']) ? $config['strokercache'] : array();
 
-        return new \StrokerCache\Strategy\PluginManager(
-            new \Zend\ServiceManager\Config($config['strokercache']['strategies']['plugin_manager'])
-        );
+        return new ModuleOptions($config);
     }
 }

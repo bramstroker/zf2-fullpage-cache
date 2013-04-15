@@ -8,6 +8,8 @@
 namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\RouteName;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
 
 class RouteNameTest extends \PHPUnit_Framework_TestCase
 {
@@ -100,9 +102,9 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
     public function testShouldCache($routes, $route, $params, $expectedResult)
     {
         $this->strategy->setRoutes($routes);
-        $routeMatch = new \Zend\Mvc\Router\RouteMatch($params);
+        $routeMatch = new RouteMatch($params);
         $routeMatch->setMatchedRouteName($route);
-        $mvcEvent = new \Zend\Mvc\MvcEvent();
+        $mvcEvent = new MvcEvent();
         $mvcEvent->setRouteMatch($routeMatch);
         $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
     }
@@ -112,7 +114,7 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldCacheReturnsFalseWhenNoRouteMatchIsSet()
     {
-        $mvcEvent = new \Zend\Mvc\MvcEvent();
+        $mvcEvent = new MvcEvent();
         $this->assertFalse($this->strategy->shouldCache($mvcEvent));
     }
 }

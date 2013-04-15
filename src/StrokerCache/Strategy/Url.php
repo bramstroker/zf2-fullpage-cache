@@ -18,10 +18,7 @@ class Url extends AbstractOptions implements StrategyInterface
     private $regexpes;
 
     /**
-     * True if the request should be cached
-     *
-     * @param  MvcEvent $event
-     * @return boolean
+     * {@inheritDoc}
      */
     public function shouldCache(MvcEvent $event)
     {
@@ -46,7 +43,7 @@ class Url extends AbstractOptions implements StrategyInterface
     /**
      * @param array $regexpes
      */
-    public function setRegexpes($regexpes)
+    public function setRegexpes(array $regexpes)
     {
         $this->regexpes = $regexpes;
     }

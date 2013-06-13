@@ -1,4 +1,7 @@
 <phpunit bootstrap="./tests/Bootstrap.php" colors="true">
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
     <testsuites>
         <testsuite name="StrokerCache Module Tests">
             <directory>./tests/StrokerCacheTest</directory>

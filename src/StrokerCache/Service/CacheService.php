@@ -94,7 +94,7 @@ class CacheService
             return false;
         }
         $tags = array_map(
-            function ($tag) { return self::TAG_PREFIX . $tag; },
+            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
             $tags
         );
         return $this->getCacheStorage()->clearByTags($tags);

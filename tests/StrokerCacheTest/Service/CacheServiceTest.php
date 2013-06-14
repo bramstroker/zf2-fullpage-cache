@@ -160,4 +160,22 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->cacheService->save($this->getMvcEvent());
     }
+
+    public function testClearByTags()
+    {
+        $tags = array('foo', 'bar');
+
+        $storageMock = \Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+            ->shouldReceive('clearByTags')
+            ->with(array('strokercache_foo', 'strokercache_bar'))
+            ->getMock();
+        $this->cacheService->setCacheStorage($storageMock);
+
+        $this->cacheService->clearByTags($tags);
+    }
+
+    public function testClearByTagsIsSkippedForNonTaggableStorageAdapters()
+    {
+        $this->cacheService->clearByTags(array('foo'));
+    }
 }

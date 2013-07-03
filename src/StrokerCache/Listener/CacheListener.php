@@ -8,12 +8,12 @@
 namespace StrokerCache\Listener;
 
 use StrokerCache\Service\CacheService;
+use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 
-class CacheListener implements ListenerAggregateInterface
+class CacheListener extends AbstractListenerAggregate
 {
     /**
      * @var array
@@ -47,18 +47,6 @@ class CacheListener implements ListenerAggregateInterface
     {
         $this->listeners[] = $events->attach('route', array($this, 'onRoute'), 100);
         $this->listeners[] = $events->attach('finish', array($this, 'onFinish'), -100);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function detach(EventManagerInterface $events)
-    {
-        foreach ($this->listeners as $index => $listener) {
-            if ($events->detach($listener)) {
-                unset($this->listeners[$index]);
-            }
-        }
     }
 
     /**

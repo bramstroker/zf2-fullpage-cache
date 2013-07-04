@@ -66,8 +66,7 @@ class CacheListener extends AbstractListenerAggregate
         if ($data !== null) {
             $this->loadedFromCache = true;
 
-            $response = $e->getResponse();
-            $response->setContent($data);
+            $response = unserialize($data);
 
             return $response;
         }

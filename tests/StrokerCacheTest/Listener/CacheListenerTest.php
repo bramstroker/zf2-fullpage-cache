@@ -7,6 +7,7 @@
 
 use Mockery as M;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Http\PhpEnvironment\Response as HttpResponse;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Listener\CacheListener;
 
@@ -51,29 +52,25 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPageIsLoadedFromCacheAndSetOnResponse()
     {
-        $content = 'Some page content';
+        $expectedResponse = new HttpResponse();
+        $expectedResponse->setContent('foo');
+
         $this->cacheServiceMock
             ->shouldReceive('load')
             ->once()
-            ->andReturn($content);
+            ->andReturn(serialize($expectedResponse));
 
         $this->cacheServiceMock
             ->shouldReceive('save')
             ->never();
 
-        $responseMock = M::mock('Zend\Stdlib\ResponseInterface')
-            ->shouldReceive('setContent')
-            ->once()
-            ->with($content)
-            ->getMock();
-
         $mvcEvent = new MvcEvent();
         $mvcEvent->setRequest(new HttpRequest());
-        $mvcEvent->setResponse($responseMock);
+        $mvcEvent->setResponse(new HttpResponse());
 
         $response = $this->cacheListener->onRoute($mvcEvent);
 
-        $this->assertEquals($responseMock, $response);
+        $this->assertEquals($expectedResponse, $response);
 
         $this->cacheListener->onFinish($mvcEvent);
     }

@@ -108,9 +108,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testSaveResponseIsCached()
     {
-        $expectedContent = 'Some dummy content';
-
-        $this->getMvcEvent()->getResponse()->setContent($expectedContent);
+        $response = $this->getMvcEvent()->getResponse();
 
         $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
             ->shouldReceive('shouldCache')
@@ -123,7 +121,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->storageMock
             ->shouldReceive('setItem')
             ->once()
-            ->with(\Mockery::any(), $expectedContent);
+            ->with(\Mockery::any(), serialize($response));
 
         $this->cacheService->save($this->getMvcEvent());
     }
@@ -177,5 +175,14 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     public function testClearByTagsIsSkippedForNonTaggableStorageAdapters()
     {
         $this->cacheService->clearByTags(array('foo'));
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testCreateIdThrowsExceptionWhenRequestUriIsNotAvailable()
+    {
+        unset($_SERVER['REQUEST_URI']);
+        $this->cacheService->load(new MvcEvent());
     }
 }

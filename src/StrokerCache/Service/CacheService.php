@@ -76,8 +76,10 @@ class CacheService
 
         if ($shouldCache) {
             $id = $this->createId();
-            $content = $e->getResponse()->getContent();
-            $this->getCacheStorage()->setItem($id, $content);
+
+            $response = $e->getResponse();
+
+            $this->getCacheStorage()->setItem($id, serialize($response));
             if ($this->getCacheStorage() instanceof TaggableInterface) {
                 $this->getCacheStorage()->setTags($id, $tags);
             }

@@ -9,6 +9,7 @@ namespace StrokerCacheTest\Service;
 
 use StrokerCache\Service\CacheService;
 use StrokerCache\Options\ModuleOptions;
+use StrokerCache\Strategy\RouteName;
 use Zend\Mvc\MvcEvent;
 
 class CacheServiceTest extends \PHPUnit_Framework_TestCase
@@ -184,5 +185,21 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     {
         unset($_SERVER['REQUEST_URI']);
         $this->cacheService->load(new MvcEvent());
+    }
+
+    public function testGetSetOptions()
+    {
+        $options = new ModuleOptions();
+        $this->cacheService->setOptions($options);
+        $this->assertEquals($options, $this->cacheService->getOptions());
+    }
+
+    public function testGetSetStrategies()
+    {
+        $strategies = array(
+            new RouteName()
+        );
+        $this->cacheService->setStrategies($strategies);
+        $this->assertEquals($strategies, $this->cacheService->getStrategies());
     }
 }

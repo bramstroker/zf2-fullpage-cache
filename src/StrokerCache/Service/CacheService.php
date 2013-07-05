@@ -8,14 +8,27 @@
 namespace StrokerCache\Service;
 
 use Zend\Mvc\MvcEvent;
+use StrokerCache\Event\CacheEvent;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventManagerAwareInterface;
 use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
 use StrokerCache\Strategy\StrategyInterface;
 use Zend\Cache\Storage\StorageInterface;
 
-class CacheService
+class CacheService implements EventManagerAwareInterface
 {
+    /**
+     * Prefix to use for the tag key
+     * @var string
+     */
     const TAG_PREFIX = 'strokercache_';
+
+    /**
+     * @var EventManagerInterface
+     */
+    protected $eventManager;
 
     /**
      * @var StorageInterface
@@ -51,6 +64,9 @@ class CacheService
     {
         $id = $this->createId();
         if ($this->getCacheStorage()->hasItem($id)) {
+            $event = new CacheEvent(CacheEvent::EVENT_LOAD, $this);
+            $event->setCacheKey($id);
+            $this->getEventManager()->trigger($event);
             return $this->getCacheStorage()->getItem($id);
         }
 
@@ -62,44 +78,36 @@ class CacheService
      */
     public function save(MvcEvent $e)
     {
-        $shouldCache = false;
-        $tags = array();
-        /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
-        foreach ($this->getStrategies() as $strategy) {
-            if ($strategy->shouldCache($e)) {
-                $shouldCache = true;
-                if ($this->getCacheStorage() instanceof TaggableInterface) {
-                    $tags = array_merge($tags, $this->getTags($e));
-                }
-            }
+        if (!$this->shouldCacheRequest($e)) {
+            return;
         }
 
-        if ($shouldCache) {
-            $id = $this->createId();
+        $id = $this->createId();
 
-            $response = $e->getResponse();
+        $this->getCacheStorage()->setItem($id, serialize($e->getResponse()));
 
-            $this->getCacheStorage()->setItem($id, serialize($response));
-            if ($this->getCacheStorage() instanceof TaggableInterface) {
-                $this->getCacheStorage()->setTags($id, $tags);
-            }
+        $this->getEventManager()->trigger(new CacheEvent(CacheEvent::EVENT_SAVE, $this));
+
+        if ($this->getCacheStorage() instanceof TaggableInterface) {
+            $this->getCacheStorage()->setTags($id, $this->getTags($e));
         }
     }
 
     /**
-     * @param array $tags
+     * Determine if we should cache the current request
+     *
+     * @param MvcEvent $e
      * @return bool
      */
-    public function clearByTags(array $tags = array())
+    protected function shouldCacheRequest(MvcEvent $e)
     {
-        if (!$this->getCacheStorage() instanceof TaggableInterface) {
-            return false;
+        /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
+        foreach ($this->getStrategies() as $strategy) {
+            if ($strategy->shouldCache($e)) {
+                return true;
+            }
         }
-        $tags = array_map(
-            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
-            $tags
-        );
-        return $this->getCacheStorage()->clearByTags($tags);
+        return false;
     }
 
     /**
@@ -117,6 +125,22 @@ class CacheService
         $requestUri = $_SERVER['REQUEST_URI'];
 
         return md5($requestUri);
+    }
+
+    /**
+     * @param array $tags
+     * @return bool
+     */
+    public function clearByTags(array $tags = array())
+    {
+        if (!$this->getCacheStorage() instanceof TaggableInterface) {
+            return false;
+        }
+        $tags = array_map(
+            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
+            $tags
+        );
+        return $this->getCacheStorage()->clearByTags($tags);
     }
 
     /**
@@ -152,10 +176,12 @@ class CacheService
 
     /**
      * @param array $strategies
+     * @return self
      */
     public function setStrategies($strategies)
     {
         $this->strategies = $strategies;
+        return $this;
     }
 
     /**
@@ -176,10 +202,12 @@ class CacheService
 
     /**
      * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
+     * @return self
      */
     public function setCacheStorage($cacheStorage)
     {
         $this->cacheStorage = $cacheStorage;
+        return $this;
     }
 
     /**
@@ -192,9 +220,43 @@ class CacheService
 
     /**
      * @param \StrokerCache\Options\ModuleOptions $options
+     * @return self
      */
     public function setOptions($options)
     {
         $this->options = $options;
+        return $this;
+    }
+
+    /**
+     * Inject an EventManager instance
+     *
+     * @param  EventManagerInterface $eventManager
+     * @return self
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $eventManager->setIdentifiers(array(
+            __CLASS__,
+            get_called_class()
+        ));
+
+        $this->eventManager = $eventManager;
+        return $this;
+    }
+
+    /**
+     * Retrieve the event manager
+     *
+     * Lazy-loads an EventManager instance if none registered.
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        if (!$this->eventManager instanceof EventManagerInterface) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->eventManager;
     }
 }

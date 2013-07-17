@@ -7,6 +7,7 @@
 
 namespace StrokerCache\Listener;
 
+use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
@@ -26,6 +27,11 @@ class CacheListener extends AbstractListenerAggregate
     protected $cacheService;
 
     /**
+     * @var ModuleOptions
+     */
+    protected $options;
+
+    /**
      * @var bool
      */
     protected $loadedFromCache = false;
@@ -35,9 +41,10 @@ class CacheListener extends AbstractListenerAggregate
      *
      * @param CacheService $cacheService
      */
-    public function __construct(CacheService $cacheService)
+    public function __construct(CacheService $cacheService, ModuleOptions $options)
     {
         $this->cacheService = $cacheService;
+        $this->options      = $options;
     }
 
     /**
@@ -66,7 +73,12 @@ class CacheListener extends AbstractListenerAggregate
         if ($data !== null) {
             $this->loadedFromCache = true;
 
-            $response = unserialize($data);
+            if($this->getOptions()->getCacheResponse() === true) {
+                $response = unserialize($data);
+            } else {
+                $response = $e->getResponse();
+                $response->setContent($data);
+            }
 
             return $response;
         }
@@ -93,5 +105,13 @@ class CacheListener extends AbstractListenerAggregate
     public function getCacheService()
     {
         return $this->cacheService;
+    }
+
+    /**
+     * @return ModuleOptions
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 }

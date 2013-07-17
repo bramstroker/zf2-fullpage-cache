@@ -84,7 +84,9 @@ class CacheService implements EventManagerAwareInterface
 
         $id = $this->createId();
 
-        $this->getCacheStorage()->setItem($id, serialize($e->getResponse()));
+        $item = ($this->getOptions()->getCacheResponse() === true) ? serialize($e->getResponse()) : $e->getResponse()->getContent();
+
+        $this->getCacheStorage()->setItem($id, $item);
 
         $this->getEventManager()->trigger(new CacheEvent(CacheEvent::EVENT_SAVE, $this));
 

@@ -10,6 +10,7 @@ use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Listener\CacheListener;
+use StrokerCache\Options\ModuleOptions;
 
 class CacheListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventManagerMock = M::mock('Zend\EventManager\EventManagerInterface');
         $this->cacheServiceMock = M::mock('StrokerCache\Service\CacheService');
-        $this->cacheListener = new CacheListener($this->cacheServiceMock);
+        $this->cacheListener = new CacheListener($this->cacheServiceMock, new ModuleOptions());
     }
 
     public function testCorrectListenersAreAttached()
@@ -68,6 +69,33 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
         $mvcEvent->setRequest(new HttpRequest());
         $mvcEvent->setResponse(new HttpResponse());
 
+        $response = $this->cacheListener->onRoute($mvcEvent);
+
+        $this->assertEquals($expectedResponse, $response);
+
+        $this->cacheListener->onFinish($mvcEvent);
+    }
+
+    public function testContentIsLoadedFromCacheAndSetOnResponse()
+    {
+        $expectedResponse = new HttpResponse();
+        $expectedResponse->setContent('mockContent');
+
+        $this->cacheServiceMock
+            ->shouldReceive('load')
+            ->once()
+            ->andReturn('mockContent');
+
+        $this->cacheServiceMock
+            ->shouldReceive('save')
+            ->never();
+
+        $mvcEvent = new MvcEvent();
+        $mvcEvent->setRequest(new HttpRequest());
+        $mvcEvent->setResponse(new HttpResponse());
+
+
+        $this->cacheListener->getOptions()->setCacheResponse(false);
         $response = $this->cacheListener->onRoute($mvcEvent);
 
         $this->assertEquals($expectedResponse, $response);

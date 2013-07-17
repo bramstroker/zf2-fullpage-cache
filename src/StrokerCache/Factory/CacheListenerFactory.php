@@ -18,6 +18,6 @@ class CacheListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new CacheListener($serviceLocator->get('StrokerCache\Service\CacheService'));
+        return new CacheListener($serviceLocator->get('StrokerCache\Service\CacheService'), $serviceLocator->get('StrokerCache\Options\ModuleOptions'));
     }
 }

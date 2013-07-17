@@ -22,6 +22,12 @@ class ModuleOptions extends AbstractOptions
     private $storageAdapter;
 
     /**
+     * @var bool
+     */
+    private $cacheResponse = true;
+
+
+    /**
      * @return array
      */
     public function getStrategies()
@@ -51,5 +57,21 @@ class ModuleOptions extends AbstractOptions
     public function setStorageAdapter(array $storageAdapter)
     {
         $this->storageAdapter = $storageAdapter;
+    }
+
+    /**
+     * @param boolean $cacheResponse
+     */
+    public function setCacheResponse($cacheResponse)
+    {
+        $this->cacheResponse = $cacheResponse;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCacheResponse()
+    {
+        return $this->cacheResponse;
     }
 }

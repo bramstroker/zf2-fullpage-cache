@@ -123,6 +123,31 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * testSaveContentIsCached
+     */
+    public function testSaveContentIsCached()
+    {
+        $response = $this->getMvcEvent()->getResponse();
+        $response->setContent('mockContent');
+
+        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
+            ->shouldReceive('shouldCache')
+            ->with($this->getMvcEvent())
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $this->cacheService->addStrategy($strategyMock);
+
+        $this->storageMock
+            ->shouldReceive('setItem')
+            ->once()
+            ->with(\Mockery::any(), $response->getContent());
+
+        $this->cacheService->getOptions()->setCacheResponse(false);
+        $this->cacheService->save($this->getMvcEvent());
+    }
+
+    /**
      * testSaveGeneratesCorrectTags
      */
     public function testSaveGeneratesCorrectTags()

@@ -188,10 +188,12 @@ class CacheService implements EventManagerAwareInterface
 
     /**
      * @param \StrokerCache\Strategy\StrategyInterface $strategy
+     * @return self
      */
     public function addStrategy(StrategyInterface $strategy)
     {
         $this->strategies[] = $strategy;
+        return $this;
     }
 
     /**

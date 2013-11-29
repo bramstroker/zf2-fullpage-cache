@@ -38,6 +38,7 @@ The module provides several strategies to determine if a page should be cached.
 - By routename
 - By controller classname
 - By regex on the URI
+- Disable caching for authenticated users
 
 ### Examples
 
@@ -54,6 +55,21 @@ return array(
                         'home'
                     ),
                 ),
+            ),
+        ),
+    ),
+);
+```
+
+Disable caching for authenticated users
+
+```php
+<?php
+return array(
+    'strokercache' => array(
+        'strategies' => array(
+            'enabled' => array(
+                'StrokerCache\Strategy\Authentication'
             ),
         ),
     ),

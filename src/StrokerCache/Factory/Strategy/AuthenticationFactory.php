@@ -5,13 +5,13 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Factory;
+namespace StrokerCache\Factory\Strategy;
 
-use StrokerCache\Controller\CacheController;
+use StrokerCache\Strategy\Authentication;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class CacheControllerFactory implements FactoryInterface
+class AuthenticationFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
@@ -20,6 +20,6 @@ class CacheControllerFactory implements FactoryInterface
     {
         $locator = $serviceLocator->getServiceLocator();
 
-        return new CacheController($locator->get('StrokerCache\Service\CacheService'));
+        return new Authentication($locator->get('Zend\Authentication\AuthenticationService'));
     }
 }

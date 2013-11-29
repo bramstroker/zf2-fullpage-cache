@@ -7,114 +7,74 @@
 
 namespace StrokerCacheTest\Strategy;
 
-use StrokerCache\Strategy\RouteName;
+use Mockery as M;
+use StrokerCache\Strategy\Authentication;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
 
-class RouteNameTest extends \PHPUnit_Framework_TestCase
+class AuthenticationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RouteName
+     * @var Authentication
      */
-    private $strategy;
+    protected $strategy;
 
     /**
-     * Setup
+     * @var MockInterface|AuthenticationService
      */
+    protected $authenticationServiceMock;
+
     public function setUp()
     {
-        $this->strategy = new RouteName();
+        $this->authenticationServiceMock = M::mock('Zend\Authentication\AuthenticationService');
+        $this->strategy = new Authentication($this->authenticationServiceMock);
     }
 
-    /**
-     * @return array
-     */
-    public static function shouldCacheProvider()
+    public function testCacheIsDisabledWhenUserIdentityIsFound()
     {
-        return array(
-            'match' => array(
-                array('route/route1', 'route2'),
-                'route/route1',
-                array(),
-                true
-            ),
-            'nomatch' => array(
-                array('route/route1', 'route2'),
-                'route3',
-                array(),
-                false
-            ),
-            'match-params' => array(
+        $this->authenticationServiceMock->shouldReceive('hasIdentity')->andReturn(true);
 
-                array(
-                    array(
-                        'name' => 'testroute',
-                        'params' => array('param1' => 'value1')
-                    )
-                ),
-                'testroute',
-                array(
-                    'param1' => 'value1',
-                    'param2' => 'value2'
-                ),
-                true
-            ),
-            'nomatch-params' => array(
-                array(
-                    array(
-                        'name' => 'testroute',
-                        'params' => array('param1' => 'value2')
-                    )
-                ),
-                'testroute',
-                array(
-                    'param1' => 'value1',
-                    'param2' => 'value2'
-                ),
-                false
-            ),
-
-            'match-regexparams' => array(
-                array(
-                    array(
-                        'name' => 'testroute',
-                        'params' => array(
-                            'param1' => '/val.*/')
-                    )
-                ),
-                'testroute',
-                array(
-                    'param1' => 'value1',
-                    'param2' => 'value2'
-                ),
-                true
-            ),
-        );
+        $this->strategy->setCacheIfIdentityExists(false);
+        $this->assertFalse($this->strategy->shouldCache(new MvcEvent()));
     }
 
-    /**
-     * @param array   $routes
-     * @param string  $route
-     * @param array   $params
-     * @param boolean $expectedResult
-     * @dataProvider shouldCacheProvider
-     */
-    public function testShouldCache($routes, $route, $params, $expectedResult)
+    public function testCacheIsDisabledOnlyForSpecificIdentity()
     {
-        $this->strategy->setRoutes($routes);
-        $routeMatch = new RouteMatch($params);
-        $routeMatch->setMatchedRouteName($route);
-        $mvcEvent = new MvcEvent();
-        $mvcEvent->setRouteMatch($routeMatch);
-        $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
+        $this->authenticationServiceMock->shouldReceive('hasIdentity')->andReturn(true);
+        $this->authenticationServiceMock->shouldReceive('getIdentity')->andReturn('foo');
+
+        $this->strategy->setCacheIfIdentityExists(false);
+        $this->strategy->setIdentity('foo');
+        $this->assertFalse($this->strategy->shouldCache(new MvcEvent()));
+        $this->strategy->setIdentity('bar');
+        $this->assertTrue($this->strategy->shouldCache(new MvcEvent()));
     }
 
-    /**
-     * testShouldCacheReturnsFalseOnNoRouteMatchObject
-     */
-    public function testShouldCacheReturnsFalseWhenNoRouteMatchIsSet()
+    public function testCacheIsEnabledWhenNoUserIdentityIsFound()
     {
-        $mvcEvent = new MvcEvent();
-        $this->assertFalse($this->strategy->shouldCache($mvcEvent));
+        $this->authenticationServiceMock->shouldReceive('hasIdentity')->andReturn(false);
+
+        $this->strategy->setCacheIfIdentityExists(false);
+        $this->assertTrue($this->strategy->shouldCache(new MvcEvent()));
+    }
+
+    public function testCacheIsEnabledWhenUserIdentityIsFound()
+    {
+        $this->authenticationServiceMock->shouldReceive('hasIdentity')->andReturn(true);
+
+        $this->strategy->setCacheIfIdentityExists(true);
+        $this->assertTrue($this->strategy->shouldCache(new MvcEvent()));
+    }
+
+    public function testCacheIsEnabledOnlyForSpecificIdentity()
+    {
+        $this->authenticationServiceMock->shouldReceive('hasIdentity')->andReturn(true);
+        $this->authenticationServiceMock->shouldReceive('getIdentity')->andReturn('foo');
+
+        $this->strategy->setCacheIfIdentityExists(true);
+        $this->strategy->setIdentity('foo');
+        $this->assertTrue($this->strategy->shouldCache(new MvcEvent()));
+
+        $this->strategy->setIdentity('bar');
+        $this->assertFalse($this->strategy->shouldCache(new MvcEvent()));
     }
 }

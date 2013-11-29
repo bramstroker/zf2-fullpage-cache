@@ -7,81 +7,77 @@
 
 namespace StrokerCache\Strategy;
 
+use Zend\Authentication\AuthenticationService;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\AbstractOptions;
 
-class RouteName extends AbstractOptions implements StrategyInterface
+class Authentication extends AbstractOptions implements StrategyInterface
 {
     /**
-     * @var array
+     * @var bool
      */
-    private $routes;
+    protected $cacheIfIdentityExists = false;
+
+    /**
+     * @var string
+     */
+    protected $identity;
+
+    /**
+     * @var AuthenticationService
+     */
+    protected $authenticationService;
+
+    public function __construct(AuthenticationService $authenticationService)
+    {
+        $this->authenticationService = $authenticationService;
+    }
 
     /**
      * {@inheritDoc}
      */
     public function shouldCache(MvcEvent $event)
     {
-        if ($event->getRouteMatch() === null) {
-            return false;
+        //true & false = false
+        //true & true  = true
+        //false & false = true
+        //false & true  = false
+        $shouldCache = ($this->getCacheIfIdentityExists() ^ $this->authenticationService->hasIdentity()) == false;
+        if (!empty($this->identity) && $this->identity !== $this->authenticationService->getIdentity()) {
+            $shouldCache = !$shouldCache;
         }
-
-        foreach ($this->getRoutes() as $routeOptions) {
-            if (is_string($routeOptions)) {
-                $route = $routeOptions;
-                $params = array();
-            } else {
-                $route = $routeOptions['name'];
-                $params = isset($routeOptions['params']) ? $routeOptions['params'] : array();
-            }
-
-            if (
-                $route == $event->getRouteMatch()->getMatchedRouteName() &&
-                $this->matchParams($event->getRouteMatch()->getParams(), $params)
-            ) {
-                return true;
-            }
-        }
-
-        return false;
+        return $shouldCache;
     }
 
     /**
-     * @param  array $params
-     * @param  array $ruleParams
-     * @return bool
+     * @return boolean
      */
-    protected function matchParams(array $params, $ruleParams)
+    public function getCacheIfIdentityExists()
     {
-        foreach ($ruleParams as $param => $value) {
-            if (isset($params[$param])) {
-                if (preg_match('/^\/.*\//', $value)) {
-                    $regex = $value;
-                    if (!preg_match($regex, $params[$param])) {
-                        return false;
-                    }
-                } elseif ($value != $params[$param]) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return $this->cacheIfIdentityExists;
     }
 
     /**
-     * @return array
+     * @param boolean $cacheIfIdentityExists
      */
-    public function getRoutes()
+    public function setCacheIfIdentityExists($cacheIfIdentityExists)
     {
-        return $this->routes;
+        $this->cacheIfIdentityExists = $cacheIfIdentityExists;
     }
 
     /**
-     * @param array $routes
+     * @return string
      */
-    public function setRoutes(array $routes)
+    public function getIdentity()
     {
-        $this->routes = $routes;
+        return $this->identity;
+    }
+
+    /**
+     * @param string $identity
+     */
+    public function setIdentity($identity)
+    {
+        $this->identity = $identity;
     }
 }

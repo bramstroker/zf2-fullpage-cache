@@ -63,14 +63,18 @@ class CacheService implements EventManagerAwareInterface
     public function load()
     {
         $id = $this->createId();
-        if ($this->getCacheStorage()->hasItem($id)) {
-            $event = new CacheEvent(CacheEvent::EVENT_LOAD, $this);
-            $event->setCacheKey($id);
-            $this->getEventManager()->trigger($event);
-            return $this->getCacheStorage()->getItem($id);
+        if (!$this->getCacheStorage()->hasItem($id)) {
+            return null;
+        };
+
+        $event = new CacheEvent(CacheEvent::EVENT_LOAD, $this);
+        $event->setCacheKey($id);
+        $this->getEventManager()->trigger($event);
+        if($event->getAbort()) {
+            return null;
         }
 
-        return null;
+        return $this->getCacheStorage()->getItem($id);
     }
 
     /**
@@ -103,6 +107,14 @@ class CacheService implements EventManagerAwareInterface
      */
     protected function shouldCacheRequest(MvcEvent $e)
     {
+        // Early break if page should not be cached
+        $event = new CacheEvent(CacheEvent::EVENT_SHOULDCACHE, $this);
+        $this->getEventManager()->trigger($event);
+        if($event->getAbort())
+        {
+            return false;
+        }
+
         /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
         foreach ($this->getStrategies() as $strategy) {
             if ($strategy->shouldCache($e)) {

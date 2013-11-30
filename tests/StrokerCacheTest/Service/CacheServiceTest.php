@@ -76,6 +76,19 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->cacheService->load());
     }
 
+    public function testCanAbortLoadingWithEvent()
+    {
+        $this->setEventManager($this->cacheService, CacheEvent::EVENT_LOAD, function($e) {
+            $e->setAbort(true);
+        });
+
+        $this->storageMock
+            ->shouldReceive('hasItem')
+            ->andReturn(true);
+
+        $this->assertNull($this->cacheService->load());
+    }
+
     /**
      * testSaveResponseIsNotCached
      */
@@ -229,6 +242,23 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->setEventManager($this->cacheService, CacheEvent::EVENT_SAVE, function($e) use ($self) {
             $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
         });
+
+        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
+            ->shouldReceive('shouldCache')
+            ->andReturn(true)
+            ->getMock();
+        $this->cacheService->addStrategy($strategyMock);
+
+        $this->cacheService->save($this->getMvcEvent());
+    }
+
+    public function testCanEarlyAbortShouldCacheWithEvent()
+    {
+        $this->setEventManager($this->cacheService, CacheEvent::EVENT_SAVE, function($e) {
+            $e->setAbort(true);
+        });
+
+        $this->storageMock->shouldReceive('setItem')->never();
 
         $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
             ->shouldReceive('shouldCache')

@@ -39,6 +39,7 @@ The module provides several strategies to determine if a page should be cached.
 - By routename
 - By controller classname
 - By regex on the URI
+- Disable caching for authenticated users
 
 ### Examples
 
@@ -55,6 +56,21 @@ return array(
                         'home'
                     ),
                 ),
+            ),
+        ),
+    ),
+);
+```
+
+Disable caching for authenticated users
+
+```php
+<?php
+return array(
+    'strokercache' => array(
+        'strategies' => array(
+            'enabled' => array(
+                'StrokerCache\Strategy\Authentication'
             ),
         ),
     ),
@@ -131,3 +147,15 @@ return array(
     ),
 );
 ```
+
+## Events
+
+The cache service triggers several events you can utilize to add some custom logic whenever saving/loading the cache happens.
+The events are listed as constants in the [CacheEvent](https://github.com/bramstroker/zf2-fullpage-cache/blob/master/src/StrokerCache/Event/CacheEvent.php) class:
+
+- `EVENT_LOAD`: triggered when the requested page is found in the cache and ready to be served to the client
+- `EVENT_SAVE`: triggered when your page is stored in the cache storage
+- `EVENT_SHOULDCACHE`: this event is used to determine if a page should be stored into the cache. You can listen to this event don't want the page to be cached at an early stage.
+
+TODO add some examples
+

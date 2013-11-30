@@ -21,6 +21,11 @@ class CacheEvent extends Event
     protected $cacheKey;
 
     /**
+     * @var bool
+     */
+    protected $abort = false;
+
+    /**
      * @return string
      */
     public function getCacheKey()
@@ -34,5 +39,23 @@ class CacheEvent extends Event
     public function setCacheKey($cacheKey)
     {
         $this->cacheKey = $cacheKey;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAbort()
+    {
+        return $this->abort;
+    }
+
+    /**
+     * @param boolean $abort
+     * @return CacheEvent
+     */
+    public function setAbort($abort)
+    {
+        $this->abort = (boolean) $abort;
+        return $this;
     }
 }

@@ -35,31 +35,31 @@ class RouteName extends AbstractOptions implements StrategyInterface
 
         $routeConfig = $this->getRouteConfig($routeName);
 
-        if (isset($routeConfig['params'])) {
-            $params = $routeConfig['params'];
-            if (!$this->matchParams($event->getRouteMatch(), $params)) {
-                return false;
-            }
-        }
-
-        if (isset($routeConfig['http_methods'])) {
-            $methods = (array) $routeConfig['http_methods'];
-            if (!in_array($event->getRequest()->getMethod(), $methods)) {
-                return false;
-            }
+        if (
+            !$this->checkParams($routeMatch, $routeConfig) ||
+            !$this->checkHttpMethod($event, $routeConfig)
+        ) {
+            return false;
         }
 
         return true;
     }
 
     /**
+     * Check if we should cache the request based on the params in the routematch
+     *
      * @param  RouteMatch $match
      * @param  array $routeConfig
      * @return bool
      * @todo This could be cleaned up some more
      */
-    protected function matchParams(RouteMatch $match, $ruleParams)
+    protected function checkParams(RouteMatch $match, $routeConfig)
     {
+        if (!isset($routeConfig['params'])) {
+            return true;
+        }
+
+        $ruleParams = $routeConfig['params'];
         $params = $match->getParams();
         foreach ($ruleParams as $param => $value) {
             if (isset($params[$param])) {
@@ -74,6 +74,24 @@ class RouteName extends AbstractOptions implements StrategyInterface
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Check if we should cache the request based on http method requested
+     *
+     * @param MvcEvent $event
+     * @param $routeConfig
+     * @return bool
+     */
+    protected function checkHttpMethod(MvcEvent $event, $routeConfig)
+    {
+        if (isset($routeConfig['http_methods'])) {
+            $methods = (array) $routeConfig['http_methods'];
+            if (!in_array($event->getRequest()->getMethod(), $methods)) {
+                return false;
+            }
+        }
         return true;
     }
 

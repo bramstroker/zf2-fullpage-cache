@@ -56,6 +56,18 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
                     'param2' => 'value2'
                 ),
             ),
+            'match-params-multivalue' => array(
+                array(
+                    'testroute' => array(
+                        'params' => array('param1' => array('value1', 'value2', 'value3'))
+                    )
+                ),
+                'testroute',
+                true,
+                array(
+                    'param1' => 'value3',
+                ),
+            ),
             'nomatch-params' => array(
                 array(
                     'testroute' => array(

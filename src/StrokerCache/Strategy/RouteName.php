@@ -81,14 +81,14 @@ class RouteName extends AbstractOptions implements StrategyInterface
      */
     protected function checkParam($actualValue, $checkValue)
     {
-        if (preg_match('/^\/.*\//', $checkValue)) {
+        if (is_array($checkValue)) {
+            return in_array($actualValue, $checkValue);
+        } elseif (preg_match('/^\/.*\//', $checkValue)) {
             $regex = $checkValue;
             if (!preg_match($regex, $actualValue)) {
                 return false;
             }
-        } elseif (is_string($checkValue) && $checkValue != $actualValue) {
-            return false;
-        } elseif (is_array($checkValue) && !in_array($actualValue, $checkValue)) {
+        } elseif ($checkValue != $actualValue) {
             return false;
         }
         return true;

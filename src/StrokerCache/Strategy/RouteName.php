@@ -8,6 +8,7 @@
 namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\Stdlib\AbstractOptions;
 
 class RouteName extends AbstractOptions implements StrategyInterface
@@ -15,44 +16,51 @@ class RouteName extends AbstractOptions implements StrategyInterface
     /**
      * @var array
      */
-    private $routes;
+    protected $routes;
 
     /**
      * {@inheritDoc}
      */
     public function shouldCache(MvcEvent $event)
     {
-        if ($event->getRouteMatch() === null) {
+        $routeMatch = $event->getRouteMatch();
+        if ($routeMatch === null) {
             return false;
         }
 
-        foreach ($this->getRoutes() as $routeOptions) {
-            if (is_string($routeOptions)) {
-                $route = $routeOptions;
-                $params = array();
-            } else {
-                $route = $routeOptions['name'];
-                $params = isset($routeOptions['params']) ? $routeOptions['params'] : array();
-            }
+        $routeName = $event->getRouteMatch()->getMatchedRouteName();
+        if (!array_key_exists($routeName, $this->getRoutes()) && !in_array($routeName, $this->getRoutes())) {
+            return false;
+        }
 
-            if (
-                $route == $event->getRouteMatch()->getMatchedRouteName() &&
-                $this->matchParams($event->getRouteMatch()->getParams(), $params)
-            ) {
-                return true;
+        $routeConfig = $this->getRouteConfig($routeName);
+
+        if (isset($routeConfig['params'])) {
+            $params = $routeConfig['params'];
+            if (!$this->matchParams($event->getRouteMatch(), $params)) {
+                return false;
             }
         }
 
-        return false;
+        if (isset($routeConfig['http_methods'])) {
+            $methods = (array) $routeConfig['http_methods'];
+            if (!in_array($event->getRequest()->getMethod(), $methods)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
-     * @param  array $params
-     * @param  array $ruleParams
+     * @param  RouteMatch $match
+     * @param  array $routeConfig
      * @return bool
+     * @todo This could be cleaned up some more
      */
-    protected function matchParams(array $params, $ruleParams)
+    protected function matchParams(RouteMatch $match, $ruleParams)
     {
+        $params = $match->getParams();
         foreach ($ruleParams as $param => $value) {
             if (isset($params[$param])) {
                 if (preg_match('/^\/.*\//', $value)) {
@@ -67,6 +75,19 @@ class RouteName extends AbstractOptions implements StrategyInterface
         }
 
         return true;
+    }
+
+    /**
+     * @param $routeName
+     * @return array
+     */
+    protected function getRouteConfig($routeName)
+    {
+        $routes = $this->getRoutes();
+        if (!isset($routes[$routeName])) {
+            return array();
+        }
+        return (array) $routes[$routeName];
     }
 
     /**

@@ -43,6 +43,9 @@ return array(
             'plugin_manager' => array(
                 'abstract_factories' => array(
                     'StrokerCache\Factory\CacheStrategyAbstractFactory',
+                ),
+                'factories' => array(
+                    'StrokerCache\Strategy\Authentication' => 'StrokerCache\Factory\Strategy\AuthenticationFactory'
                 )
             ),
         )

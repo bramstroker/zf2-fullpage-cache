@@ -8,6 +8,8 @@
 namespace StrokerCache\Options;
 
 use Zend\Stdlib\AbstractOptions;
+use StrokerCache\Exception\InvalidArgumentException;
+use StrokerCache\Strategy\StrategyInterface;
 
 class ModuleOptions extends AbstractOptions
 {
@@ -35,6 +37,27 @@ class ModuleOptions extends AbstractOptions
     public function setStrategies(array $strategies)
     {
         $this->strategies = $strategies;
+    }
+
+    /**
+     * @param $strategy
+     * @return array
+     */
+    public function getStrategyOptions($strategy)
+    {
+        if ($strategy instanceof StrategyInterface) {
+            $strategy = get_class($strategy);
+        }
+
+        if (!is_string($strategy)) {
+            throw new InvalidArgumentException('Strategy should be eighter a string or implement the StrategyInterface');
+        }
+
+        if (!isset($this->strategies['enabled'][$strategy])) {
+            return array();
+        }
+
+        return $this->strategies['enabled'][$strategy];
     }
 
     /**

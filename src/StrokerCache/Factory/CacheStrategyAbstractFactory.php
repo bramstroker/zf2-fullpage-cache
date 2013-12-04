@@ -32,13 +32,7 @@ class CacheStrategyAbstractFactory implements AbstractFactoryInterface
             throw new \RuntimeException($requestedName . ' Not found');
         }
 
-        $strategyOptions = array();
-        $strategies = $options->getStrategies();
-        if (isset($strategies['enabled'][$requestedName])) {
-            $strategyOptions = $strategies['enabled'][$requestedName];
-        }
-
-        $strategy = new $requestedName($strategyOptions);
+        $strategy = new $requestedName($options->getStrategyOptions($requestedName));
 
         return $strategy;
     }

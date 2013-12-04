@@ -20,6 +20,10 @@ class AuthenticationFactory implements FactoryInterface
     {
         $locator = $serviceLocator->getServiceLocator();
 
-        return new Authentication($locator->get('Zend\Authentication\AuthenticationService'));
+        /** @var $options \StrokerCache\Options\ModuleOptions */
+        $options = $locator->getServiceLocator()->get('StrokerCache\Options\ModuleOptions');
+
+        $authenticationStrategy = new Authentication($locator->get('Zend\Authentication\AuthenticationService'));
+        $authenticationStrategy->setFromArray($options->getStrategyOptions($authenticationStrategy));
     }
 }

@@ -68,6 +68,15 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
                     'param1' => 'value3',
                 ),
             ),
+            'match-params-when-no-params-in-routematch' => array(
+                array(
+                    'testroute' => array(
+                        'params' => array('param1' => 'value1')
+                    )
+                ),
+                'testroute',
+                true
+            ),
             'nomatch-params' => array(
                 array(
                     'testroute' => array(
@@ -92,6 +101,20 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
                 true,
                 array(
                     'param1' => 'value1',
+                    'param2' => 'value2'
+                ),
+            ),
+            'nomatch-regexparams' => array(
+                array(
+                    'testroute' => array(
+                        'params' => array(
+                            'param1' => '/val.*/')
+                    )
+                ),
+                'testroute',
+                false,
+                array(
+                    'param1' => 'foo',
                     'param2' => 'value2'
                 ),
             ),

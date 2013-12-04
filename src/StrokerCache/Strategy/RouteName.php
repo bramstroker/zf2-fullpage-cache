@@ -51,7 +51,6 @@ class RouteName extends AbstractOptions implements StrategyInterface
      * @param  RouteMatch $match
      * @param  array $routeConfig
      * @return bool
-     * @todo This could be cleaned up some more
      */
     protected function checkParams(RouteMatch $match, $routeConfig)
     {
@@ -59,21 +58,39 @@ class RouteName extends AbstractOptions implements StrategyInterface
             return true;
         }
 
-        $ruleParams = $routeConfig['params'];
-        $params = $match->getParams();
-        foreach ($ruleParams as $param => $value) {
-            if (isset($params[$param])) {
-                if (preg_match('/^\/.*\//', $value)) {
-                    $regex = $value;
-                    if (!preg_match($regex, $params[$param])) {
-                        return false;
-                    }
-                } elseif ($value != $params[$param]) {
-                    return false;
-                }
+        $params = (array) $routeConfig['params'];
+        foreach ($params as $name => $value) {
+
+            $param = $match->getParam($name, null);
+            if (null === $param) {
+                continue;
+            }
+
+            if (!$this->checkParam($param, $value)) {
+                return false;
             }
         }
 
+        return true;
+    }
+
+    /**
+     * @param $actualValue
+     * @param $checkValue
+     * @return bool
+     */
+    protected function checkParam($actualValue, $checkValue)
+    {
+        if (preg_match('/^\/.*\//', $checkValue)) {
+            $regex = $checkValue;
+            if (!preg_match($regex, $actualValue)) {
+                return false;
+            }
+        } elseif (is_string($checkValue) && $checkValue != $actualValue) {
+            return false;
+        } elseif (is_array($checkValue) && !in_array($actualValue, $checkValue)) {
+            return false;
+        }
         return true;
     }
 

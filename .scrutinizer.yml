@@ -2,5 +2,5 @@ inherit: true
 filter:
     excluded_paths: [tests/*]
 tools:
-    external_code_coverage: true
+    external_code_coverage:
         timeout: 600

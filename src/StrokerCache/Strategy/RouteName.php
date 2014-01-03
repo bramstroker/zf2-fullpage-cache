@@ -8,6 +8,7 @@
 namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
 use Zend\Stdlib\AbstractOptions;
 
 class RouteName extends AbstractOptions implements StrategyInterface
@@ -15,58 +16,113 @@ class RouteName extends AbstractOptions implements StrategyInterface
     /**
      * @var array
      */
-    private $routes;
+    protected $routes;
 
     /**
      * {@inheritDoc}
      */
     public function shouldCache(MvcEvent $event)
     {
-        if ($event->getRouteMatch() === null) {
+        $routeMatch = $event->getRouteMatch();
+        if ($routeMatch === null) {
             return false;
         }
 
-        foreach ($this->getRoutes() as $routeOptions) {
-            if (is_string($routeOptions)) {
-                $route = $routeOptions;
-                $params = array();
-            } else {
-                $route = $routeOptions['name'];
-                $params = isset($routeOptions['params']) ? $routeOptions['params'] : array();
-            }
-
-            if (
-                $route == $event->getRouteMatch()->getMatchedRouteName() &&
-                $this->matchParams($event->getRouteMatch()->getParams(), $params)
-            ) {
-                return true;
-            }
+        $routeName = $event->getRouteMatch()->getMatchedRouteName();
+        if (!array_key_exists($routeName, $this->getRoutes()) && !in_array($routeName, $this->getRoutes())) {
+            return false;
         }
 
-        return false;
+        $routeConfig = $this->getRouteConfig($routeName);
+
+        if (
+            !$this->checkParams($routeMatch, $routeConfig) ||
+            !$this->checkHttpMethod($event, $routeConfig)
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
-     * @param  array $params
-     * @param  array $ruleParams
+     * Check if we should cache the request based on the params in the routematch
+     *
+     * @param  RouteMatch $match
+     * @param  array $routeConfig
      * @return bool
      */
-    protected function matchParams(array $params, $ruleParams)
+    protected function checkParams(RouteMatch $match, $routeConfig)
     {
-        foreach ($ruleParams as $param => $value) {
-            if (isset($params[$param])) {
-                if (preg_match('/^\/.*\//', $value)) {
-                    $regex = $value;
-                    if (!preg_match($regex, $params[$param])) {
-                        return false;
-                    }
-                } elseif ($value != $params[$param]) {
-                    return false;
-                }
+        if (!isset($routeConfig['params'])) {
+            return true;
+        }
+
+        $params = (array) $routeConfig['params'];
+        foreach ($params as $name => $value) {
+
+            $param = $match->getParam($name, null);
+            if (null === $param) {
+                continue;
+            }
+
+            if (!$this->checkParam($param, $value)) {
+                return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * @param $actualValue
+     * @param $checkValue
+     * @return bool
+     */
+    protected function checkParam($actualValue, $checkValue)
+    {
+        if (is_array($checkValue)) {
+            return in_array($actualValue, $checkValue);
+        } elseif (preg_match('/^\/.*\//', $checkValue)) {
+            $regex = $checkValue;
+            if (!preg_match($regex, $actualValue)) {
+                return false;
+            }
+        } elseif ($checkValue != $actualValue) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check if we should cache the request based on http method requested
+     *
+     * @param MvcEvent $event
+     * @param $routeConfig
+     * @return bool
+     */
+    protected function checkHttpMethod(MvcEvent $event, $routeConfig)
+    {
+        if (isset($routeConfig['http_methods'])) {
+            $methods = (array) $routeConfig['http_methods'];
+            if (!in_array($event->getRequest()->getMethod(), $methods)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param $routeName
+     * @return array
+     */
+    protected function getRouteConfig($routeName)
+    {
+        $routes = $this->getRoutes();
+        if (!isset($routes[$routeName])) {
+            return array();
+        }
+        return (array) $routes[$routeName];
     }
 
     /**

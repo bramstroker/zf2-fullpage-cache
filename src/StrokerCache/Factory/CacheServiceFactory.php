@@ -7,7 +7,9 @@
 
 namespace StrokerCache\Factory;
 
+use StrokerCache\Listener\ShouldCacheStrategyListener;
 use StrokerCache\Service\CacheService;
+use Zend\EventManager\ListenerAggregateInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -35,7 +37,13 @@ class CacheServiceFactory implements FactoryInterface
                     $alias = $options;
                 }
                 $strategy = $strategyPluginManager->get($alias);
-                $cacheService->addStrategy($strategy);
+
+                if ($strategy instanceof ListenerAggregateInterface) {
+                    $listener = $strategy;
+                } else {
+                    $listener = new ShouldCacheStrategyListener($strategy);
+                }
+                $cacheService->getEventManager()->attach($listener);
             }
         }
 

@@ -41,11 +41,6 @@ class CacheService implements EventManagerAwareInterface
     protected $options;
 
     /**
-     * @var array
-     */
-    protected $strategies = array();
-
-    /**
      * Default constructor
      *
      * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
@@ -67,10 +62,14 @@ class CacheService implements EventManagerAwareInterface
             return null;
         };
 
-        $event = new CacheEvent(CacheEvent::EVENT_LOAD, $this);
+        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD);
         $event->setCacheKey($id);
-        $this->getEventManager()->trigger($event);
-        if($event->getAbort()) {
+
+        $result = $this->getEventManager()->triggerUntil($event, function($result) {
+            return $result === false;
+        });
+
+        if ($result === false) {
             return null;
         }
 
@@ -80,48 +79,38 @@ class CacheService implements EventManagerAwareInterface
     /**
      * Save the page contents to the cache storage.
      */
-    public function save(MvcEvent $e)
+    public function save(MvcEvent $mvcEvent)
     {
-        if (!$this->shouldCacheRequest($e)) {
+        if (!$this->shouldCacheRequest($mvcEvent)) {
             return;
         }
 
         $id = $this->createId();
 
-        $item = ($this->getOptions()->getCacheResponse() === true) ? serialize($e->getResponse()) : $e->getResponse()->getContent();
+        $item = ($this->getOptions()->getCacheResponse() === true) ? serialize($mvcEvent->getResponse()) : $mvcEvent->getResponse()->getContent();
 
         $this->getCacheStorage()->setItem($id, $item);
 
-        $this->getEventManager()->trigger(new CacheEvent(CacheEvent::EVENT_SAVE, $this));
+        $this->getEventManager()->trigger($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
 
         if ($this->getCacheStorage() instanceof TaggableInterface) {
-            $this->getCacheStorage()->setTags($id, $this->getTags($e));
+            $this->getCacheStorage()->setTags($id, $this->getTags($mvcEvent));
         }
     }
 
     /**
      * Determine if we should cache the current request
      *
-     * @param MvcEvent $e
+     * @param MvcEvent $mvcEvent
      * @return bool
      */
-    protected function shouldCacheRequest(MvcEvent $e)
+    protected function shouldCacheRequest(MvcEvent $mvcEvent)
     {
-        // Early break if page should not be cached
-        $event = new CacheEvent(CacheEvent::EVENT_SHOULDCACHE, $this);
-        $this->getEventManager()->trigger($event);
-        if($event->getAbort())
-        {
-            return false;
-        }
+        $event = $this->createCacheEvent(CacheEvent::EVENT_SHOULDCACHE, $mvcEvent);
 
-        /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
-        foreach ($this->getStrategies() as $strategy) {
-            if ($strategy->shouldCache($e)) {
-                return true;
-            }
-        }
-        return false;
+        return $this->getEventManager()->triggerUntil($event, function($result) {
+            return $result;
+        });
     }
 
     /**
@@ -181,31 +170,15 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @return array
+     * @param string $eventName
+     * @param MvcEvent|null $mvcEvent
+     * @return CacheEvent
      */
-    public function getStrategies()
+    protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null)
     {
-        return $this->strategies;
-    }
-
-    /**
-     * @param array $strategies
-     * @return self
-     */
-    public function setStrategies($strategies)
-    {
-        $this->strategies = $strategies;
-        return $this;
-    }
-
-    /**
-     * @param \StrokerCache\Strategy\StrategyInterface $strategy
-     * @return self
-     */
-    public function addStrategy(StrategyInterface $strategy)
-    {
-        $this->strategies[] = $strategy;
-        return $this;
+        $cacheEvent = new CacheEvent($eventName, $this);
+        $cacheEvent->setMvcEvent($mvcEvent);
+        return $cacheEvent;
     }
 
     /**

@@ -8,6 +8,7 @@
 namespace StrokerCache\Event;
 
 use Zend\EventManager\Event;
+use Zend\Mvc\MvcEvent;
 
 class CacheEvent extends Event
 {
@@ -26,6 +27,11 @@ class CacheEvent extends Event
     protected $abort = false;
 
     /**
+     * @var MvcEvent
+     */
+    protected $mvcEvent;
+
+    /**
      * @return string
      */
     public function getCacheKey()
@@ -42,20 +48,20 @@ class CacheEvent extends Event
     }
 
     /**
-     * @return boolean
+     * @return MvcEvent
      */
-    public function getAbort()
+    public function getMvcEvent()
     {
-        return $this->abort;
+        return $this->mvcEvent;
     }
 
     /**
-     * @param boolean $abort
-     * @return CacheEvent
+     * @param MvcEvent $mvcEvent
      */
-    public function setAbort($abort)
+    public function setMvcEvent($mvcEvent)
     {
-        $this->abort = (boolean) $abort;
-        return $this;
+        $this->mvcEvent = $mvcEvent;
     }
+
+
 }

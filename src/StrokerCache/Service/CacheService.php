@@ -258,10 +258,6 @@ class CacheService implements EventManagerAwareInterface
      */
     public function getIdGenerator()
     {
-        if ($this->idGenerator === null) {
-            $this->idGenerator = new RequestUriGenerator();
-        }
-
         return $this->idGenerator;
     }
 

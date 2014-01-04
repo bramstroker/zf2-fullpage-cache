@@ -37,4 +37,10 @@ class ModuleOptionsTest extends \PHPUnit_Framework_TestCase
         $this->options->setStorageAdapter($storageAdapter);
         $this->assertEquals($storageAdapter, $this->options->getStorageAdapter());
     }
+
+    public function testGetSetIdGenerator()
+    {
+        $this->options->setIdGenerator('foo');
+        $this->assertEquals('foo', $this->options->getIdGenerator());
+    }
 }

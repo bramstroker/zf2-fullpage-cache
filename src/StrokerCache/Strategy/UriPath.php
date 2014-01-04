@@ -9,12 +9,12 @@ namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
 
-class Url extends AbstractStrategy
+class UriPath extends AbstractStrategy
 {
     /**
      * @var array
      */
-    private $regexpes;
+    protected $regexpes;
 
     /**
      * {@inheritDoc}

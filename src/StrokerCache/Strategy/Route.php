@@ -10,7 +10,7 @@ namespace StrokerCache\Strategy;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 
-class RouteName extends AbstractStrategy
+class Route extends AbstractStrategy
 {
     /**
      * @var array

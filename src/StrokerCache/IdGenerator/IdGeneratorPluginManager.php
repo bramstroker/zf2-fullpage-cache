@@ -8,7 +8,6 @@
 namespace StrokerCache\IdGenerator;
 
 use StrokerCache\Exception;
-use StrokerCache\IdGenerator\IdGeneratorInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 
 class IdGeneratorPluginManager extends AbstractPluginManager
@@ -33,7 +32,7 @@ class IdGeneratorPluginManager extends AbstractPluginManager
             return;
         }
 
-        throw new Exception\InvalidStrategyException(sprintf(
+        throw new Exception\RuntimeException(sprintf(
             'Plugin of type %s is invalid; must implement %s\IdGeneratorInterface',
             (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
             __NAMESPACE__

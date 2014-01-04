@@ -43,8 +43,14 @@ return array(
             'plugin_manager' => array(
                 'abstract_factories' => array(
                     'StrokerCache\Factory\CacheStrategyAbstractFactory',
+                ),
+                // This is for BC support
+                'aliases' => array(
+                    'StrokerCache\Strategy\RouteName' => 'StrokerCache\Strategy\Route',
+                    'StrokerCache\Strategy\ControllerName' => 'StrokerCache\Strategy\Controller',
                 )
             ),
-        )
+        ),
+        'id_generator' => 'requesturi'
     ),
 );

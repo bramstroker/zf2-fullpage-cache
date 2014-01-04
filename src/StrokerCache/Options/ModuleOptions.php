@@ -29,7 +29,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var string
      */
-    protected $idGenerator;
+    protected $idGenerator = 'requesturi';
 
     /**
      * @return array

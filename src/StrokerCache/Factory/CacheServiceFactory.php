@@ -7,6 +7,7 @@
 
 namespace StrokerCache\Factory;
 
+use StrokerCache\Exception\BadConfigurationException;
 use StrokerCache\Exception\RuntimeException;
 use StrokerCache\Listener\ShouldCacheStrategyListener;
 use StrokerCache\Options\ModuleOptions;
@@ -30,19 +31,27 @@ class CacheServiceFactory implements FactoryInterface
 
         $cacheService = new CacheService($cacheStorage, $options);
 
-        $idGenerator = $options->getIdGenerator();
-        if (!empty($idGenerator)) {
-            $idGeneratorHelper = new IdGeneratorPluginManager();
-            if ($idGeneratorHelper->has($idGenerator)) {
-                $cacheService->setIdGenerator($idGeneratorHelper->get($idGenerator));
-            } else {
-                throw new RuntimeException('No IdGenerator register for key ' . $idGenerator);
-            }
-        }
-
+        $this->setupIdGenerator($cacheService, $options, $serviceLocator);
         $this->attachStrategiesToEventManager($cacheService, $options, $serviceLocator);
 
         return $cacheService;
+    }
+
+    /**
+     * @param CacheService $cacheService
+     * @param ModuleOptions $options
+     * @param ServiceLocatorInterface $serviceLocator
+     * @throws RuntimeException
+     */
+    protected function setupIdGenerator(CacheService $cacheService, ModuleOptions $options, ServiceLocatorInterface $serviceLocator)
+    {
+        $idGenerator = $options->getIdGenerator();
+        $idGeneratorHelper = new IdGeneratorPluginManager();
+        if ($idGeneratorHelper->has($idGenerator)) {
+            $cacheService->setIdGenerator($idGeneratorHelper->get($idGenerator));
+        } else {
+            throw new RuntimeException('No IdGenerator register for key ' . $idGenerator);
+        }
     }
 
     /**

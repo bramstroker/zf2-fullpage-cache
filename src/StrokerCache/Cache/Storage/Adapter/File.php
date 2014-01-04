@@ -56,7 +56,7 @@ class File extends AbstractAdapter
     /**
      * {@inheritDoc}
      */
-    protected function internalGetItem(&$normalizedKey, &$success = null, &$casToken = null)
+    protected function internalGetItem(& $normalizedKey, & $success = null, & $casToken = null)
     {
         $file = $this->getFileForUrl($normalizedKey);
         if (!$file->isReadable()) {

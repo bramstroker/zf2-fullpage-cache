@@ -17,7 +17,7 @@ class RequestUriGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $generator = new RequestUriGenerator();
         $_SERVER['REQUEST_URI'] = '/foo/bar';
-        $this->assertEquals('/foo/bar', $generator->generate());
+        $this->assertEquals(md5('/foo/bar'), $generator->generate());
     }
 
     /**

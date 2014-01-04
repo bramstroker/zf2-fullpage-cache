@@ -9,9 +9,7 @@ namespace StrokerCacheTest\Listener;
 
 use Mockery as M;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
-use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;
-use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Listener\CacheListener;
 use StrokerCache\Options\ModuleOptions;
@@ -75,7 +73,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->cacheListener->onRoute($mvcEvent);
 
-        $this->assertEquals($expectedResponse, $response);
+        $this->assertEquals($expectedResponse->getContent(), $response->getContent());
 
         $this->cacheListener->onFinish($mvcEvent);
     }
@@ -99,7 +97,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
         $this->cacheListener->getOptions()->setCacheResponse(false);
         $response = $this->cacheListener->onRoute($mvcEvent);
 
-        $this->assertEquals($expectedResponse, $response);
+        $this->assertEquals($expectedResponse->getContent(), $response->getContent());
 
         $this->cacheListener->onFinish($mvcEvent);
     }

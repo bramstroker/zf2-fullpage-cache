@@ -1,9 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: bram
- * Date: 4-1-14
- * Time: 12:06
+ * @author Bram Gerritsen bgerritsen@gmail.com
+ * @copyright (c) Bram Gerritsen 2013
+ * @license http://opensource.org/licenses/mit-license.php
  */
 
 namespace StrokerCache\IdGenerator;

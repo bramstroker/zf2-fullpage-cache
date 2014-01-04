@@ -62,7 +62,7 @@ return array(
 );
 ```
 
-Disable caching for authenticated users
+Caching the `foo/bar` route, but only for a GET request and only when the param `id` equals 60
 
 ```php
 <?php
@@ -70,7 +70,14 @@ return array(
     'strokercache' => array(
         'strategies' => array(
             'enabled' => array(
-                'StrokerCache\Strategy\Authentication'
+                'StrokerCache\Strategy\RouteName' => array(
+                    'routes' => array(
+                        'foo/bar' => array(
+                            'http_methods' => array('GET'),
+                            'params' => array('id' => 60)
+                        )
+                    ),
+                ),
             ),
         ),
     ),

@@ -6,6 +6,11 @@ return array(
                 'StrokerCache\Strategy\RouteName' => array(
                     'routes' => array(
                         'home',
+                        'someroute' => array(
+                            'params' => array(
+                                'foo' => 'bar'
+                            )
+                        )
                     ),
                 ),
                 /*'StrokerCache\Strategy\ControllerName' => array(

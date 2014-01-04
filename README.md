@@ -162,7 +162,43 @@ The events are listed as constants in the [CacheEvent](https://github.com/bramst
 
 - `EVENT_LOAD`: triggered when the requested page is found in the cache and ready to be served to the client
 - `EVENT_SAVE`: triggered when your page is stored in the cache storage
-- `EVENT_SHOULDCACHE`: this event is used to determine if a page should be stored into the cache. You can listen to this event don't want the page to be cached at an early stage.
+- `EVENT_SHOULDCACHE`: this event is used to determine if a page should be stored into the cache. You can listen to this event if you don't want the page to be cached. All the strategies are attached to this event as well.
 
-TODO add some examples
+### Examples
 
+Log to file whenever a page is written to the cache storage
+
+```php
+public function onBootstrap(MvcEvent $e)
+{
+    $serviceManager = $e->getApplication()->getServiceManager();
+    $logger = new \Zend\Log\Logger();
+    $logger->addWriter(new \Zend\Log\Writer\Stream('/log/strokercache.log'));
+    $cacheService = $serviceManager->get('strokercache_service');
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function (CacheEvent $e) use ($logger) {
+        $logger->debug('Saving page to cache with ID: ' . $e->getCacheKey());
+    });
+}
+```
+`
+Say we want to disable caching for all requests on port 8080, we can simply listen to the `SHOULDCACHE` event and return `false`.
+Keep in mind you want to prevent other listeners from executing using `stopPropagation()`. If you don't do this other listeners will be executed and whenever one of them returns `true` the page will be cached.
+Also you need to attach the listener at a higher priority (`1000` in this example) than the buildin strategies (they are registered at priority `100`).
+
+```php
+public function onBootstrap(MvcEvent $e)
+{
+    $serviceManager = $e->getApplication()->getServiceManager();
+    $cacheService = $serviceManager->get('strokercache_service');
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function (CacheEvent $e) {
+        if ($e->getMvcEvent()->getRequest()->getUri()->getPort() == 8080) {
+            $e->stopPropagation(true);
+            return false;
+        }
+        return true;
+    }, 1000);
+```
+
+## Store directly to HTML files for max performance
+
+TODO ...

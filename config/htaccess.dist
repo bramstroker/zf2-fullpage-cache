@@ -1,0 +1,45 @@
+# HT access rewrite rules for fetching using the File adapter
+
+# HTTPS version
+RewriteCond %{HTTPS} ==on [NC]
+RewriteCond %{QUERY_STRING} ^$ [NC]
+RewriteCond %{REQUEST_URI} !\/fpc\/.*$ [NC]
+RewriteCond fpc/http/%{HTTP_HOST}/%{REQUEST_URI}.html -F
+RewriteRule ^(.*)$ /fpc/https/%{HTTP_HOST}/$1.html [L]
+
+# HTTP version
+RewriteCond %{HTTPS} !=on [NC]
+RewriteCond %{QUERY_STRING} ^$ [NC]
+RewriteCond %{REQUEST_URI} !\/fpc\/.*$ [NC]
+RewriteCond fpc/http/%{HTTP_HOST}/%{REQUEST_URI}.html -F
+RewriteRule ^(.*)$ /fpc/http/%{HTTP_HOST}/%{REQUEST_URI}.html [L]
+
+# HTTPS version with query string
+RewriteCond %{HTTPS} ==on [NC]
+RewriteCond %{QUERY_STRING} ^.+$ [NC]
+RewriteCond %{REQUEST_URI} !\/fpc\/.*$ [NC]
+RewriteCond fpc/https/%{HTTP_HOST}/%{REQUEST_URI}-%{QUERY_STRING}.html -F
+RewriteRule ^(.*)$ /fpc/https/%{HTTP_HOST}/%{REQUEST_URI}-%{QUERY_STRING}.html [L]
+
+# HTTP version with query string
+RewriteCond %{HTTPS} !=on [NC]
+RewriteCond %{QUERY_STRING} ^.+$ [NC]
+RewriteCond %{REQUEST_URI} !\/fpc\/.*$ [NC]
+RewriteCond fpc/http/%{HTTP_HOST}/%{REQUEST_URI}-%{QUERY_STRING}.html -F
+RewriteRule ^(.*)$ /fpc/http/%{HTTP_HOST}/%{REQUEST_URI}-%{QUERY_STRING}.html [L]
+
+# HTTP Version directory
+RewriteCond %{HTTPS} !=on [NC]
+RewriteCond %{QUERY_STRING} ^$ [NC]
+RewriteCond %{REQUEST_URI} !\/fpc\/.*$ [NC]
+RewriteCond %{REQUEST_URI} ^/$ [NC]
+RewriteCond fpc/http/%{HTTP_HOST}/%{REQUEST_URI}index.html -F
+RewriteRule ^(.*)$ /fpc/http/%{HTTP_HOST}/%{REQUEST_URI}index.html [L]
+
+# HTTPS Version directory
+RewriteCond %{HTTPS} ==on [NC]
+RewriteCond %{QUERY_STRING} ^$ [NC]
+RewriteCond %{REQUEST_URI} !\/fpc\/.*$ [NC]
+RewriteCond %{REQUEST_URI} ^/$ [NC]
+RewriteCond fpc/https/%{HTTP_HOST}/%{REQUEST_URI}index.html -F
+RewriteRule ^(.*)$ /fpc/http/%{HTTP_HOST}/%{REQUEST_URI}index.html [L]

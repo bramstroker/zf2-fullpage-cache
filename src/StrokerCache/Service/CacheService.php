@@ -7,6 +7,8 @@
 
 namespace StrokerCache\Service;
 
+use StrokerCache\IdGenerator\IdGeneratorInterface;
+use StrokerCache\IdGenerator\RequestUriGenerator;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManager;
@@ -33,7 +35,12 @@ class CacheService implements EventManagerAwareInterface
     /**
      * @var StorageInterface
      */
-    private $cacheStorage;
+    protected $cacheStorage;
+
+    /**
+     * @var IdGeneratorInterface
+     */
+    protected $idGenerator;
 
     /**
      * @var ModuleOptions
@@ -43,13 +50,14 @@ class CacheService implements EventManagerAwareInterface
     /**
      * Default constructor
      *
-     * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
-     * @param \StrokerCache\Options\ModuleOptions  $options
+     * @param StorageInterface $cacheStorage
+     * @param ModuleOptions  $options
      */
-    public function __construct(StorageInterface $cacheStorage, ModuleOptions $options)
+    public function __construct(StorageInterface $cacheStorage, ModuleOptions $options, IdGeneratorInterface $idGenerator = null)
     {
         $this->setCacheStorage($cacheStorage);
         $this->setOptions($options);
+        $this->setIdGenerator($idGenerator);
     }
 
     /**
@@ -57,7 +65,7 @@ class CacheService implements EventManagerAwareInterface
      */
     public function load()
     {
-        $id = $this->createId();
+        $id = $this->getIdGenerator()->generate();
         if (!$this->getCacheStorage()->hasItem($id)) {
             return null;
         };
@@ -87,7 +95,7 @@ class CacheService implements EventManagerAwareInterface
             return;
         }
 
-        $id = $this->createId();
+        $id = $this->getIdGenerator()->generate();
 
         $item = ($this->getOptions()->getCacheResponse() === true) ? serialize($mvcEvent->getResponse()) : $mvcEvent->getResponse()->getContent();
 
@@ -119,23 +127,6 @@ class CacheService implements EventManagerAwareInterface
         }
 
         return false;
-    }
-
-    /**
-     * Determine the page to save from the request
-     *
-     * @throws \RuntimeException
-     * @return string
-     */
-    protected function createId()
-    {
-        if (!isset($_SERVER['REQUEST_URI'])) {
-            throw new \RuntimeException("Can't auto-detect current page identity");
-        }
-
-        $port = ($_SERVER['SERVER_PORT'] == '80') ? '' : (':'.$_SERVER['SERVER_PORT']);
-        $scheme = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https' : 'http';
-        return $scheme . '://'.$_SERVER['HTTP_HOST']. $port . $_SERVER['REQUEST_URI'];
     }
 
     /**
@@ -255,5 +246,24 @@ class CacheService implements EventManagerAwareInterface
             $this->setEventManager(new EventManager());
         }
         return $this->eventManager;
+    }
+
+    /**
+     * @return IdGeneratorInterface
+     */
+    public function getIdGenerator()
+    {
+        if ($this->idGenerator === null) {
+            $this->idGenerator = new RequestUriGenerator();
+        }
+        return $this->idGenerator;
+    }
+
+    /**
+     * @param IdGeneratorInterface $idGenerator
+     */
+    public function setIdGenerator($idGenerator)
+    {
+        $this->idGenerator = $idGenerator;
     }
 }

@@ -28,6 +28,11 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     protected $storageMock;
 
     /**
+     * @var MockInterface
+     */
+    protected $idGeneratorMock;
+
+    /**
      * @var MvcEvent
      */
     protected $mvcEvent;
@@ -42,7 +47,13 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->byDefault()
             ->getMock();
 
-        $this->cacheService = new CacheService($this->storageMock, new ModuleOptions());
+        $this->idGeneratorMock = \Mockery::mock('StrokerCache\IdGenerator\IdGeneratorInterface')
+            ->shouldReceive('generate')
+            ->byDefault()
+            ->andReturn('/foo/bar')
+            ->getMock();
+
+        $this->cacheService = new CacheService($this->storageMock, new ModuleOptions(), $this->idGeneratorMock);
     }
 
     public function tearDown()
@@ -56,8 +67,10 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->storageMock
             ->shouldReceive('hasItem')
+            ->with('/foo/bar')
             ->andReturn(true)
             ->shouldReceive('getItem')
+            ->with('/foo/bar')
             ->andReturn($expectedContent);
 
         $content = $this->cacheService->load();
@@ -76,6 +89,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->storageMock
             ->shouldReceive('hasItem')
+            ->with('/foo/bar')
             ->andReturn(true);
 
         $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function() { return false; });
@@ -105,7 +119,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->storageMock
             ->shouldReceive('setItem')
             ->once()
-            ->with(\Mockery::any(), serialize($response));
+            ->with('/foo/bar', serialize($response));
 
         $this->cacheService->save($this->getMvcEvent());
     }
@@ -120,7 +134,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->storageMock
             ->shouldReceive('setItem')
             ->once()
-            ->with(\Mockery::any(), $response->getContent());
+            ->with('/foo/bar', $response->getContent());
 
         $this->cacheService->getOptions()->setCacheResponse(false);
         $this->cacheService->save($this->getMvcEvent());
@@ -157,7 +171,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('setItem')
             ->shouldReceive('setTags')
             ->once()
-            ->with(\Mockery::any(), $expectedTags)
+            ->with('/foo/bar', $expectedTags)
             ->getMock();
         $this->cacheService->setCacheStorage($storageMock);
 
@@ -184,15 +198,6 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->cacheService->clearByTags(array('foo'));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testCreateIdThrowsExceptionWhenRequestUriIsNotAvailable()
-    {
-        unset($_SERVER['REQUEST_URI']);
-        $this->cacheService->load(new MvcEvent());
-    }
-
     public function testGetSetOptions()
     {
         $options = new ModuleOptions();
@@ -214,12 +219,12 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadEventIsTriggered()
     {
-        $cacheKey = md5($_SERVER['REQUEST_URI']);
+        $this->idGeneratorMock->shouldReceive('generate')->andReturn('foo-bar');
 
         $self = $this;
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function($e) use ($self, $cacheKey) {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function($e) use ($self) {
             $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
-            $self->assertEquals($cacheKey, $e->getCacheKey());
+            $self->assertEquals('foo-bar', $e->getCacheKey());
         });
 
         $this->storageMock

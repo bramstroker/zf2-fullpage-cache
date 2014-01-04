@@ -80,8 +80,11 @@ class CacheListener extends AbstractListenerAggregate
                 $response->setContent($data);
             }
 
+            $response->getHeaders()->addHeaderLine('X-Stroker-Cache', 'Hit');
+
             return $response;
         }
+        $e->getResponse()->getHeaders()->addHeaderLine('X-Stroker-Cache', 'Miss');
     }
 
     /**

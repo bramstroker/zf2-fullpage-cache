@@ -9,10 +9,14 @@ namespace StrokerCacheTest\Listener;
 
 use Mockery as M;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Http\PhpEnvironment\Request;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Listener\CacheListener;
 use StrokerCache\Options\ModuleOptions;
+use Zend\Stdlib\RequestInterface;
+use Zend\Stdlib\ResponseInterface;
 
 class CacheListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -67,9 +71,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('save')
             ->never();
 
-        $mvcEvent = new MvcEvent();
-        $mvcEvent->setRequest(new HttpRequest());
-        $mvcEvent->setResponse(new HttpResponse());
+        $mvcEvent = $this->createMvcEvent();
 
         $response = $this->cacheListener->onRoute($mvcEvent);
 
@@ -92,10 +94,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('save')
             ->never();
 
-        $mvcEvent = new MvcEvent();
-        $mvcEvent->setRequest(new HttpRequest());
-        $mvcEvent->setResponse(new HttpResponse());
-
+        $mvcEvent = $this->createMvcEvent();
 
         $this->cacheListener->getOptions()->setCacheResponse(false);
         $response = $this->cacheListener->onRoute($mvcEvent);
@@ -105,6 +104,36 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
         $this->cacheListener->onFinish($mvcEvent);
     }
 
+    public function testResponseHeaderIsSentOnCacheHit()
+    {
+        $mvcEvent = $this->createMvcEvent();
+
+        $this->cacheServiceMock->shouldReceive('load')->andReturn(serialize($mvcEvent->getResponse()));
+
+        $response = $this->cacheListener->onRoute($mvcEvent);
+
+        /** @var \Zend\Http\Headers $headers */
+        $headers = $response->getHeaders();
+
+        $this->assertTrue($headers->has('X-Stroker-Cache'));
+        $this->assertStringStartsWith('X-Stroker-Cache: Hit', $headers->toString());
+    }
+
+    public function testResponseHeaderIsSentOnCacheMiss()
+    {
+        $this->cacheServiceMock->shouldReceive('load')->andReturn(null);
+
+        $mvcEvent = $this->createMvcEvent();;
+
+        $this->cacheListener->onRoute($mvcEvent);
+
+        /** @var \Zend\Http\Headers $headers */
+        $headers = $mvcEvent->getResponse()->getHeaders();
+
+        $this->assertTrue($headers->has('X-Stroker-Cache'));
+        $this->assertStringStartsWith('X-Stroker-Cache: Miss', $headers->toString());
+    }
+
     public function testPageNotFoundInCacheAndSavedOnFinish()
     {
         $this->cacheServiceMock
@@ -112,8 +141,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->andReturn(null);
 
-        $mvcEvent = new MvcEvent();
-        $mvcEvent->setRequest(new HttpRequest());
+        $mvcEvent = $this->createMvcEvent();
 
         $this->cacheServiceMock
             ->shouldReceive('save')
@@ -127,17 +155,36 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnRouteIsSkippedWhenNoHttpRequest()
     {
-        $mvcEvent = new MvcEvent();
-        $mvcEvent->setRequest(M::mock('Zend\StdLib\RequestInterface'));
+        $mvcEvent = $this->createMvcEvent(M::mock('Zend\StdLib\RequestInterface'));
         $response = $this->cacheListener->onRoute($mvcEvent);
         $this->assertNull($response);
     }
 
     public function testOnFinishIsSkippedWhenNoHttpRequest()
     {
-        $mvcEvent = new MvcEvent();
-        $mvcEvent->setRequest(M::mock('Zend\StdLib\RequestInterface'));
+        $mvcEvent = $this->createMvcEvent(M::mock('Zend\StdLib\RequestInterface'));
         $response = $this->cacheListener->onFinish($mvcEvent);
         $this->assertNull($response);
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return MvcEvent
+     */
+    protected function createMvcEvent(RequestInterface $request = null, ResponseInterface $response = null)
+    {
+        if ($request === null) {
+            $request = new HttpRequest();
+        }
+
+        if ($response === null) {
+            $response = new HttpResponse();
+        }
+
+        $mvcEvent = new MvcEvent();
+        $mvcEvent->setRequest($request);
+        $mvcEvent->setResponse($response);
+        return $mvcEvent;
     }
 }

@@ -11,6 +11,7 @@ namespace StrokerCache\Strategy;
 use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\Stdlib\AbstractOptions;
 
 abstract class AbstractStrategy extends AbstractOptions implements
     ListenerAggregateInterface,

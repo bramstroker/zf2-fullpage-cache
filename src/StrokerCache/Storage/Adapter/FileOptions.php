@@ -27,7 +27,7 @@ class FileOptions extends AdapterOptions
     }
 
     /**
-     * @param string $baseDirectory
+     * @param  string           $baseDirectory
      * @throws RuntimeException
      */
     public function setBaseDirectory($baseDirectory)

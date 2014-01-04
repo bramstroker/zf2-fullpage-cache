@@ -36,7 +36,7 @@ class ShouldCacheStrategyListener extends AbstractListenerAggregate
     }
 
     /**
-     * @param CacheEvent $event
+     * @param  CacheEvent $event
      * @return bool
      */
     public function shouldCache(CacheEvent $event)

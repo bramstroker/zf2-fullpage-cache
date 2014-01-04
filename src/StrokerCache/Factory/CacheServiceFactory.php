@@ -46,8 +46,8 @@ class CacheServiceFactory implements FactoryInterface
     }
 
     /**
-     * @param CacheService $cacheService
-     * @param ModuleOptions $options
+     * @param CacheService            $cacheService
+     * @param ModuleOptions           $options
      * @param ServiceLocatorInterface $serviceLocator
      */
     protected function attachStrategiesToEventManager(CacheService $cacheService, ModuleOptions $options, ServiceLocatorInterface $serviceLocator)

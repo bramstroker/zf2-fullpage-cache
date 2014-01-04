@@ -43,7 +43,7 @@ abstract class AbstractStrategy extends AbstractOptions implements
     }
 
     /**
-     * @param CacheEvent $event
+     * @param  CacheEvent $event
      * @return bool
      */
     public function shouldCacheCallback(CacheEvent $event)

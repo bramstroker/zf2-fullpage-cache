@@ -15,4 +15,4 @@ interface IdGeneratorInterface
      * @return string
      */
     public function generate();
-} 
+}

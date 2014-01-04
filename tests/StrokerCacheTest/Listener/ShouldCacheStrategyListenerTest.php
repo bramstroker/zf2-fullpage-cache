@@ -10,11 +10,7 @@ namespace StrokerCacheTest\Listener;
 use Mockery as M;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Listener\ShouldCacheStrategyListener;
-use Zend\Http\PhpEnvironment\Request as HttpRequest;
-use Zend\Http\PhpEnvironment\Response as HttpResponse;
 use Zend\Mvc\MvcEvent;
-use StrokerCache\Listener\CacheListener;
-use StrokerCache\Options\ModuleOptions;
 
 class ShouldCacheStrategyListenerTest extends \PHPUnit_Framework_TestCase
 {

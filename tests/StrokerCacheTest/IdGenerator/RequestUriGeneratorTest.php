@@ -8,7 +8,6 @@
 
 namespace StrokerCacheTest\IdGenerator;
 
-
 use StrokerCache\IdGenerator\RequestUriGenerator;
 
 class RequestUriGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -29,4 +28,4 @@ class RequestUriGeneratorTest extends \PHPUnit_Framework_TestCase
         unset($_SERVER['REQUEST_URI']);
         $generator->generate();
     }
-} 
+}

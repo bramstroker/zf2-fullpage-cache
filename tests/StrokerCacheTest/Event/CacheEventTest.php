@@ -19,4 +19,4 @@ class CacheEventTest extends \PHPUnit_Framework_TestCase
         $cacheEvent->setMvcEvent($mvcEvent);
         $this->assertEquals($mvcEvent, $cacheEvent->getMvcEvent());
     }
-} 
+}

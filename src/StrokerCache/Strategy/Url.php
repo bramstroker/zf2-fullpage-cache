@@ -8,7 +8,6 @@
 namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
-use Zend\Stdlib\AbstractOptions;
 
 class Url extends AbstractStrategy
 {

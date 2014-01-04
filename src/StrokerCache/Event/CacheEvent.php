@@ -58,5 +58,4 @@ class CacheEvent extends Event
         $this->mvcEvent = $mvcEvent;
     }
 
-
 }

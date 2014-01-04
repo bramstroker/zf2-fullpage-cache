@@ -9,7 +9,6 @@
 namespace StrokerCache\Storage\Adapter;
 
 use SplFileInfo;
-use Zend\Cache\Exception;
 use Zend\Cache\Storage\Adapter\AbstractAdapter;
 
 class File extends AbstractAdapter
@@ -27,7 +26,7 @@ class File extends AbstractAdapter
     }
 
     /**
-     * @param string $url
+     * @param  string      $url
      * @return SplFileInfo
      */
     protected function getFileForUrl($url)
@@ -61,9 +60,11 @@ class File extends AbstractAdapter
         $file = $this->getFileForUrl($normalizedKey);
         if (!$file->isReadable()) {
             $success = false;
+
             return null;
         }
         $success = true;
+
         return file_get_contents($file->getPathname());
     }
 
@@ -78,6 +79,7 @@ class File extends AbstractAdapter
             mkdir($dirname, 0777, true);
         }
         file_put_contents($file, $value);
+
         return true;
     }
 
@@ -91,6 +93,7 @@ class File extends AbstractAdapter
             return false;
         }
         unlink($file->getPathname());
+
         return true;
     }
 }

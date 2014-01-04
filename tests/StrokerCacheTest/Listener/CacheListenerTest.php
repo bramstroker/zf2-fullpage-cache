@@ -166,8 +166,8 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param  RequestInterface  $request
+     * @param  ResponseInterface $response
      * @return MvcEvent
      */
     protected function createMvcEvent(RequestInterface $request = null, ResponseInterface $response = null)
@@ -183,6 +183,7 @@ class CacheListenerTest extends \PHPUnit_Framework_TestCase
         $mvcEvent = new MvcEvent();
         $mvcEvent->setRequest($request);
         $mvcEvent->setResponse($response);
+
         return $mvcEvent;
     }
 }

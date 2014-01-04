@@ -12,7 +12,6 @@ use Zend\EventManager\EventManager;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Options\ModuleOptions;
-use StrokerCache\Strategy\RouteName;
 use Zend\Mvc\MvcEvent;
 
 class CacheServiceTest extends \PHPUnit_Framework_TestCase
@@ -92,7 +91,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->with('/foo/bar')
             ->andReturn(true);
 
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function() { return false; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function () { return false; });
 
         $this->assertNull($this->cacheService->load());
     }
@@ -106,13 +105,13 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->storageMock->shouldReceive('setItem')->never();
 
         // Call second time with non caching event attached
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return false; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return false; });
         $this->cacheService->save($mvcEvent);
     }
 
     public function testSaveResponseIsCached()
     {
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $response = $this->getMvcEvent()->getResponse();
 
@@ -129,7 +128,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $response = $this->getMvcEvent()->getResponse();
         $response->setContent('mockContent');
 
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $this->storageMock
             ->shouldReceive('setItem')
@@ -142,10 +141,10 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testResponseIsCachedWhenOneListenerReturnsTrue()
     {
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return false; });
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return false; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
         $self = $this;
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() use ($self) {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () use ($self) {
             $self->fail('No more listeners should have been called anymore');
         });
 
@@ -175,7 +174,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->cacheService->setCacheStorage($storageMock);
 
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $this->cacheService->save($this->getMvcEvent());
     }
@@ -208,11 +207,11 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     public function testSaveEventIsTriggered()
     {
         $self = $this;
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function($e) use ($self) {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function ($e) use ($self) {
             $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
         });
 
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function() { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $this->cacheService->save($this->getMvcEvent());
     }
@@ -222,7 +221,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->idGeneratorMock->shouldReceive('generate')->andReturn('foo-bar');
 
         $self = $this;
-        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function($e) use ($self) {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function ($e) use ($self) {
             $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
             $self->assertEquals('foo-bar', $e->getCacheKey());
         });

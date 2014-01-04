@@ -16,7 +16,6 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManagerAwareInterface;
 use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
-use StrokerCache\Strategy\StrategyInterface;
 use Zend\Cache\Storage\StorageInterface;
 
 class CacheService implements EventManagerAwareInterface
@@ -51,7 +50,7 @@ class CacheService implements EventManagerAwareInterface
      * Default constructor
      *
      * @param StorageInterface $cacheStorage
-     * @param ModuleOptions  $options
+     * @param ModuleOptions    $options
      */
     public function __construct(StorageInterface $cacheStorage, ModuleOptions $options, IdGeneratorInterface $idGenerator = null)
     {
@@ -73,7 +72,7 @@ class CacheService implements EventManagerAwareInterface
         $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD);
         $event->setCacheKey($id);
 
-        $results = $this->getEventManager()->trigger($event, function($result) {
+        $results = $this->getEventManager()->trigger($event, function ($result) {
             return ($result === false);
         });
 
@@ -111,14 +110,14 @@ class CacheService implements EventManagerAwareInterface
     /**
      * Determine if we should cache the current request
      *
-     * @param MvcEvent $mvcEvent
+     * @param  MvcEvent $mvcEvent
      * @return bool
      */
     protected function shouldCacheRequest(MvcEvent $mvcEvent)
     {
         $event = $this->createCacheEvent(CacheEvent::EVENT_SHOULDCACHE, $mvcEvent);
 
-        $results = $this->getEventManager()->triggerUntil($event, function($result) {
+        $results = $this->getEventManager()->triggerUntil($event, function ($result) {
             return $result;
         });
 
@@ -130,7 +129,7 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param array $tags
+     * @param  array $tags
      * @return bool
      */
     public function clearByTags(array $tags = array())
@@ -142,6 +141,7 @@ class CacheService implements EventManagerAwareInterface
             function ($tag) { return CacheService::TAG_PREFIX . $tag; },
             $tags
         );
+
         return $this->getCacheStorage()->clearByTags($tags);
     }
 
@@ -169,14 +169,15 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param string $eventName
-     * @param MvcEvent|null $mvcEvent
+     * @param  string        $eventName
+     * @param  MvcEvent|null $mvcEvent
      * @return CacheEvent
      */
     protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null)
     {
         $cacheEvent = new CacheEvent($eventName, $this);
         $cacheEvent->setMvcEvent($mvcEvent);
+
         return $cacheEvent;
     }
 
@@ -189,12 +190,13 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
+     * @param  \Zend\Cache\Storage\StorageInterface $cacheStorage
      * @return self
      */
     public function setCacheStorage($cacheStorage)
     {
         $this->cacheStorage = $cacheStorage;
+
         return $this;
     }
 
@@ -207,12 +209,13 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param \StrokerCache\Options\ModuleOptions $options
+     * @param  \StrokerCache\Options\ModuleOptions $options
      * @return self
      */
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -230,6 +233,7 @@ class CacheService implements EventManagerAwareInterface
         ));
 
         $this->eventManager = $eventManager;
+
         return $this;
     }
 
@@ -245,6 +249,7 @@ class CacheService implements EventManagerAwareInterface
         if (!$this->eventManager instanceof EventManagerInterface) {
             $this->setEventManager(new EventManager());
         }
+
         return $this->eventManager;
     }
 
@@ -256,6 +261,7 @@ class CacheService implements EventManagerAwareInterface
         if ($this->idGenerator === null) {
             $this->idGenerator = new RequestUriGenerator();
         }
+
         return $this->idGenerator;
     }
 

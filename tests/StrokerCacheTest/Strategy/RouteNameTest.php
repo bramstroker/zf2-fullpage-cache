@@ -149,7 +149,7 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
      * @param boolean $expectedResult
      * @param array   $params
      * @param string  $httpMethods
-     * @dataProvider shouldCacheProvider
+     *                                @dataProvider shouldCacheProvider
      */
     public function testShouldCache($routes, $route, $expectedResult, $params = array(), $httpMethod = null)
     {

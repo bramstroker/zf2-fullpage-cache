@@ -148,8 +148,8 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
      * @param string  $route
      * @param boolean $expectedResult
      * @param array   $params
-     * @param string  $httpMethods
-     *                                @dataProvider shouldCacheProvider
+     * @param string  $httpMethod
+     * @dataProvider shouldCacheProvider
      */
     public function testShouldCache($routes, $route, $expectedResult, $params = array(), $httpMethod = null)
     {
@@ -169,9 +169,6 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
     }
 
-    /**
-     * testShouldCacheReturnsFalseOnNoRouteMatchObject
-     */
     public function testShouldCacheReturnsFalseWhenNoRouteMatchIsSet()
     {
         $mvcEvent = new MvcEvent();

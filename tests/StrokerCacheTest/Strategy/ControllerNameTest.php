@@ -18,9 +18,6 @@ class ControllerNameTest extends \PHPUnit_Framework_TestCase
      */
     private $strategy;
 
-    /**
-     * Setup
-     */
     public function setUp()
     {
         $this->strategy = new ControllerName();
@@ -42,7 +39,7 @@ class ControllerNameTest extends \PHPUnit_Framework_TestCase
      * @param array   $controllers
      * @param string  $requestedController
      * @param boolean $expectedResult
-     *                                     @dataProvider shouldCacheProvider
+     * @dataProvider shouldCacheProvider
      */
     public function testShouldCache($controllers, $requestedController, $expectedResult)
     {

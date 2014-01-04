@@ -36,10 +36,13 @@ class CacheEvent extends Event
 
     /**
      * @param string $cacheKey
+     * @return CacheEvent
      */
     public function setCacheKey($cacheKey)
     {
         $this->cacheKey = $cacheKey;
+
+        return $this;
     }
 
     /**
@@ -52,10 +55,13 @@ class CacheEvent extends Event
 
     /**
      * @param MvcEvent $mvcEvent
+     * @return CacheEvent
      */
     public function setMvcEvent($mvcEvent)
     {
         $this->mvcEvent = $mvcEvent;
+
+        return $this;
     }
 
 }

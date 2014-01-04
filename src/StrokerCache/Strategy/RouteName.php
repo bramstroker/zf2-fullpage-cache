@@ -11,7 +11,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 use Zend\Stdlib\AbstractOptions;
 
-class RouteName extends AbstractOptions implements StrategyInterface
+class RouteName extends AbstractStrategy
 {
     /**
      * @var array

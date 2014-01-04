@@ -10,7 +10,7 @@ namespace StrokerCache\Strategy;
 use Zend\Mvc\MvcEvent;
 use Zend\Stdlib\AbstractOptions;
 
-class ControllerName extends AbstractOptions implements StrategyInterface
+class ControllerName extends AbstractStrategy
 {
     /**
      * @var array

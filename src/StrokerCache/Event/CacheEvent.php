@@ -22,11 +22,6 @@ class CacheEvent extends Event
     protected $cacheKey;
 
     /**
-     * @var bool
-     */
-    protected $abort = false;
-
-    /**
      * @var MvcEvent
      */
     protected $mvcEvent;

@@ -6,7 +6,7 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache\Cache\Storage\Adapter;
+namespace StrokerCache\Storage\Adapter;
 
 use RuntimeException;
 use Zend\Cache\Storage\Adapter\AdapterOptions;

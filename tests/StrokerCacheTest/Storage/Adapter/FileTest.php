@@ -6,10 +6,10 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCacheTest\Cache\Storage\Adapter;
+namespace StrokerCacheTest\Storage\Adapter;
 
 use org\bovigo\vfs\vfsStream;
-use StrokerCache\Cache\Storage\Adapter\File;
+use StrokerCache\Storage\Adapter\File;
 
 class FileTest extends \PHPUnit_Framework_TestCase
 {

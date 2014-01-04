@@ -32,7 +32,7 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
     public static function shouldCacheProvider()
     {
         return array(
-            'match' => array(
+            /*'match' => array(
                 array('route/route1', 'route2'),
                 'route/route1',
                 array(),
@@ -43,9 +43,8 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
                 'route3',
                 array(),
                 false
-            ),
+            ),*/
             'match-params' => array(
-
                 array(
                     array(
                         'name' => 'testroute',

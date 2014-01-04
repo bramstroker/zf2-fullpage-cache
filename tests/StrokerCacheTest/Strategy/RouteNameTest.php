@@ -8,6 +8,7 @@
 namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\RouteName;
+use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 
@@ -32,80 +33,139 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
     public static function shouldCacheProvider()
     {
         return array(
-            'match' => array(
+            /*'match' => array(
                 array('route/route1', 'route2'),
                 'route/route1',
-                array(),
                 true
             ),
             'nomatch' => array(
                 array('route/route1', 'route2'),
                 'route3',
-                array(),
                 false
-            ),
+            ),*/
             'match-params' => array(
-
                 array(
-                    array(
-                        'name' => 'testroute',
+                    'testroute' => array(
                         'params' => array('param1' => 'value1')
                     )
                 ),
                 'testroute',
+                true,
                 array(
                     'param1' => 'value1',
                     'param2' => 'value2'
                 ),
+            ),
+            'match-params-multivalue' => array(
+                array(
+                    'testroute' => array(
+                        'params' => array('param1' => array('value1', 'value2', 'value3'))
+                    )
+                ),
+                'testroute',
+                true,
+                array(
+                    'param1' => 'value3',
+                ),
+            ),
+            'match-params-when-no-params-in-routematch' => array(
+                array(
+                    'testroute' => array(
+                        'params' => array('param1' => 'value1')
+                    )
+                ),
+                'testroute',
                 true
             ),
             'nomatch-params' => array(
                 array(
-                    array(
-                        'name' => 'testroute',
+                    'testroute' => array(
                         'params' => array('param1' => 'value2')
                     )
                 ),
                 'testroute',
+                false,
                 array(
                     'param1' => 'value1',
                     'param2' => 'value2'
                 ),
-                false
             ),
-
             'match-regexparams' => array(
                 array(
-                    array(
-                        'name' => 'testroute',
+                    'testroute' => array(
                         'params' => array(
                             'param1' => '/val.*/')
                     )
                 ),
                 'testroute',
+                true,
                 array(
                     'param1' => 'value1',
                     'param2' => 'value2'
                 ),
-                true
             ),
+            'nomatch-regexparams' => array(
+                array(
+                    'testroute' => array(
+                        'params' => array(
+                            'param1' => '/val.*/')
+                    )
+                ),
+                'testroute',
+                false,
+                array(
+                    'param1' => 'foo',
+                    'param2' => 'value2'
+                ),
+            ),
+            'match-http-method' => array(
+                array(
+                    'foo' => array(
+                        'http_methods' => array('GET', 'POST')
+                    )
+                ),
+                'foo',
+                true,
+                array(),
+                'POST',
+            ),
+            'nomatch-http-method' => array(
+                array(
+                    'foo' => array(
+                        'http_methods' => array('GET')
+                    )
+                ),
+                'foo',
+                false,
+                array(),
+                'POST',
+            )
         );
     }
 
     /**
      * @param array   $routes
      * @param string  $route
-     * @param array   $params
      * @param boolean $expectedResult
+     * @param array   $params
+     * @param string  $httpMethods
      * @dataProvider shouldCacheProvider
      */
-    public function testShouldCache($routes, $route, $params, $expectedResult)
+    public function testShouldCache($routes, $route, $expectedResult, $params = array(), $httpMethod = null)
     {
         $this->strategy->setRoutes($routes);
         $routeMatch = new RouteMatch($params);
         $routeMatch->setMatchedRouteName($route);
+
+        $request = new Request();
+
+        if ($httpMethod !== null) {
+            $request->setMethod($httpMethod);
+        }
+
         $mvcEvent = new MvcEvent();
         $mvcEvent->setRouteMatch($routeMatch);
+        $mvcEvent->setRequest($request);
         $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
     }
 

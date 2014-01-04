@@ -65,11 +65,11 @@ class CacheService implements EventManagerAwareInterface
         $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD);
         $event->setCacheKey($id);
 
-        $result = $this->getEventManager()->triggerUntil($event, function($result) {
-            return $result === false;
+        $results = $this->getEventManager()->trigger($event, function($result) {
+            return ($result === false);
         });
 
-        if ($result === false) {
+        if ($results->stopped()) {
             return null;
         }
 
@@ -78,6 +78,8 @@ class CacheService implements EventManagerAwareInterface
 
     /**
      * Save the page contents to the cache storage.
+     *
+     * @param MvcEvent $mvcEvent
      */
     public function save(MvcEvent $mvcEvent)
     {
@@ -108,9 +110,15 @@ class CacheService implements EventManagerAwareInterface
     {
         $event = $this->createCacheEvent(CacheEvent::EVENT_SHOULDCACHE, $mvcEvent);
 
-        return $this->getEventManager()->triggerUntil($event, function($result) {
+        $results = $this->getEventManager()->triggerUntil($event, function($result) {
             return $result;
         });
+
+        if ($results->stopped()) {
+            return $results->last();
+        }
+
+        return false;
     }
 
     /**
@@ -147,7 +155,7 @@ class CacheService implements EventManagerAwareInterface
     /**
      * Cache tags to use for this page
      *
-     * @param  \Zend\Mvc\MvcEvent $event
+     * @param  MvcEvent $event
      * @return array
      */
     public function getTags(MvcEvent $event)

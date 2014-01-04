@@ -5,6 +5,8 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
+namespace StrokerCacheTest\Listener;
+
 use Mockery as M;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
 use Zend\Http\PhpEnvironment\Response as HttpResponse;

@@ -125,9 +125,7 @@ class CacheService implements EventManagerAwareInterface
             throw new \RuntimeException("Can't auto-detect current page identity");
         }
 
-        $requestUri = $_SERVER['REQUEST_URI'];
-
-        return md5($requestUri);
+        return $_SERVER['REQUEST_URI'];
     }
 
     /**

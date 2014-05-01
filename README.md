@@ -95,10 +95,11 @@ Example using APC:
 return array(
     'strokercache' => array(
         'storage_adapter' => array(
-            'apc'
+            'name' => 'Zend\Cache\Storage\Adapter\Apc',
         ),
     ),
 );
+
 ```
 
 ## Clearing the cache
@@ -181,7 +182,7 @@ public function onBootstrap(MvcEvent $e)
 }
 ```
 
-Say we want to disable caching for all requests on port 8080, we can simply listen to the `SHOULDCACHE` event and return `false`.
+Say we want to disable caching for all requests on port 8080, we can simply listen to the `LOAD` event and return `false`.
 Keep in mind you want to prevent other listeners from executing using `stopPropagation()`. If you don't do this other listeners will be executed and whenever one of them returns `true` the page will be cached.
 Also you need to attach the listener at a higher priority (`1000` in this example) than the buildin strategies (they are registered at priority `100`).
 
@@ -190,13 +191,14 @@ public function onBootstrap(MvcEvent $e)
 {
     $serviceManager = $e->getApplication()->getServiceManager();
     $cacheService = $serviceManager->get('strokercache_service');
-    $cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function (CacheEvent $e) {
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function (CacheEvent $e) {
         if ($e->getMvcEvent()->getRequest()->getUri()->getPort() == 8080) {
             $e->stopPropagation(true);
             return false;
         }
         return true;
     }, 1000);
+}
 ```
 
 ## Store directly to HTML files for max performance

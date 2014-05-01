@@ -26,6 +26,6 @@ class FullUriGenerator implements IdGeneratorInterface
         $port = ($_SERVER['SERVER_PORT'] == '80') ? '' : (':'.$_SERVER['SERVER_PORT']);
         $scheme = stripos($_SERVER['SERVER_PROTOCOL'], 'https') === 0 ? 'https' : 'http';
 
-        return $scheme . '://'.$_SERVER['HTTP_HOST']. $port . $_SERVER['REQUEST_URI'];
+        return md5($scheme . '://'.$_SERVER['HTTP_HOST']. $port . $_SERVER['REQUEST_URI']);
     }
 }

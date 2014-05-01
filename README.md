@@ -180,7 +180,7 @@ public function onBootstrap(MvcEvent $e)
     });
 }
 ```
-`
+
 Say we want to disable caching for all requests on port 8080, we can simply listen to the `SHOULDCACHE` event and return `false`.
 Keep in mind you want to prevent other listeners from executing using `stopPropagation()`. If you don't do this other listeners will be executed and whenever one of them returns `true` the page will be cached.
 Also you need to attach the listener at a higher priority (`1000` in this example) than the buildin strategies (they are registered at priority `100`).

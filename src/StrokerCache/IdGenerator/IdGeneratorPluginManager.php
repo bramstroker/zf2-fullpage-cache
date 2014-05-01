@@ -19,7 +19,7 @@ class IdGeneratorPluginManager extends AbstractPluginManager
      */
     protected $invokableClasses = array(
         'requesturi' => 'StrokerCache\IdGenerator\RequestUriGenerator',
-        'extended'   => 'StrokerCache\IdGenerator\ExtendedGenerator'
+        'fulluri'   => 'StrokerCache\IdGenerator\FullUriGenerator'
     );
 
     /**

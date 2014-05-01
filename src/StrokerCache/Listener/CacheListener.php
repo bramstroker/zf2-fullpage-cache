@@ -40,6 +40,7 @@ class CacheListener extends AbstractListenerAggregate
      * Default constructor
      *
      * @param CacheService $cacheService
+     * @param ModuleOptions $options
      */
     public function __construct(CacheService $cacheService, ModuleOptions $options)
     {

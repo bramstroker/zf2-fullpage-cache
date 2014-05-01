@@ -50,7 +50,8 @@ class CacheService implements EventManagerAwareInterface
      * Default constructor
      *
      * @param StorageInterface $cacheStorage
-     * @param ModuleOptions    $options
+     * @param ModuleOptions $options
+     * @param IdGeneratorInterface $idGenerator
      */
     public function __construct(StorageInterface $cacheStorage, ModuleOptions $options, IdGeneratorInterface $idGenerator = null)
     {
@@ -182,7 +183,7 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @return \Zend\Cache\Storage\StorageInterface
+     * @return StorageInterface
      */
     public function getCacheStorage()
     {
@@ -190,7 +191,7 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param  \Zend\Cache\Storage\StorageInterface $cacheStorage
+     * @param  StorageInterface $cacheStorage
      * @return self
      */
     public function setCacheStorage($cacheStorage)
@@ -201,7 +202,7 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @return \StrokerCache\Options\ModuleOptions
+     * @return ModuleOptions
      */
     public function getOptions()
     {
@@ -209,7 +210,7 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param  \StrokerCache\Options\ModuleOptions $options
+     * @param  ModuleOptions $options
      * @return self
      */
     public function setOptions($options)

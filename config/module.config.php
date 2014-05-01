@@ -41,16 +41,19 @@ return array(
         ),
         'strategies' => array(
             'plugin_manager' => array(
-                'abstract_factories' => array(
-                    'StrokerCache\Factory\CacheStrategyAbstractFactory',
+                'invokables' => array(
+                    'StrokerCache\Strategy\Controller' => 'StrokerCache\Strategy\Controller',
+                    'StrokerCache\Strategy\Route' => 'StrokerCache\Strategy\Route',
+                    'StrokerCache\Strategy\UriPath' => 'StrokerCache\Strategy\UriPath'
                 ),
                 // This is for BC support
                 'aliases' => array(
                     'StrokerCache\Strategy\RouteName' => 'StrokerCache\Strategy\Route',
                     'StrokerCache\Strategy\ControllerName' => 'StrokerCache\Strategy\Controller',
+                    'StrokerCache\Strategy\Url' => 'StrokerCache\Strategy\UriPath',
                 )
             ),
         ),
-        'id_generator' => 'requesturi'
+        'id_generator' => 'requestUri'
     ),
 );

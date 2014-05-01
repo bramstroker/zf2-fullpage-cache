@@ -9,7 +9,7 @@ namespace StrokerCache\IdGenerator;
 
 use StrokerCache\Exception\RuntimeException;
 
-class ExtendedGenerator implements IdGeneratorInterface
+class FullUriGenerator implements IdGeneratorInterface
 {
 
     /**

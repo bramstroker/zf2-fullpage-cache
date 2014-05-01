@@ -24,14 +24,12 @@ class CacheServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        /** @var $options \StrokerCache\Options\ModuleOptions */
         $options = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
-
         $cacheStorage = $serviceLocator->get('StrokerCache\Storage\CacheStorage');
 
         $cacheService = new CacheService($cacheStorage, $options);
 
-        $this->setupIdGenerator($cacheService, $options, $serviceLocator);
+        $this->setupIdGenerator($cacheService, $options);
         $this->attachStrategiesToEventManager($cacheService, $options, $serviceLocator);
 
         return $cacheService;
@@ -40,15 +38,14 @@ class CacheServiceFactory implements FactoryInterface
     /**
      * @param CacheService $cacheService
      * @param ModuleOptions $options
-     * @param ServiceLocatorInterface $serviceLocator
      * @throws RuntimeException
      */
-    protected function setupIdGenerator(CacheService $cacheService, ModuleOptions $options, ServiceLocatorInterface $serviceLocator)
+    protected function setupIdGenerator(CacheService $cacheService, ModuleOptions $options)
     {
         $idGenerator = $options->getIdGenerator();
-        $idGeneratorHelper = new IdGeneratorPluginManager();
-        if ($idGeneratorHelper->has($idGenerator)) {
-            $cacheService->setIdGenerator($idGeneratorHelper->get($idGenerator));
+        $idGeneratorManager = new IdGeneratorPluginManager();
+        if ($idGeneratorManager->has($idGenerator)) {
+            $cacheService->setIdGenerator($idGeneratorManager->get($idGenerator));
         } else {
             throw new RuntimeException('No IdGenerator register for key ' . $idGenerator);
         }
@@ -71,7 +68,7 @@ class CacheServiceFactory implements FactoryInterface
                 if (is_numeric($alias)) {
                     $alias = $options;
                 }
-                $strategy = $strategyPluginManager->get($alias);
+                $strategy = $strategyPluginManager->get($alias, $options);
 
                 if ($strategy instanceof ListenerAggregateInterface) {
                     $listener = $strategy;

@@ -68,6 +68,9 @@ class FileTest extends \PHPUnit_Framework_TestCase
      */
     public function testBaseDirFile()
     {
+        if (PHP_VERSION_ID < 50400) {
+            $this->markTestSkipped('Touch on VFS is not supported in PHP 5.3');
+        }
         $dir = vfsStream::setup('tmp-dir');
         touch($dir->url() . DIRECTORY_SEPARATOR . '/tmp');
         new File(array(

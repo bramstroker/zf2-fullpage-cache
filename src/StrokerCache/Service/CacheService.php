@@ -7,6 +7,8 @@
 
 namespace StrokerCache\Service;
 
+use StrokerCache\IdGenerator\IdGeneratorInterface;
+use StrokerCache\IdGenerator\RequestUriGenerator;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManager;
@@ -14,7 +16,6 @@ use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManagerAwareInterface;
 use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
-use StrokerCache\Strategy\StrategyInterface;
 use Zend\Cache\Storage\StorageInterface;
 
 class CacheService implements EventManagerAwareInterface
@@ -33,7 +34,12 @@ class CacheService implements EventManagerAwareInterface
     /**
      * @var StorageInterface
      */
-    private $cacheStorage;
+    protected $cacheStorage;
+
+    /**
+     * @var IdGeneratorInterface
+     */
+    protected $idGenerator;
 
     /**
      * @var ModuleOptions
@@ -41,20 +47,17 @@ class CacheService implements EventManagerAwareInterface
     protected $options;
 
     /**
-     * @var array
-     */
-    protected $strategies = array();
-
-    /**
      * Default constructor
      *
-     * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
-     * @param \StrokerCache\Options\ModuleOptions  $options
+     * @param StorageInterface $cacheStorage
+     * @param ModuleOptions $options
+     * @param IdGeneratorInterface $idGenerator
      */
-    public function __construct(StorageInterface $cacheStorage, ModuleOptions $options)
+    public function __construct(StorageInterface $cacheStorage, ModuleOptions $options, IdGeneratorInterface $idGenerator = null)
     {
         $this->setCacheStorage($cacheStorage);
         $this->setOptions($options);
+        $this->setIdGenerator($idGenerator);
     }
 
     /**
@@ -62,15 +65,19 @@ class CacheService implements EventManagerAwareInterface
      */
     public function load()
     {
-        $id = $this->createId();
+        $id = $this->getIdGenerator()->generate();
         if (!$this->getCacheStorage()->hasItem($id)) {
             return null;
         };
 
-        $event = new CacheEvent(CacheEvent::EVENT_LOAD, $this);
+        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD);
         $event->setCacheKey($id);
-        $this->getEventManager()->trigger($event);
-        if($event->getAbort()) {
+
+        $results = $this->getEventManager()->trigger($event, function ($result) {
+            return ($result === false);
+        });
+
+        if ($results->stopped()) {
             return null;
         }
 
@@ -79,70 +86,51 @@ class CacheService implements EventManagerAwareInterface
 
     /**
      * Save the page contents to the cache storage.
+     *
+     * @param MvcEvent $mvcEvent
      */
-    public function save(MvcEvent $e)
+    public function save(MvcEvent $mvcEvent)
     {
-        if (!$this->shouldCacheRequest($e)) {
+        if (!$this->shouldCacheRequest($mvcEvent)) {
             return;
         }
 
-        $id = $this->createId();
+        $id = $this->getIdGenerator()->generate();
 
-        $item = ($this->getOptions()->getCacheResponse() === true) ? serialize($e->getResponse()) : $e->getResponse()->getContent();
+        $item = ($this->getOptions()->getCacheResponse() === true) ? serialize($mvcEvent->getResponse()) : $mvcEvent->getResponse()->getContent();
 
         $this->getCacheStorage()->setItem($id, $item);
 
-        $this->getEventManager()->trigger(new CacheEvent(CacheEvent::EVENT_SAVE, $this));
+        $this->getEventManager()->trigger($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
 
         if ($this->getCacheStorage() instanceof TaggableInterface) {
-            $this->getCacheStorage()->setTags($id, $this->getTags($e));
+            $this->getCacheStorage()->setTags($id, $this->getTags($mvcEvent));
         }
     }
 
     /**
      * Determine if we should cache the current request
      *
-     * @param MvcEvent $e
+     * @param  MvcEvent $mvcEvent
      * @return bool
      */
-    protected function shouldCacheRequest(MvcEvent $e)
+    protected function shouldCacheRequest(MvcEvent $mvcEvent)
     {
-        // Early break if page should not be cached
-        $event = new CacheEvent(CacheEvent::EVENT_SHOULDCACHE, $this);
-        $this->getEventManager()->trigger($event);
-        if($event->getAbort())
-        {
-            return false;
+        $event = $this->createCacheEvent(CacheEvent::EVENT_SHOULDCACHE, $mvcEvent);
+
+        $results = $this->getEventManager()->triggerUntil($event, function ($result) {
+            return $result;
+        });
+
+        if ($results->stopped()) {
+            return $results->last();
         }
 
-        /** @var $strategy \StrokerCache\Strategy\StrategyInterface */
-        foreach ($this->getStrategies() as $strategy) {
-            if ($strategy->shouldCache($e)) {
-                return true;
-            }
-        }
         return false;
     }
 
     /**
-     * Determine the page to save from the request
-     *
-     * @throws \RuntimeException
-     * @return string
-     */
-    protected function createId()
-    {
-        if (!isset($_SERVER['REQUEST_URI'])) {
-            throw new \RuntimeException("Can't auto-detect current page identity");
-        }
-
-        $requestUri = $_SERVER['REQUEST_URI'];
-
-        return md5($requestUri);
-    }
-
-    /**
-     * @param array $tags
+     * @param  array $tags
      * @return bool
      */
     public function clearByTags(array $tags = array())
@@ -154,13 +142,14 @@ class CacheService implements EventManagerAwareInterface
             function ($tag) { return CacheService::TAG_PREFIX . $tag; },
             $tags
         );
+
         return $this->getCacheStorage()->clearByTags($tags);
     }
 
     /**
      * Cache tags to use for this page
      *
-     * @param  \Zend\Mvc\MvcEvent $event
+     * @param  MvcEvent $event
      * @return array
      */
     public function getTags(MvcEvent $event)
@@ -181,35 +170,20 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @return array
+     * @param  string        $eventName
+     * @param  MvcEvent|null $mvcEvent
+     * @return CacheEvent
      */
-    public function getStrategies()
+    protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null)
     {
-        return $this->strategies;
+        $cacheEvent = new CacheEvent($eventName, $this);
+        $cacheEvent->setMvcEvent($mvcEvent);
+
+        return $cacheEvent;
     }
 
     /**
-     * @param array $strategies
-     * @return self
-     */
-    public function setStrategies($strategies)
-    {
-        $this->strategies = $strategies;
-        return $this;
-    }
-
-    /**
-     * @param \StrokerCache\Strategy\StrategyInterface $strategy
-     * @return self
-     */
-    public function addStrategy(StrategyInterface $strategy)
-    {
-        $this->strategies[] = $strategy;
-        return $this;
-    }
-
-    /**
-     * @return \Zend\Cache\Storage\StorageInterface
+     * @return StorageInterface
      */
     public function getCacheStorage()
     {
@@ -217,17 +191,18 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param \Zend\Cache\Storage\StorageInterface $cacheStorage
+     * @param  StorageInterface $cacheStorage
      * @return self
      */
     public function setCacheStorage($cacheStorage)
     {
         $this->cacheStorage = $cacheStorage;
+
         return $this;
     }
 
     /**
-     * @return \StrokerCache\Options\ModuleOptions
+     * @return ModuleOptions
      */
     public function getOptions()
     {
@@ -235,12 +210,13 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param \StrokerCache\Options\ModuleOptions $options
+     * @param  ModuleOptions $options
      * @return self
      */
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -258,6 +234,7 @@ class CacheService implements EventManagerAwareInterface
         ));
 
         $this->eventManager = $eventManager;
+
         return $this;
     }
 
@@ -273,6 +250,23 @@ class CacheService implements EventManagerAwareInterface
         if (!$this->eventManager instanceof EventManagerInterface) {
             $this->setEventManager(new EventManager());
         }
+
         return $this->eventManager;
+    }
+
+    /**
+     * @return IdGeneratorInterface
+     */
+    public function getIdGenerator()
+    {
+        return $this->idGenerator;
+    }
+
+    /**
+     * @param IdGeneratorInterface $idGenerator
+     */
+    public function setIdGenerator($idGenerator)
+    {
+        $this->idGenerator = $idGenerator;
     }
 }

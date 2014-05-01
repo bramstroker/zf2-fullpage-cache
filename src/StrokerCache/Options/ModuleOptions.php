@@ -14,18 +14,22 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var array
      */
-    private $strategies;
+    protected $strategies;
 
     /**
      * @var array
      */
-    private $storageAdapter;
+    protected $storageAdapter;
 
     /**
      * @var bool
      */
-    private $cacheResponse = true;
+    protected $cacheResponse = true;
 
+    /**
+     * @var string
+     */
+    protected $idGenerator = 'requesturi';
 
     /**
      * @return array
@@ -73,5 +77,21 @@ class ModuleOptions extends AbstractOptions
     public function getCacheResponse()
     {
         return $this->cacheResponse;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdGenerator()
+    {
+        return $this->idGenerator;
+    }
+
+    /**
+     * @param string $idGenerator
+     */
+    public function setIdGenerator($idGenerator)
+    {
+        $this->idGenerator = $idGenerator;
     }
 }

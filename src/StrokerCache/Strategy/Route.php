@@ -9,9 +9,8 @@ namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
-use Zend\Stdlib\AbstractOptions;
 
-class RouteName extends AbstractOptions implements StrategyInterface
+class Route extends AbstractStrategy
 {
     /**
      * @var array
@@ -49,7 +48,7 @@ class RouteName extends AbstractOptions implements StrategyInterface
      * Check if we should cache the request based on the params in the routematch
      *
      * @param  RouteMatch $match
-     * @param  array $routeConfig
+     * @param  array      $routeConfig
      * @return bool
      */
     protected function checkParams(RouteMatch $match, $routeConfig)
@@ -91,14 +90,15 @@ class RouteName extends AbstractOptions implements StrategyInterface
         } elseif ($checkValue != $actualValue) {
             return false;
         }
+
         return true;
     }
 
     /**
      * Check if we should cache the request based on http method requested
      *
-     * @param MvcEvent $event
-     * @param $routeConfig
+     * @param  MvcEvent $event
+     *                         @param $routeConfig
      * @return bool
      */
     protected function checkHttpMethod(MvcEvent $event, $routeConfig)
@@ -109,6 +109,7 @@ class RouteName extends AbstractOptions implements StrategyInterface
                 return false;
             }
         }
+
         return true;
     }
 
@@ -122,6 +123,7 @@ class RouteName extends AbstractOptions implements StrategyInterface
         if (!isset($routes[$routeName])) {
             return array();
         }
+
         return (array) $routes[$routeName];
     }
 

@@ -5,9 +5,8 @@
  * @license http://opensource.org/licenses/mit-license.php
  */
 
-namespace StrokerCache;
+namespace StrokerCache\Exception;
 
-class Version
+class BadConfigurationException extends \Exception implements ExceptionInterface
 {
-    const VERSION = '0.3.0';
 }

@@ -40,6 +40,7 @@ class CacheListener extends AbstractListenerAggregate
      * Default constructor
      *
      * @param CacheService $cacheService
+     * @param ModuleOptions $options
      */
     public function __construct(CacheService $cacheService, ModuleOptions $options)
     {
@@ -59,7 +60,7 @@ class CacheListener extends AbstractListenerAggregate
     /**
      * Load the page contents from the cache and set the response.
      *
-     * @param  MvcEvent $e
+     * @param  MvcEvent                            $e
      * @return \Zend\Stdlib\ResponseInterface|void
      */
     public function onRoute(MvcEvent $e)
@@ -73,15 +74,18 @@ class CacheListener extends AbstractListenerAggregate
         if ($data !== null) {
             $this->loadedFromCache = true;
 
-            if($this->getOptions()->getCacheResponse() === true) {
+            if ($this->getOptions()->getCacheResponse() === true) {
                 $response = unserialize($data);
             } else {
                 $response = $e->getResponse();
                 $response->setContent($data);
             }
 
+            $response->getHeaders()->addHeaderLine('X-Stroker-Cache', 'Hit');
+
             return $response;
         }
+        $e->getResponse()->getHeaders()->addHeaderLine('X-Stroker-Cache', 'Miss');
     }
 
     /**

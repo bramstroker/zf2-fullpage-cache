@@ -12,7 +12,6 @@ use Zend\EventManager\EventManager;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Options\ModuleOptions;
-use StrokerCache\Strategy\RouteName;
 use Zend\Mvc\MvcEvent;
 
 class CacheServiceTest extends \PHPUnit_Framework_TestCase
@@ -28,13 +27,15 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     protected $storageMock;
 
     /**
+     * @var MockInterface
+     */
+    protected $idGeneratorMock;
+
+    /**
      * @var MvcEvent
      */
     protected $mvcEvent;
 
-    /**
-     * Setup cache service and mocks
-     */
     public function setUp()
     {
         $_SERVER['REQUEST_URI'] = '/someroute';
@@ -45,29 +46,36 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->byDefault()
             ->getMock();
 
-        $this->cacheService = new CacheService($this->storageMock, new ModuleOptions());
+        $this->idGeneratorMock = \Mockery::mock('StrokerCache\IdGenerator\IdGeneratorInterface')
+            ->shouldReceive('generate')
+            ->byDefault()
+            ->andReturn('/foo/bar')
+            ->getMock();
+
+        $this->cacheService = new CacheService($this->storageMock, new ModuleOptions(), $this->idGeneratorMock);
     }
 
-    /**
-     * testLoadPageFromCache
-     */
+    public function tearDown()
+    {
+        \Mockery::close();
+    }
+
     public function testLoadPageFromCache()
     {
         $expectedContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 
         $this->storageMock
             ->shouldReceive('hasItem')
+            ->with('/foo/bar')
             ->andReturn(true)
             ->shouldReceive('getItem')
+            ->with('/foo/bar')
             ->andReturn($expectedContent);
 
         $content = $this->cacheService->load();
         $this->assertEquals($expectedContent, $content);
     }
 
-    /**
-     * testLoadReturnsNullWhenPageIsNotInCache
-     */
     public function testLoadReturnsNullWhenPageIsNotInCache()
     {
         $this->storageMock
@@ -76,93 +84,75 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->cacheService->load());
     }
 
-    public function testCanAbortLoadingWithEvent()
+    public function testCancelLoadingUsingLoadEvent()
     {
-        $this->setEventManager($this->cacheService, CacheEvent::EVENT_LOAD, function($e) {
-            $e->setAbort(true);
-        });
-
         $this->storageMock
             ->shouldReceive('hasItem')
+            ->with('/foo/bar')
             ->andReturn(true);
+
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function () { return false; });
 
         $this->assertNull($this->cacheService->load());
     }
 
-    /**
-     * testSaveResponseIsNotCached
-     */
     public function testSaveResponseIsNotCached()
     {
         // Setup
         $mvcEvent = new MvcEvent();
-        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
-            ->shouldReceive('shouldCache')
-            ->andReturn(false)
-            ->getMock();
 
         // Expectations
         $this->storageMock->shouldReceive('setItem')->never();
 
-        // Call once without any strategies confirured
-        $this->cacheService->save($mvcEvent);
-
-        // Call second time with non caching strategy added
-        $this->cacheService->addStrategy($strategyMock);
+        // Call second time with non caching event attached
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return false; });
         $this->cacheService->save($mvcEvent);
     }
 
-    /**
-     * testSaveResponseIsCached
-     */
     public function testSaveResponseIsCached()
     {
-        $response = $this->getMvcEvent()->getResponse();
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
-        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
-            ->shouldReceive('shouldCache')
-            ->with($this->getMvcEvent())
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        $this->cacheService->addStrategy($strategyMock);
+        $response = $this->getMvcEvent()->getResponse();
 
         $this->storageMock
             ->shouldReceive('setItem')
             ->once()
-            ->with(\Mockery::any(), serialize($response));
+            ->with('/foo/bar', serialize($response));
 
         $this->cacheService->save($this->getMvcEvent());
     }
 
-    /**
-     * testSaveContentIsCached
-     */
     public function testSaveContentIsCached()
     {
         $response = $this->getMvcEvent()->getResponse();
         $response->setContent('mockContent');
 
-        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
-            ->shouldReceive('shouldCache')
-            ->with($this->getMvcEvent())
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        $this->cacheService->addStrategy($strategyMock);
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $this->storageMock
             ->shouldReceive('setItem')
             ->once()
-            ->with(\Mockery::any(), $response->getContent());
+            ->with('/foo/bar', $response->getContent());
 
         $this->cacheService->getOptions()->setCacheResponse(false);
         $this->cacheService->save($this->getMvcEvent());
     }
 
-    /**
-     * testSaveGeneratesCorrectTags
-     */
+    public function testResponseIsCachedWhenOneListenerReturnsTrue()
+    {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return false; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
+        $self = $this;
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () use ($self) {
+            $self->fail('No more listeners should have been called anymore');
+        });
+
+        $this->storageMock->shouldReceive('setItem')->once();
+
+        $this->cacheService->save($this->getMvcEvent());
+    }
+
     public function testSaveGeneratesCorrectTags()
     {
         $expectedTags = array(
@@ -180,15 +170,11 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('setItem')
             ->shouldReceive('setTags')
             ->once()
-            ->with(\Mockery::any(), $expectedTags)
+            ->with('/foo/bar', $expectedTags)
             ->getMock();
         $this->cacheService->setCacheStorage($storageMock);
 
-        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
-            ->shouldReceive('shouldCache')
-            ->andReturn(true)
-            ->getMock();
-        $this->cacheService->addStrategy($strategyMock);
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $this->cacheService->save($this->getMvcEvent());
     }
@@ -211,15 +197,6 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->cacheService->clearByTags(array('foo'));
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testCreateIdThrowsExceptionWhenRequestUriIsNotAvailable()
-    {
-        unset($_SERVER['REQUEST_URI']);
-        $this->cacheService->load(new MvcEvent());
-    }
-
     public function testGetSetOptions()
     {
         $options = new ModuleOptions();
@@ -227,56 +204,26 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($options, $this->cacheService->getOptions());
     }
 
-    public function testGetSetStrategies()
-    {
-        $strategies = array(
-            new RouteName()
-        );
-        $this->cacheService->setStrategies($strategies);
-        $this->assertEquals($strategies, $this->cacheService->getStrategies());
-    }
-
     public function testSaveEventIsTriggered()
     {
         $self = $this;
-        $this->setEventManager($this->cacheService, CacheEvent::EVENT_SAVE, function($e) use ($self) {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function ($e) use ($self) {
             $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
         });
 
-        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
-            ->shouldReceive('shouldCache')
-            ->andReturn(true)
-            ->getMock();
-        $this->cacheService->addStrategy($strategyMock);
-
-        $this->cacheService->save($this->getMvcEvent());
-    }
-
-    public function testCanEarlyAbortShouldCacheWithEvent()
-    {
-        $this->setEventManager($this->cacheService, CacheEvent::EVENT_SAVE, function($e) {
-            $e->setAbort(true);
-        });
-
-        $this->storageMock->shouldReceive('setItem')->never();
-
-        $strategyMock = \Mockery::mock('StrokerCache\Strategy\StrategyInterface')
-            ->shouldReceive('shouldCache')
-            ->andReturn(true)
-            ->getMock();
-        $this->cacheService->addStrategy($strategyMock);
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
 
         $this->cacheService->save($this->getMvcEvent());
     }
 
     public function testLoadEventIsTriggered()
     {
-        $cacheKey = md5($_SERVER['REQUEST_URI']);
+        $this->idGeneratorMock->shouldReceive('generate')->andReturn('foo-bar');
 
         $self = $this;
-        $this->setEventManager($this->cacheService, CacheEvent::EVENT_LOAD, function($e) use ($self, $cacheKey) {
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function ($e) use ($self) {
             $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
-            $self->assertEquals($cacheKey, $e->getCacheKey());
+            $self->assertEquals('foo-bar', $e->getCacheKey());
         });
 
         $this->storageMock
@@ -291,8 +238,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $service = $this->cacheService
             ->setEventManager(new EventManager())
             ->setCacheStorage($this->storageMock)
-            ->setOptions(new ModuleOptions())
-            ->setStrategies(array());
+            ->setOptions(new ModuleOptions());
 
         $this->assertEquals($this->cacheService, $service);
     }
@@ -309,17 +255,5 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         }
 
         return $this->mvcEvent;
-    }
-
-    protected function setEventManager(CacheService $cacheService, $event = null, $callback = null)
-    {
-        $events = new EventManager;
-
-        if (null !== $event && null !== $callback) {
-            $events->attach($event, $callback);
-        }
-
-        $cacheService->setEventManager($events);
-        return $cacheService;
     }
 }

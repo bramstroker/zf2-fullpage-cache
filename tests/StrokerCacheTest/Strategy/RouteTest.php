@@ -7,15 +7,15 @@
 
 namespace StrokerCacheTest\Strategy;
 
-use StrokerCache\Strategy\RouteName;
+use StrokerCache\Strategy\Route;
 use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 
-class RouteNameTest extends \PHPUnit_Framework_TestCase
+class RouteTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RouteName
+     * @var Route
      */
     private $strategy;
 
@@ -24,7 +24,7 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->strategy = new RouteName();
+        $this->strategy = new Route();
     }
 
     /**
@@ -148,7 +148,7 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
      * @param string  $route
      * @param boolean $expectedResult
      * @param array   $params
-     * @param string  $httpMethods
+     * @param string  $httpMethod
      * @dataProvider shouldCacheProvider
      */
     public function testShouldCache($routes, $route, $expectedResult, $params = array(), $httpMethod = null)
@@ -169,12 +169,14 @@ class RouteNameTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $this->strategy->shouldCache($mvcEvent));
     }
 
-    /**
-     * testShouldCacheReturnsFalseOnNoRouteMatchObject
-     */
     public function testShouldCacheReturnsFalseWhenNoRouteMatchIsSet()
     {
         $mvcEvent = new MvcEvent();
         $this->assertFalse($this->strategy->shouldCache($mvcEvent));
+    }
+
+    public function testStrategyExtendsAbstractStrategy()
+    {
+        $this->assertInstanceOf('StrokerCache\Strategy\AbstractStrategy', $this->strategy);
     }
 }

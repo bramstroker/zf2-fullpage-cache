@@ -95,10 +95,11 @@ Example using APC:
 return array(
     'strokercache' => array(
         'storage_adapter' => array(
-            'apc'
+            'name' => 'Zend\Cache\Storage\Adapter\Apc',
         ),
     ),
 );
+
 ```
 
 ## Clearing the cache
@@ -197,6 +198,25 @@ public function onBootstrap(MvcEvent $e)
         }
         return true;
     }, 1000);
+}
+```
+
+If you want to avoide caching because, for instance, the user is authenticated, do the same as above, but listen on `LOAD` instead of `SHOULDCACHE`:
+
+
+```php
+public function onBootstrap(MvcEvent $e)
+{
+    $serviceManager = $e->getApplication()->getServiceManager();
+    $cacheService = $serviceManager->get('strokercache_service');
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function (CacheEvent $e) {
+        $loggedIn = /* your logic here */;
+        if ($loggedIn) {
+            $e->stopPropagation(true);
+            return false;
+        }
+    }, 1000);
+}
 ```
 
 ## Store directly to HTML files for max performance

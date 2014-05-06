@@ -219,6 +219,23 @@ public function onBootstrap(MvcEvent $e)
 }
 ```
 
+**Attention:** Be aware, that you should probably disable storing for authenticated users as well:
+
+```php
+public function onBootstrap(MvcEvent $e)
+{
+    $serviceManager = $e->getApplication()->getServiceManager();
+    $cacheService = $serviceManager->get('strokercache_service');
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function (CacheEvent $e) {
+        $loggedIn = /* your logic here */;
+        if ($loggedIn) {
+            $e->stopPropagation(true);
+            return false;
+        }
+    }, 1000);
+}
+```
+
 ## Store directly to HTML files for max performance
 
 TODO ...

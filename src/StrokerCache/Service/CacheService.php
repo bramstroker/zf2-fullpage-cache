@@ -130,10 +130,11 @@ class CacheService implements EventManagerAwareInterface
     }
 
     /**
-     * @param  array $tags
+     * @param  array     $tags
+     * @param  bool|null $disjunction
      * @return bool
      */
-    public function clearByTags(array $tags = array())
+    public function clearByTags(array $tags = array(), $disjunction = null)
     {
         if (!$this->getCacheStorage() instanceof TaggableInterface) {
             return false;
@@ -143,7 +144,7 @@ class CacheService implements EventManagerAwareInterface
             $tags
         );
 
-        return $this->getCacheStorage()->clearByTags($tags);
+        return $this->getCacheStorage()->clearByTags($tags, $disjunction);
     }
 
     /**

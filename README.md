@@ -122,6 +122,27 @@ To clear every page renderered by the `someAction` in `MyNamespace\MyController`
 To clear the route with alias `player` but only for the player with id 60. 
 `php public/index.php strokercache clear route_player,param_id_60`
 
+## Custom id generators
+
+You can create your own id generator by implementing the StrokerCache\IdGenerator\IdGeneratorInterface.
+Now register your generator to the PluginManager:
+
+```php
+<?php
+return array(
+    'strokercache' => array(
+        'id_generators' => array(
+            'plugin_manager' => array(
+                'invokables' => array(
+                    'myGenerator' => 'MyNamespace\MyGenerator'
+                ),
+            ),
+        ),
+        'id_generator' => 'myGenerator'
+    ),
+);
+```
+
 ## Custom strategies
 
 You can create your own strategies by implementing the StrokerCache\Strategy\StrategyInterface. Now register your strategy to the pluginManager:

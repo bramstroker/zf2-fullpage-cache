@@ -27,7 +27,7 @@ class CacheServiceFactory implements FactoryInterface
 
         $cacheService = new CacheService($cacheStorage, $options);
 
-        $this->setupIdGenerator($cacheService, $options);
+        $this->setupIdGenerator($cacheService, $options, $serviceLocator);
         $this->attachStrategiesToEventManager($cacheService, $options, $serviceLocator);
 
         return $cacheService;

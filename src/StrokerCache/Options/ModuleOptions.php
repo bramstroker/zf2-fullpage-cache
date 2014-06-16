@@ -1,8 +1,9 @@
 <?php
 /**
- * @author Bram Gerritsen bgerritsen@gmail.com
+ * @author        Bram Gerritsen bgerritsen@gmail.com
+ * @author        Aeneas Rekkas
  * @copyright (c) Bram Gerritsen 2013
- * @license http://opensource.org/licenses/mit-license.php
+ * @license       http://opensource.org/licenses/mit-license.php
  */
 
 namespace StrokerCache\Options;
@@ -14,37 +15,70 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var array
      */
+    protected $idGenerators;
+    /**
+     * @var array
+     */
     protected $strategies;
-
     /**
      * @var array
      */
     protected $storageAdapter;
-
     /**
      * @var bool
      */
     protected $cacheResponse = true;
-
     /**
      * @var string
      */
     protected $idGenerator = 'requesturi';
 
     /**
-     * @return array
+     * @return boolean
      */
-    public function getStrategies()
+    public function getCacheResponse()
     {
-        return $this->strategies;
+        return $this->cacheResponse;
     }
 
     /**
-     * @param array $strategies
+     * @param boolean $cacheResponse
      */
-    public function setStrategies(array $strategies)
+    public function setCacheResponse($cacheResponse)
     {
-        $this->strategies = $strategies;
+        $this->cacheResponse = $cacheResponse;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdGenerator()
+    {
+        return $this->idGenerator;
+    }
+
+    /**
+     * @param string $idGenerator
+     */
+    public function setIdGenerator($idGenerator)
+    {
+        $this->idGenerator = $idGenerator;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIdGenerators()
+    {
+        return $this->idGenerators;
+    }
+
+    /**
+     * @param array $idGenerators
+     */
+    public function setIdGenerators($idGenerators)
+    {
+        $this->idGenerators = $idGenerators;
     }
 
     /**
@@ -64,34 +98,18 @@ class ModuleOptions extends AbstractOptions
     }
 
     /**
-     * @param boolean $cacheResponse
+     * @return array
      */
-    public function setCacheResponse($cacheResponse)
+    public function getStrategies()
     {
-        $this->cacheResponse = $cacheResponse;
+        return $this->strategies;
     }
 
     /**
-     * @return boolean
+     * @param array $strategies
      */
-    public function getCacheResponse()
+    public function setStrategies(array $strategies)
     {
-        return $this->cacheResponse;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdGenerator()
-    {
-        return $this->idGenerator;
-    }
-
-    /**
-     * @param string $idGenerator
-     */
-    public function setIdGenerator($idGenerator)
-    {
-        $this->idGenerator = $idGenerator;
+        $this->strategies = $strategies;
     }
 }

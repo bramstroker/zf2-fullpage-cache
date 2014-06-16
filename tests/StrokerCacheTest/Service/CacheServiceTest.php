@@ -185,7 +185,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
         $storageMock = \Mockery::mock('Zend\Cache\Storage\TaggableInterface')
             ->shouldReceive('clearByTags')
-            ->with(array('strokercache_foo', 'strokercache_bar'))
+            ->with(array('strokercache_foo', 'strokercache_bar'), null)
             ->getMock();
         $this->cacheService->setCacheStorage($storageMock);
 

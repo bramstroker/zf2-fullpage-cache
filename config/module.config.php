@@ -38,7 +38,7 @@ return array(
             'name' => 'Zend\Cache\Storage\Adapter\Filesystem',
         ),
         'id_generators'   => array(
-            'plugin_manager' => []
+            'plugin_manager' => array()
         ),
         'strategies'      => array(
             'plugin_manager' => array(

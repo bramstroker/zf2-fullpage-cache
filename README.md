@@ -103,7 +103,7 @@ return array(
 );
 ```
 
-## Change storage adapter
+## TTL
 
 You can set the TTL (Time to live) for the cache items by specifying the option on the storage adapter configuration. Not all ZF2 storage adapters support TTL, which also is the reason why StrokerCache doesn't support per item TTL at the moment.
 

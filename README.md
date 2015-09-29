@@ -101,7 +101,24 @@ return array(
         ),
     ),
 );
+```
 
+## Change storage adapter
+
+You can set the TTL (Time to live) for the cache items by specifying the option on the storage adapter configuration. Not all ZF2 storage adapters support TTL, which also is the reason why StrokerCache doesn't support per item TTL at the moment.
+
+```php
+<?php
+return array(
+    'strokercache' => array(
+        'storage_adapter' => array(
+            'name' => 'filesystem',
+            'options' => [
+              'cache_dir' => __DIR__ . '/../../data/cache'
+            ],
+        ),
+    ),
+);
 ```
 
 ## Clearing the cache

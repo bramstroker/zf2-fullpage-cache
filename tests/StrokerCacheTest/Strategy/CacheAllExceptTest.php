@@ -77,12 +77,12 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
             array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'another' , false ),
             array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'more'    , false ),
 
-            array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'bar'     , true ),
+            array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'bar'     , true  ),
 
 
             // and finally
 
-            array( $except, 'Another\Different\Controller'                           , 'bar'     , true ),
+            array( $except, 'Another\Different\Controller'                           , 'bar'     , true  ),
 
         );
     }
@@ -109,7 +109,7 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldCacheException()
     {
-        $except = array('missing'=>1);
+        $except = array('missing' => 1);
 
         $this->strategy->setExcept($except);
 

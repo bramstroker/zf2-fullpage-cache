@@ -2,11 +2,11 @@
 
 namespace StrokerCacheTest\Strategy;
 
-use StrokerCache\Strategy\ControllerCacheAll;
+use StrokerCache\Strategy\CacheAllExcept;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
 
-class ControllerCacheAllTest extends \PHPUnit_Framework_TestCase
+class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ControllerName
@@ -15,7 +15,7 @@ class ControllerCacheAllTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->strategy = new ControllerCacheAll();
+        $this->strategy = new CacheAllExcept();
     }
 
     /**

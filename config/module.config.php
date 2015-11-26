@@ -43,6 +43,7 @@ return array(
         'strategies'      => array(
             'plugin_manager' => array(
                 'invokables' => array(
+                    'StrokerCache\Strategy\CacheAllExcept' => 'StrokerCache\Strategy\CacheAllExcept',
                     'StrokerCache\Strategy\Controller' => 'StrokerCache\Strategy\Controller',
                     'StrokerCache\Strategy\Route'      => 'StrokerCache\Strategy\Route',
                     'StrokerCache\Strategy\UriPath'    => 'StrokerCache\Strategy\UriPath'

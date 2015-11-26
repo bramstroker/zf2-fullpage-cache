@@ -7,7 +7,7 @@ use Zend\Mvc\MvcEvent;
 use StrokerCache\Strategy\AbstractStrategy as AbstractStrategyStrategyStrokerCache;
 use StrokerCache\Exception\BadConfigurationException;
 
-class ControllerCacheAll extends AbstractStrategyStrategyStrokerCache
+class CacheAllExcept extends AbstractStrategyStrategyStrokerCache
 {
     protected $except;
 

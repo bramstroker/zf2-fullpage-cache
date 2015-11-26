@@ -13,15 +13,36 @@ return array(
                         )
                     ),
                 ),
-                /*'StrokerCache\Strategy\ControllerName' => array(
+                /*
+                'StrokerCache\Strategy\ControllerName' => array(
                     'controllers' => array(
                     )
                 ),
                 'StrokerCache\Strategy\UriPath' => array(
                     'regexpes' => array(
                     )
-                )*/
+                )
+                'StrokerCache\Strategy\CacheAllExcept' => array(
+                    'except' => array(
+                        'namespaces' => array(
+                            'Application\Controller\Example1',
+                            'Application\Controller\Example2',
+                        ),
+                        'controllers' => array(
+                            'Application\Controller\Example1\Index',
+                            'Application\Controller\Example2\Contact',
+                        ),
+                        'actions' => array(
+                            'Application\Controller\Example1\Index' => array(
+                                'bar',
+                                'foo',
+                            ),
+                        ),
+
+                    ),
+                ),
+                */
             ),
-        )
-    )
+        ),
+    ),
 );

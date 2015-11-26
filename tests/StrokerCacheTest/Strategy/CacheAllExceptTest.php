@@ -45,7 +45,7 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
 
         );
 
-        return [
+        return array(
 
             // test for namespaces
 
@@ -84,7 +84,7 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
 
             array( $except, 'Another\Different\Controller'                           , 'bar'     , true ),
 
-        ];
+        );
     }
 
     /**
@@ -109,7 +109,7 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
      */
     public function testShouldCacheException()
     {
-        $except = ['missing'=>1];
+        $except = array('missing'=>1);
 
         $this->strategy->setExcept($except);
 

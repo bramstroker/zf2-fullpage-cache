@@ -23,66 +23,66 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
      */
     public static function shouldCacheProvider()
     {
-        $except = [
-            
-            'namespaces' => [
+        $except = array(
+
+            'namespaces' => array(
                 'Namespace\Controller\Console',
                 'Namespace\Controller\Debug',
-            ],
+            ),
 
-            'controllers' => [
+            'controllers' => array(
                 'Namespace\Controller\Company\Contact\Index',
                 'Namespace\Controller\Company\Mail\Index',
-            ],
+            ),
 
-            'actions' => [
-                'Namespace\Controller\Media\Newsletters\Subscribe' => [
+            'actions' => array(
+                'Namespace\Controller\Media\Newsletters\Subscribe' => array(
                     'index',
                     'another',
                     'more',
-                ]
-            ],
+                )
+            ),
 
-        ];
+        );
 
         return [
 
             // test for namespaces
 
-            [ $except, 'Namespace\Controller\Console\Index'                     , null      , false ],
-            [ $except, 'Namespace\Controller\Console\Index'                     , 'index'   , false ],
-            [ $except, 'Namespace\Controller\Console\Another'                   , null      , false ],
-            [ $except, 'Namespace\Controller\Console\Another'                   , 'boo'     , false ],
-            [ $except, 'Namespace\Controller\Console\Another\Another\Another'   , null      , false ],
-            [ $except, 'Namespace\Controller\Console\Another\Another\Another'   , 'bar'     , false ],
+            array( $except, 'Namespace\Controller\Console\Index'                     , null      , false ),
+            array( $except, 'Namespace\Controller\Console\Index'                     , 'index'   , false ),
+            array( $except, 'Namespace\Controller\Console\Another'                   , null      , false ),
+            array( $except, 'Namespace\Controller\Console\Another'                   , 'boo'     , false ),
+            array( $except, 'Namespace\Controller\Console\Another\Another\Another'   , null      , false ),
+            array( $except, 'Namespace\Controller\Console\Another\Another\Another'   , 'bar'     , false ),
 
-            [ $except, 'Namespace\Controller\Foo\Bar'                           , null      , true  ],
-            [ $except, 'Namespace\Controller\Foo\Bar'                           , 'boo'     , true  ],
+            array( $except, 'Namespace\Controller\Foo\Bar'                           , null      , true  ),
+            array( $except, 'Namespace\Controller\Foo\Bar'                           , 'boo'     , true  ),
 
 
             // test for controllers
 
-            [ $except, 'Namespace\Controller\Company\Contact\Index'             , null      , false ],
-            [ $except, 'Namespace\Controller\Company\Contact\Index'             , 'index'   , false ],
-            [ $except, 'Namespace\Controller\Company\Mail\Index'                , null      , false ],
-            [ $except, 'Namespace\Controller\Company\Mail\Index'                , 'boo'     , false ],
+            array( $except, 'Namespace\Controller\Company\Contact\Index'             , null      , false ),
+            array( $except, 'Namespace\Controller\Company\Contact\Index'             , 'index'   , false ),
+            array( $except, 'Namespace\Controller\Company\Mail\Index'                , null      , false ),
+            array( $except, 'Namespace\Controller\Company\Mail\Index'                , 'boo'     , false ),
 
-            [ $except, 'Namespace\Controller\Company\Bar\Index'                 , null      , true  ],
-            [ $except, 'Namespace\Controller\Company\Bar\Index'                 , 'bar'     , true  ],
+            array( $except, 'Namespace\Controller\Company\Bar\Index'                 , null      , true  ),
+            array( $except, 'Namespace\Controller\Company\Bar\Index'                 , 'bar'     , true  ),
 
 
             // test for actions
 
-            [ $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'index'   , false ],
-            [ $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'another' , false ],
-            [ $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'more'    , false ],
+            array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'index'   , false ),
+            array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'another' , false ),
+            array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'more'    , false ),
 
-            [ $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'bar'     , true ],
+            array( $except, 'Namespace\Controller\Media\Newsletters\Subscribe'       , 'bar'     , true ),
 
 
             // and finally
 
-            [ $except, 'Another\Different\Controller'                           , 'bar'     , true ],
+            array( $except, 'Another\Different\Controller'                           , 'bar'     , true ),
 
         ];
     }

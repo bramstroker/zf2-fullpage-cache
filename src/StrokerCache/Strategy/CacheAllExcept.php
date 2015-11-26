@@ -1,16 +1,26 @@
 <?php
+/**
+ * @author Bram Gerritsen bgerritsen@gmail.com
+ * @copyright (c) Bram Gerritsen 2013
+ * @license http://opensource.org/licenses/mit-license.php
+ */
 
 namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
 
-use StrokerCache\Strategy\AbstractStrategy as AbstractStrategyStrategyStrokerCache;
 use StrokerCache\Exception\BadConfigurationException;
 
-class CacheAllExcept extends AbstractStrategyStrategyStrokerCache
+class CacheAllExcept extends AbstractStrategy
 {
+    /**
+     * @var array
+     */
     protected $except;
 
+    /**
+     * {@inheritDoc}
+     */
     public function shouldCache(MvcEvent $event)
     {
         $except = $this->getExcept();
@@ -64,11 +74,17 @@ class CacheAllExcept extends AbstractStrategyStrategyStrokerCache
         return $shouldCache;
     }
 
+    /**
+     * @return array
+     */
     public function getExcept()
     {
         return $this->except;
     }
 
+    /**
+     * @param array $except
+     */
     public function setExcept(array $except)
     {
         $this->except = $except;

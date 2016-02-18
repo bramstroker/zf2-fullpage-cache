@@ -10,10 +10,7 @@ namespace StrokerCache\Strategy;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\Http\RouteMatch    as RouteMatchHttp;
 use Zend\Mvc\Router\Console\RouteMatch as RouteMatchConsole;
-
 use StrokerCache\Exception\BadConfigurationException;
-
-
 
 class CacheAllExcept extends AbstractStrategy
 {

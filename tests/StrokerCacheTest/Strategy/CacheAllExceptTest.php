@@ -120,4 +120,23 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
         $this->strategy->shouldCache($mvcEvent);
     }
 
+    /**
+     * In the case that a route is not matched - i.e. RouteMatch is null - strategy should always return false.
+     * Caching a non-matched route does not make any sense.
+     */
+    public function testShouldCacheWhenRouteMatchIsNull()
+    {
+        $except = array(
+            'namespaces' => array(
+                'Namespace\Example',
+            ),
+        );
+
+        $this->strategy->setExcept($except);
+
+        $mvcEvent = new MvcEvent();
+
+        $this->assertFalse($this->strategy->shouldCache($mvcEvent));
+    }
+
 }

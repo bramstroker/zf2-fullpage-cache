@@ -22,6 +22,11 @@ class Controller extends AbstractStrategy
     public function shouldCache(MvcEvent $event)
     {
         $routeMatch = $event->getRouteMatch();
+
+        if (null === $routeMatch) {
+            return false;
+        }
+
         $controller = $routeMatch->getParam('controller');
 
         return in_array($controller, $this->getControllers());

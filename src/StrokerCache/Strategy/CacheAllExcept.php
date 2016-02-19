@@ -29,7 +29,7 @@ class CacheAllExcept extends AbstractStrategy
             throw new BadConfigurationException(
                   "At least one of ['namespaces', 'controllers', 'actions'] keys has to be set in the "
                 . "\$config['strokercache']['strategies']['enabled']['" . __CLASS__ . "']['except'][] "
-                . "confiuration array."
+                . "configuration array."
             );
         }
 

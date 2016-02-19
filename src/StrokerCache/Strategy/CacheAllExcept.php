@@ -88,10 +88,13 @@ class CacheAllExcept extends AbstractStrategy
 
     /**
      * @param array $except
+     * @return $this
      */
     public function setExcept(array $except)
     {
         $this->except = $except;
+
+        return $this;
     }
 
     /**

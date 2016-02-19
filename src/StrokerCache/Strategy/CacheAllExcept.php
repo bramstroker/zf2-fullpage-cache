@@ -97,7 +97,8 @@ class CacheAllExcept extends AbstractStrategy
     /**
      * Normalize names before comparing
      *
-     * @param type $string
+     * @param string $string
+     * @return string
      */
     protected function normalize($string)
     {
@@ -105,6 +106,6 @@ class CacheAllExcept extends AbstractStrategy
 
         $string = strtolower($string);
 
-        return (string) $string;
+        return $string;
     }
 }

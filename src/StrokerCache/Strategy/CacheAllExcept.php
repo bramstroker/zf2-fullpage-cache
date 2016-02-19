@@ -27,13 +27,17 @@ class CacheAllExcept extends AbstractStrategy
 
         if (!isset($except['namespaces']) && !isset($except['controllers']) && !isset($except['actions'])) {
             throw new BadConfigurationException(
-                "At least one of ['namespaces', 'controllers', 'actions'] keys has to be set in the "
+                  "At least one of ['namespaces', 'controllers', 'actions'] keys has to be set in the "
                 . "\$config['strokercache']['strategies']['enabled']['" . __CLASS__ . "']['except'][] "
-                . "confiuration array."
+                . "configuration array."
             );
         }
 
-        $routeMatch  = $event->getRouteMatch();
+        $routeMatch = $event->getRouteMatch();
+
+        if (null === $routeMatch) {
+            return false;
+        }
 
         $controller  = $this->normalize($routeMatch->getParam('controller'));
         $action      = $this->normalize($routeMatch->getParam('action'));
@@ -84,16 +88,20 @@ class CacheAllExcept extends AbstractStrategy
 
     /**
      * @param array $except
+     * @return $this
      */
     public function setExcept(array $except)
     {
         $this->except = $except;
+
+        return $this;
     }
 
     /**
      * Normalize names before comparing
      *
-     * @param type $string
+     * @param string $string
+     * @return string
      */
     protected function normalize($string)
     {
@@ -101,6 +109,6 @@ class CacheAllExcept extends AbstractStrategy
 
         $string = strtolower($string);
 
-        return (string) $string;
+        return $string;
     }
 }

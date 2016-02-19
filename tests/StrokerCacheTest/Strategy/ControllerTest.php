@@ -54,4 +54,15 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf('StrokerCache\Strategy\AbstractStrategy', $this->strategy);
     }
+
+    /**
+     * In the case that a route is not matched - i.e. RouteMatch is null - strategy should always return false.
+     * Caching a non-matched route does not make any sense.
+     */
+    public function testShouldCacheWhenRouteMatchIsNull()
+    {
+        $this->strategy->setControllers(array());
+        $mvcEvent = new MvcEvent();
+        $this->assertFalse($this->strategy->shouldCache($mvcEvent));
+    }
 }

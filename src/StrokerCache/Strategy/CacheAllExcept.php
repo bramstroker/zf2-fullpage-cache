@@ -8,8 +8,7 @@
 namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\Http\RouteMatch    as RouteMatchHttp;
-use Zend\Mvc\Router\Console\RouteMatch as RouteMatchConsole;
+
 use StrokerCache\Exception\BadConfigurationException;
 
 class CacheAllExcept extends AbstractStrategy
@@ -34,48 +33,46 @@ class CacheAllExcept extends AbstractStrategy
             );
         }
 
-        $shouldCache = false;
-
         $routeMatch = $event->getRouteMatch();
 
-        if ($routeMatch instanceof RouteMatchHttp || $routeMatch instanceof RouteMatchConsole) {
+        if (null === $routeMatch) {
+            return false;
+        }
 
-            $shouldCache = true;
+        $controller  = $this->normalize($routeMatch->getParam('controller'));
+        $action      = $this->normalize($routeMatch->getParam('action'));
 
-            $controller  = $this->normalize($routeMatch->getParam('controller'));
-            $action      = $this->normalize($routeMatch->getParam('action'));
+        $shouldCache = true;
 
-            if (true === $shouldCache && isset($except['namespaces'])) {
-                foreach ($except['namespaces'] as $exceptNamespace) {
-                    if (0 === strpos($controller, $this->normalize($exceptNamespace))) {
-                        $shouldCache = false;
-                        break 1;
-                    }
+        if (true === $shouldCache && isset($except['namespaces'])) {
+            foreach ($except['namespaces'] as $exceptNamespace) {
+                if (0 === strpos($controller, $this->normalize($exceptNamespace))) {
+                    $shouldCache = false;
+                    break 1;
                 }
             }
+        }
 
-            if (true === $shouldCache && isset($except['controllers'])) {
-                foreach ($except['controllers'] as $exceptController) {
-                    if ($controller === $this->normalize($exceptController)) {
-                        $shouldCache = false;
-                        break 1;
-                    }
+        if (true === $shouldCache && isset($except['controllers'])) {
+            foreach ($except['controllers'] as $exceptController) {
+                if ($controller === $this->normalize($exceptController)) {
+                    $shouldCache = false;
+                    break 1;
                 }
             }
+        }
 
-            if (true === $shouldCache && isset($except['actions'])) {
-                foreach ($except['actions'] as $exceptController => $exceptActions) {
-                    if ($controller === $this->normalize($exceptController)) {
-                        foreach ($exceptActions as $exceptAction) {
-                            if ($action === $this->normalize($exceptAction)) {
-                                $shouldCache = false;
-                                break 2;
-                            }
+        if (true === $shouldCache && isset($except['actions'])) {
+            foreach ($except['actions'] as $exceptController => $exceptActions) {
+                if ($controller === $this->normalize($exceptController)) {
+                    foreach ($exceptActions as $exceptAction) {
+                        if ($action === $this->normalize($exceptAction)) {
+                            $shouldCache = false;
+                            break 2;
                         }
                     }
                 }
             }
-
         }
 
         return $shouldCache;

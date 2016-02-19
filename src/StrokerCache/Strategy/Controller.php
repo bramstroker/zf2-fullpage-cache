@@ -42,9 +42,11 @@ class Controller extends AbstractStrategy
 
     /**
      * @param array $controllers
+     * @return $this
      */
     public function setControllers(array $controllers)
     {
         $this->controllers = $controllers;
+        return $this;
     }
 }

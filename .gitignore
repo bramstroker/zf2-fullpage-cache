@@ -2,7 +2,6 @@ INSTALL.txt
 LICENSE.txt
 README.txt
 vendor
-.idea
 composer.lock
 composer.phar
 build

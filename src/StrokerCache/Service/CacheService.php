@@ -8,7 +8,6 @@
 namespace StrokerCache\Service;
 
 use StrokerCache\IdGenerator\IdGeneratorInterface;
-use StrokerCache\IdGenerator\RequestUriGenerator;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManager;

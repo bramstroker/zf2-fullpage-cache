@@ -2,8 +2,7 @@ inherit: true
 filter:
     excluded_paths: [tests/*]
 tools:
-    external_code_coverage:
-        timeout: 600
+    external_code_coverage: false
 checks:
     php:
         code_rating: true

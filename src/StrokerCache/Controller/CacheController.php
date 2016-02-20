@@ -40,7 +40,7 @@ class CacheController extends AbstractActionController
      */
     public function clearAction()
     {
-        $tags = $this->getRequest()->getParam('tags');
+        $tags = $this->params('tags', null);
         if (null === $tags) {
             return "\n\nYou should provide tags";
         }

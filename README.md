@@ -1,13 +1,13 @@
 # StrokerCache
 
 [![Build Status](https://travis-ci.org/bramstroker/zf2-fullpage-cache.png?branch=master)](https://travis-ci.org/bramstroker/zf2-fullpage-cache)
-[![Coverage Status](https://coveralls.io/repos/bramstroker/zf2-fullpage-cache/badge.png)](https://coveralls.io/r/bramstroker/zf2-fullpage-cache)
+[![Code Coverage](https://scrutinizer-ci.com/g/bramstroker/zf2-fullpage-cache/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/bramstroker/zf2-fullpage-cache/?branch=master)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/bramstroker/zf2-fullpage-cache/badges/quality-score.png?s=82cfa6f87dbe10c8c9d9e74ca62027a80a8c9cfb)](https://scrutinizer-ci.com/g/bramstroker/zf2-fullpage-cache/)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/b99c2f08-32c2-4c57-923e-a0be3af98227/mini.png)](https://insight.sensiolabs.com/projects/b99c2f08-32c2-4c57-923e-a0be3af98227)
 [![Total Downloads](https://poser.pugx.org/stroker/cache/downloads.svg)](https://packagist.org/packages/stroker/cache)
 [![Latest Stable Version](https://poser.pugx.org/stroker/cache/v/stable.svg)](https://packagist.org/packages/stroker/cache)
 
-This module provides a full page cache solution for Zend Framework 2.
+This module provides a full page cache solution for ZF 2 and ZF 3.
 
 ## Installation
 

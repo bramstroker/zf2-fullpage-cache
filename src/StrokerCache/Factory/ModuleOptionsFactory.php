@@ -7,6 +7,7 @@
 
 namespace StrokerCache\Factory;
 
+use Interop\Container\ContainerInterface;
 use StrokerCache\Options\ModuleOptions;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -18,8 +19,16 @@ class ModuleOptionsFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config = $serviceLocator->get('Config');
-        $config = isset($config['strokercache']) ? $config['strokercache'] : array();
+        return $this($serviceLocator, ModuleOptions::class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $config = $container->get('Config');
+        $config = isset($config['strokercache']) ? $config['strokercache'] : [];
 
         return new ModuleOptions($config);
     }

@@ -4,7 +4,7 @@ namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\CacheAllExcept;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 
 class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,27 +23,27 @@ class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
      */
     public static function shouldCacheProvider()
     {
-        $except = array(
+        $except = [
 
-            'namespaces' => array(
+            'namespaces' => [
                 'Namespace\Controller\Console',
                 'Namespace\Controller\Debug',
-            ),
+            ],
 
-            'controllers' => array(
+            'controllers' => [
                 'Namespace\Controller\Company\Contact\Index',
                 'Namespace\Controller\Company\Mail\Index',
-            ),
+            ],
 
-            'actions' => array(
-                'Namespace\Controller\Media\Newsletters\Subscribe' => array(
+            'actions' => [
+                'Namespace\Controller\Media\Newsletters\Subscribe' => [
                     'index',
                     'another',
                     'more',
-                )
-            ),
+                ]
+            ],
 
-        );
+        ];
 
         return array(
 

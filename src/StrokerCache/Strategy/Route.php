@@ -8,7 +8,7 @@
 namespace StrokerCache\Strategy;
 
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 
 class Route extends AbstractStrategy
 {
@@ -121,7 +121,7 @@ class Route extends AbstractStrategy
     {
         $routes = $this->getRoutes();
         if (!isset($routes[$routeName])) {
-            return array();
+            return [];
         }
 
         return (array) $routes[$routeName];

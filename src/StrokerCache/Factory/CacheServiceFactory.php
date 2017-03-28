@@ -7,11 +7,17 @@
 
 namespace StrokerCache\Factory;
 
+use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
 use StrokerCache\Exception\RuntimeException;
+use StrokerCache\IdGenerator\IdGeneratorPluginManager;
 use StrokerCache\Listener\ShouldCacheStrategyListener;
 use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
+use StrokerCache\Strategy\CacheStrategyPluginManager;
 use Zend\EventManager\ListenerAggregateInterface;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -22,13 +28,21 @@ class CacheServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $options      = $serviceLocator->get('StrokerCache\Options\ModuleOptions');
-        $cacheStorage = $serviceLocator->get('StrokerCache\Storage\CacheStorage');
+        return $this($serviceLocator, CacheService::class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        $options      = $container->get(ModuleOptions::class);
+        $cacheStorage = $container->get('StrokerCache\Storage\CacheStorage');
 
         $cacheService = new CacheService($cacheStorage, $options);
 
-        $this->setupIdGenerator($cacheService, $options, $serviceLocator);
-        $this->attachStrategiesToEventManager($cacheService, $options, $serviceLocator);
+        $this->setupIdGenerator($cacheService, $options, $container);
+        $this->attachStrategiesToEventManager($cacheService, $options, $container);
 
         return $cacheService;
     }
@@ -36,16 +50,16 @@ class CacheServiceFactory implements FactoryInterface
     /**
      * @param CacheService            $cacheService
      * @param ModuleOptions           $options
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface      $container
      * @throws RuntimeException
      */
     protected function setupIdGenerator(
         CacheService $cacheService,
         ModuleOptions $options,
-        ServiceLocatorInterface $serviceLocator
+        ContainerInterface $container
     ) {
         $idGenerator        = $options->getIdGenerator();
-        $idGeneratorManager = $serviceLocator->get('StrokerCache\IdGenerator\IdGeneratorPluginManager');
+        $idGeneratorManager = $container->get(IdGeneratorPluginManager::class);
 
         if ($idGeneratorManager->has($idGenerator)) {
             $cacheService->setIdGenerator($idGeneratorManager->get($idGenerator));
@@ -57,18 +71,18 @@ class CacheServiceFactory implements FactoryInterface
     /**
      * @param CacheService            $cacheService
      * @param ModuleOptions           $options
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param ContainerInterface      $container
      */
     protected function attachStrategiesToEventManager(
         CacheService $cacheService,
         ModuleOptions $options,
-        ServiceLocatorInterface $serviceLocator
+        ContainerInterface $container
     ) {
         // Register enabled strategies on the cacheListener
         $strategies = $options->getStrategies();
         if (isset($strategies['enabled'])) {
-            /** @var $strategyPluginManager \StrokerCache\Strategy\CacheStrategyPluginManager */
-            $strategyPluginManager = $serviceLocator->get('StrokerCache\Strategy\CacheStrategyPluginManager');
+            /** @var $strategyPluginManager CacheStrategyPluginManager */
+            $strategyPluginManager = $container->get(CacheStrategyPluginManager::class);
 
             foreach ($strategies['enabled'] as $alias => $options) {
                 if (is_numeric($alias)) {
@@ -81,7 +95,7 @@ class CacheServiceFactory implements FactoryInterface
                 } else {
                     $listener = new ShouldCacheStrategyListener($strategy);
                 }
-                $cacheService->getEventManager()->attach($listener);
+                $listener->attach($cacheService->getEventManager());
             }
         }
     }

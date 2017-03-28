@@ -7,9 +7,10 @@
 
 namespace StrokerCacheTest\Strategy;
 
+use StrokerCache\Strategy\AbstractStrategy;
 use StrokerCache\Strategy\Controller;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,11 +29,11 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
      */
     public static function shouldCacheProvider()
     {
-        return array(
-            array(array('Namespace\TestController'), 'Namespace\TestController', true),
-            array(array(), 'Namespace\TestController', false),
-            array(array('Namespace\TestController2'), 'Namespace\TestController', false),
-        );
+        return [
+            [['Namespace\TestController'], 'Namespace\TestController', true],
+            [[], 'Namespace\TestController', false],
+            [['Namespace\TestController2'], 'Namespace\TestController', false],
+        ];
     }
 
     /**
@@ -52,7 +53,7 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
 
     public function testStrategyExtendsAbstractStrategy()
     {
-        $this->assertInstanceOf('StrokerCache\Strategy\AbstractStrategy', $this->strategy);
+        $this->assertInstanceOf(AbstractStrategy::class, $this->strategy);
     }
 
     /**

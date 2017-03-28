@@ -51,10 +51,10 @@ class CacheListener extends AbstractListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach('route', array($this, 'onRoute'), 100);
-        $this->listeners[] = $events->attach('finish', array($this, 'onFinish'), -100);
+        $this->listeners[] = $events->attach('route', [$this, 'onRoute'], 100);
+        $this->listeners[] = $events->attach('finish', [$this, 'onFinish'], -100);
     }
 
     /**

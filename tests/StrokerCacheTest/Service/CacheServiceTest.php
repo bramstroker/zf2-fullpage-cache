@@ -66,6 +66,10 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadPageFromCache()
     {
+        // Setup
+        $mvcEvent = new MvcEvent();
+
+        // Expectations
         $expectedContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 
         $this->storageMock
@@ -76,20 +80,26 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->with('/foo/bar')
             ->andReturn($expectedContent);
 
-        $content = $this->cacheService->load();
+        $content = $this->cacheService->load($mvcEvent);
         $this->assertEquals($expectedContent, $content);
     }
 
     public function testLoadReturnsNullWhenPageIsNotInCache()
     {
+        // Setup
+        $mvcEvent = new MvcEvent();
+
         $this->storageMock
             ->shouldReceive('hasItem')
             ->andReturn(false);
-        $this->assertNull($this->cacheService->load());
+        $this->assertNull($this->cacheService->load($mvcEvent));
     }
 
     public function testCancelLoadingUsingLoadEvent()
     {
+        // Setup
+        $mvcEvent = new MvcEvent();
+
         $this->storageMock
             ->shouldReceive('hasItem')
             ->with('/foo/bar')
@@ -97,7 +107,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function () { return false; });
 
-        $this->assertNull($this->cacheService->load());
+        $this->assertNull($this->cacheService->load($mvcEvent));
     }
 
     public function testSaveResponseIsNotCached()
@@ -222,6 +232,9 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadEventIsTriggered()
     {
+        // Setup
+        $mvcEvent = new MvcEvent();
+
         $this->idGeneratorMock->shouldReceive('generate')->andReturn('foo-bar');
 
         $self = $this;
@@ -234,7 +247,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('hasItem')
             ->andReturn(true);
 
-        $this->cacheService->load();
+        $this->cacheService->load($mvcEvent);
     }
 
     public function testSettersProvideFluentInterface()

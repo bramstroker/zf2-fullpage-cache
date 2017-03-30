@@ -3,7 +3,7 @@ return array(
     'strokercache' => array(
         'strategies' => array(
             'enabled' => array(
-                'StrokerCache\Strategy\RouteName' => array(
+                'StrokerCache\Strategy\Route' => array(
                     'routes' => array(
                         'home',
                         'someroute' => array(
@@ -14,7 +14,7 @@ return array(
                     ),
                 ),
                 /*
-                'StrokerCache\Strategy\ControllerName' => array(
+                'StrokerCache\Strategy\Controller' => array(
                     'controllers' => array(
                     )
                 ),

@@ -1,61 +1,75 @@
 <?php
-return array(
-    'service_manager' => array(
-        'factories' => array(
-            'StrokerCache\Listener\CacheListener'               => 'StrokerCache\Factory\CacheListenerFactory',
-            'StrokerCache\Options\ModuleOptions'                => 'StrokerCache\Factory\ModuleOptionsFactory',
-            'strokerCache\Service\CacheService'                 => 'StrokerCache\Factory\CacheServiceFactory',
-            'StrokerCache\Storage\CacheStorage'                 => 'StrokerCache\Factory\CacheStorageFactory',
-            'StrokerCache\Strategy\CacheStrategyPluginManager'  => 'StrokerCache\Factory\CacheStrategyPluginManagerFactory',
-            'StrokerCache\IdGenerator\IdGeneratorPluginManager' => 'StrokerCache\Factory\IdGeneratorPluginManagerFactory',
-        ),
-        'aliases'   => array(
-            'strokercache_service' => 'StrokerCache\Service\CacheService'
-        )
-    ),
-    'console'         => array(
-        'router' => array(
-            'routes' => array(
-                'strokercache-clear' => array(
-                    'options' => array(
+use StrokerCache\Controller\CacheController;
+use StrokerCache\Factory\CacheControllerFactory;
+use StrokerCache\Factory\CacheListenerFactory;
+use StrokerCache\Factory\CacheServiceFactory;
+use StrokerCache\Factory\CacheStorageFactory;
+use StrokerCache\Factory\CacheStrategyPluginManagerFactory;
+use StrokerCache\Factory\IdGeneratorPluginManagerFactory;
+use StrokerCache\Factory\ModuleOptionsFactory;
+use StrokerCache\IdGenerator\IdGeneratorPluginManager;
+use StrokerCache\Listener\CacheListener;
+use StrokerCache\Options\ModuleOptions;
+use StrokerCache\Service\CacheService;
+use StrokerCache\Strategy\CacheAllExcept;
+use StrokerCache\Strategy\CacheStrategyPluginManager;
+use StrokerCache\Strategy\Controller;
+use StrokerCache\Strategy\Route;
+use StrokerCache\Strategy\UriPath;
+use Zend\Cache\Storage\Adapter\Filesystem;
+use Zend\ServiceManager\Factory\InvokableFactory;
+
+return [
+    'service_manager' => [
+        'factories' => [
+            CacheListener::class => CacheListenerFactory::class,
+            ModuleOptions::class => ModuleOptionsFactory::class,
+            CacheService::class => CacheServiceFactory::class,
+            'StrokerCache\Storage\CacheStorage' => CacheStorageFactory::class,
+            CacheStrategyPluginManager::class => CacheStrategyPluginManagerFactory::class,
+            IdGeneratorPluginManager::class => IdGeneratorPluginManagerFactory::class,
+        ],
+        'aliases'   => [
+            'strokercache_service' => CacheService::class
+        ]
+    ],
+    'console' => [
+        'router' => [
+            'routes' => [
+                'strokercache-clear' => [
+                    'options' => [
                         'route'    => 'strokercache clear <tags>',
-                        'defaults' => array(
-                            'controller' => 'StrokerCache\Controller\Cache',
+                        'defaults' => [
+                            'controller' => CacheController::class,
                             'action'     => 'clear',
-                        )
-                    ),
-                ),
-            ),
-        ),
-    ),
-    'controllers'     => array(
-        'factories' => array(
-            'StrokerCache\Controller\Cache' => 'StrokerCache\Factory\CacheControllerFactory'
-        )
-    ),
-    'strokercache'    => array(
-        'storage_adapter' => array(
-            'name' => 'Zend\Cache\Storage\Adapter\Filesystem',
-        ),
-        'id_generators'   => array(
-            'plugin_manager' => array()
-        ),
-        'strategies'      => array(
-            'plugin_manager' => array(
-                'invokables' => array(
-                    'StrokerCache\Strategy\CacheAllExcept' => 'StrokerCache\Strategy\CacheAllExcept',
-                    'StrokerCache\Strategy\Controller'     => 'StrokerCache\Strategy\Controller',
-                    'StrokerCache\Strategy\Route'          => 'StrokerCache\Strategy\Route',
-                    'StrokerCache\Strategy\UriPath'        => 'StrokerCache\Strategy\UriPath',
-                ),
-                // This is for BC support
-                'aliases'    => array(
-                    'StrokerCache\Strategy\RouteName'      => 'StrokerCache\Strategy\Route',
-                    'StrokerCache\Strategy\ControllerName' => 'StrokerCache\Strategy\Controller',
-                    'StrokerCache\Strategy\Url'            => 'StrokerCache\Strategy\UriPath',
-                )
-            ),
-        ),
+                        ]
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'controllers'     => [
+        'factories' => [
+            CacheController::class => CacheControllerFactory::class
+        ]
+    ],
+    'strokercache'    => [
+        'storage_adapter' => [
+            'name' => Filesystem::class,
+        ],
+        'id_generators'   => [
+            'plugin_manager' => []
+        ],
+        'strategies'      => [
+            'plugin_manager' => [
+                'factories' => [
+                    CacheAllExcept::class => InvokableFactory::class,
+                    Controller::class => InvokableFactory::class,
+                    Route::class => InvokableFactory::class,
+                    UriPath::class => InvokableFactory::class
+                ],
+            ],
+        ],
         'id_generator'    => 'requestUri'
-    ),
-);
+    ],
+];

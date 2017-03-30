@@ -17,7 +17,7 @@ use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
 use Zend\Cache\Storage\StorageInterface;
 
-class CacheService implements EventManagerAwareInterface
+class CacheService
 {
     /**
      * Prefix to use for the tag key

@@ -14,7 +14,7 @@ class UriPath extends AbstractStrategy
     /**
      * @var array
      */
-    protected $regexpes;
+    protected $regexpes = [];
 
     /**
      * {@inheritDoc}

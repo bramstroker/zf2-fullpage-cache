@@ -7,12 +7,16 @@
 
 namespace StrokerCacheTest\Service;
 
+use Mockery;
 use Mockery\MockInterface;
+use StrokerCache\IdGenerator\IdGeneratorInterface;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\EventManager\EventManager;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Options\ModuleOptions;
 use Zend\Mvc\MvcEvent;
+use Zend\Router\RouteMatch;
 
 class CacheServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,14 +43,14 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $_SERVER['REQUEST_URI'] = '/someroute';
-        $this->storageMock = \Mockery::mock('Zend\Cache\Storage\StorageInterface')
+        $this->storageMock = Mockery::mock(StorageInterface::class)
             ->shouldReceive('setItem')
             ->byDefault()
             ->shouldReceive('getItem')
             ->byDefault()
             ->getMock();
 
-        $this->idGeneratorMock = \Mockery::mock('StrokerCache\IdGenerator\IdGeneratorInterface')
+        $this->idGeneratorMock = Mockery::mock(IdGeneratorInterface::class)
             ->shouldReceive('generate')
             ->byDefault()
             ->andReturn('/foo/bar')
@@ -57,7 +61,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testLoadPageFromCache()
@@ -176,7 +180,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->getMvcEvent()->getRouteMatch()->setParam('someParam', 'someValue');
 
         // Storage mock should implement the TaggableInterface
-        $storageMock = \Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+        $storageMock = Mockery::mock('Zend\Cache\Storage\TaggableInterface')
             ->shouldReceive('setItem')
             ->shouldReceive('setTags')
             ->once()
@@ -193,7 +197,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     {
         $tags = array('foo', 'bar');
 
-        $storageMock = \Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+        $storageMock = Mockery::mock('Zend\Cache\Storage\TaggableInterface')
             ->shouldReceive('clearByTags')
             ->with(array('strokercache_foo', 'strokercache_bar'), null)
             ->getMock();
@@ -263,7 +267,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     {
         if ($this->mvcEvent === null) {
             $this->mvcEvent = new MvcEvent();
-            $this->mvcEvent->setRouteMatch(new \Zend\Mvc\Router\Http\RouteMatch(array()));
+            $this->mvcEvent->setRouteMatch(new RouteMatch([]));
             $this->mvcEvent->setResponse(new \Zend\Http\Response());
         }
 

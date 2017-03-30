@@ -7,7 +7,10 @@
 
 namespace StrokerCache\Factory;
 
+use Interop\Container\ContainerInterface;
 use StrokerCache\Listener\CacheListener;
+use StrokerCache\Options\ModuleOptions;
+use StrokerCache\Service\CacheService;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -18,6 +21,17 @@ class CacheListenerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new CacheListener($serviceLocator->get('StrokerCache\Service\CacheService'), $serviceLocator->get('StrokerCache\Options\ModuleOptions'));
+        return $this($serviceLocator, CacheListener::class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    {
+        return new CacheListener(
+            $container->get(CacheService::class),
+            $container->get(ModuleOptions::class)
+        );
     }
 }

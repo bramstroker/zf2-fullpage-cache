@@ -10,7 +10,7 @@ namespace StrokerCacheTest\Strategy;
 use StrokerCache\Strategy\Route;
 use Zend\Http\Request;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Router\RouteMatch;
+use Zend\Router\RouteMatch;
 
 class RouteTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,115 +32,115 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     public static function shouldCacheProvider()
     {
-        return array(
-            'match' => array(
-                array('route/route1', 'route2'),
+        return [
+            'match' => [
+                ['route/route1', 'route2'],
                 'route/route1',
                 true
-            ),
-            'nomatch' => array(
-                array('route/route1', 'route2'),
+            ],
+            'nomatch' => [
+                ['route/route1', 'route2'],
                 'route3',
                 false
-            ),
-            'match-params' => array(
-                array(
-                    'testroute' => array(
-                        'params' => array('param1' => 'value1')
-                    )
-                ),
+            ],
+            'match-params' => [
+                [
+                    'testroute' => [
+                        'params' => ['param1' => 'value1']
+                    ]
+                ],
                 'testroute',
                 true,
-                array(
+                [
                     'param1' => 'value1',
                     'param2' => 'value2'
-                ),
-            ),
-            'match-params-multivalue' => array(
-                array(
-                    'testroute' => array(
-                        'params' => array('param1' => array('value1', 'value2', 'value3'))
-                    )
-                ),
+                ],
+            ],
+            'match-params-multivalue' => [
+                [
+                    'testroute' => [
+                        'params' => ['param1' => ['value1', 'value2', 'value3']]
+                    ]
+                ],
                 'testroute',
                 true,
-                array(
+                [
                     'param1' => 'value3',
-                ),
-            ),
-            'match-params-when-no-params-in-routematch' => array(
-                array(
-                    'testroute' => array(
-                        'params' => array('param1' => 'value1')
-                    )
-                ),
+                ],
+            ],
+            'match-params-when-no-params-in-routematch' => [
+                [
+                    'testroute' => [
+                        'params' => ['param1' => 'value1']
+                    ]
+                ],
                 'testroute',
                 true
-            ),
-            'nomatch-params' => array(
-                array(
-                    'testroute' => array(
-                        'params' => array('param1' => 'value2')
-                    )
-                ),
+            ],
+            'nomatch-params' => [
+                [
+                    'testroute' => [
+                        'params' => ['param1' => 'value2']
+                    ]
+                ],
                 'testroute',
                 false,
-                array(
+                [
                     'param1' => 'value1',
                     'param2' => 'value2'
-                ),
-            ),
-            'match-regexparams' => array(
-                array(
-                    'testroute' => array(
-                        'params' => array(
-                            'param1' => '/val.*/')
-                    )
-                ),
+                ],
+            ],
+            'match-regexparams' => [
+                [
+                    'testroute' => [
+                        'params' => [
+                            'param1' => '/val.*/']
+                    ]
+                ],
                 'testroute',
                 true,
-                array(
+                [
                     'param1' => 'value1',
                     'param2' => 'value2'
-                ),
-            ),
-            'nomatch-regexparams' => array(
-                array(
-                    'testroute' => array(
-                        'params' => array(
-                            'param1' => '/val.*/')
-                    )
-                ),
+                ],
+            ],
+            'nomatch-regexparams' => [
+                [
+                    'testroute' => [
+                        'params' => [
+                            'param1' => '/val.*/']
+                    ]
+                ],
                 'testroute',
                 false,
-                array(
+                [
                     'param1' => 'foo',
                     'param2' => 'value2'
-                ),
-            ),
-            'match-http-method' => array(
-                array(
-                    'foo' => array(
-                        'http_methods' => array('GET', 'POST')
-                    )
-                ),
+                ],
+            ],
+            'match-http-method' => [
+                [
+                    'foo' => [
+                        'http_methods' => ['GET', 'POST']
+                    ]
+                ],
                 'foo',
                 true,
-                array(),
+                [],
                 'POST',
-            ),
-            'nomatch-http-method' => array(
-                array(
-                    'foo' => array(
-                        'http_methods' => array('GET')
-                    )
-                ),
+            ],
+            'nomatch-http-method' => [
+                [
+                    'foo' => [
+                        'http_methods' => ['GET']
+                    ]
+                ],
                 'foo',
                 false,
-                array(),
+                [],
                 'POST',
-            )
-        );
+            ]
+        ];
     }
 
     /**

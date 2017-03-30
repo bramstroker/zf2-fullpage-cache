@@ -4,5 +4,5 @@ README.txt
 vendor
 composer.lock
 composer.phar
-build
+build/**
 .idea

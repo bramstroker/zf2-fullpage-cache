@@ -7,8 +7,10 @@
 
 namespace StrokerCacheTest\Strategy;
 
+use Mockery;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Strategy\AbstractStrategy;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\MvcEvent;
 
 class AbstractStrategyTest extends \PHPUnit_Framework_TestCase
@@ -25,12 +27,12 @@ class AbstractStrategyTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        \Mockery::close();
+        Mockery::close();
     }
 
     public function testCorrectListenerIsAttached()
     {
-        $eventManagerMock = \Mockery::mock('Zend\EventManager\EventManagerInterface')
+        $eventManagerMock = Mockery::mock(EventManagerInterface::class)
             ->shouldReceive('attach')
             ->once()
             ->with(CacheEvent::EVENT_SHOULDCACHE, array($this->strategy, 'shouldCacheCallback'), 100)
@@ -41,8 +43,9 @@ class AbstractStrategyTest extends \PHPUnit_Framework_TestCase
 
     public function testListenersCanBeDetached()
     {
-        $eventManagerMock = \Mockery::mock('Zend\EventManager\EventManagerInterface')
+        $eventManagerMock = Mockery::mock(EventManagerInterface::class)
             ->shouldReceive('attach')
+            ->andReturn(function() {})
             ->getMock();
 
         $eventManagerMock

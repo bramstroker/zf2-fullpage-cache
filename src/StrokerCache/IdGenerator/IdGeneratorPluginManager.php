@@ -9,33 +9,57 @@ namespace StrokerCache\IdGenerator;
 
 use StrokerCache\Exception;
 use Zend\ServiceManager\AbstractPluginManager;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 class IdGeneratorPluginManager extends AbstractPluginManager
 {
+    /**
+     * @var string
+     */
+    protected $instanceOf = IdGeneratorInterface::class;
+
+    /**
+     * @var array
+     */
+    protected $aliases = [
+        'requesturi' => RequestUriGenerator::class,
+        'requestUri' => RequestUriGenerator::class,
+        'fulluri'   => FullUriGenerator::class,
+        'fullUri'   => FullUriGenerator::class
+    ];
+
     /**
      * Builtin generators
      *
      * @var array
      */
-    protected $invokableClasses = array(
-        'requesturi' => 'StrokerCache\IdGenerator\RequestUriGenerator',
-        'fulluri'   => 'StrokerCache\IdGenerator\FullUriGenerator'
-    );
+    protected $factories = [
+        RequestUriGenerator::class => InvokableFactory::class,
+        FullUriGenerator::class => InvokableFactory::class
+    ];
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function validatePlugin($plugin)
+    public function validate($instance)
     {
-        if ($plugin instanceof IdGeneratorInterface) {
+        if ($instance instanceof $this->instanceOf) {
             // we're okay
             return;
         }
 
         throw new Exception\RuntimeException(sprintf(
             'Plugin of type %s is invalid; must implement %s\IdGeneratorInterface',
-            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
+            (is_object($instance) ? get_class($instance) : gettype($instance)),
             __NAMESPACE__
         ));
+    }
+
+    /**
+     * @deprecated to support ServiceManager v2
+     */
+    public function validatePlugin($instance)
+    {
+        $this->validate($instance);
     }
 }

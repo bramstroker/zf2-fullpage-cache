@@ -30,9 +30,9 @@ class ShouldCacheStrategyListener extends AbstractListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach(CacheEvent::EVENT_SHOULDCACHE, array($this, 'shouldCache'), 100);
+        $this->listeners[] = $events->attach(CacheEvent::EVENT_SHOULDCACHE, [$this, 'shouldCache'], 100);
     }
 
     /**

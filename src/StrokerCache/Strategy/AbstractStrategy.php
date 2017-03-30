@@ -12,15 +12,16 @@ use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Stdlib\AbstractOptions;
+use Zend\Stdlib\CallbackHandler;
 
 abstract class AbstractStrategy extends AbstractOptions implements
     ListenerAggregateInterface,
     StrategyInterface
 {
     /**
-     * @var \Zend\Stdlib\CallbackHandler[]
+     * @var callable[]
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * {@inheritDoc}
@@ -28,18 +29,17 @@ abstract class AbstractStrategy extends AbstractOptions implements
     public function detach(EventManagerInterface $events)
     {
         foreach ($this->listeners as $index => $callback) {
-            if ($events->detach($callback)) {
-                unset($this->listeners[$index]);
-            }
+            $events->detach($callback);
+            unset($this->listeners[$index]);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $listener = 1)
     {
-        $this->listeners[] = $events->attach(CacheEvent::EVENT_SHOULDCACHE, array($this, 'shouldCacheCallback'), 100);
+        $this->listeners[] = $events->attach(CacheEvent::EVENT_SHOULDCACHE, [$this, 'shouldCacheCallback'], 100);
     }
 
     /**

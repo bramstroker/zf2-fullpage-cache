@@ -17,7 +17,7 @@ use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
 use Zend\Cache\Storage\StorageInterface;
 
-class CacheService implements EventManagerAwareInterface
+class CacheService
 {
     /**
      * Prefix to use for the tag key
@@ -72,9 +72,9 @@ class CacheService implements EventManagerAwareInterface
         $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD, $mvcEvent);
         $event->setCacheKey($id);
 
-        $results = $this->getEventManager()->trigger($event, function ($result) {
+        $results = $this->getEventManager()->triggerEventUntil(function ($result) {
             return ($result === false);
-        });
+        }, $event);
 
         if ($results->stopped()) {
             return null;
@@ -100,7 +100,7 @@ class CacheService implements EventManagerAwareInterface
 
         $this->getCacheStorage()->setItem($id, $item);
 
-        $this->getEventManager()->trigger($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
+        $this->getEventManager()->triggerEvent($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
 
         if ($this->getCacheStorage() instanceof TaggableInterface) {
             $this->getCacheStorage()->setTags($id, $this->getTags($mvcEvent));
@@ -117,9 +117,9 @@ class CacheService implements EventManagerAwareInterface
     {
         $event = $this->createCacheEvent(CacheEvent::EVENT_SHOULDCACHE, $mvcEvent);
 
-        $results = $this->getEventManager()->trigger($event, function ($result) {
+        $results = $this->getEventManager()->triggerEventUntil(function ($result) {
             return $result;
-        });
+        }, $event);
 
         if ($results->stopped()) {
             return $results->last();
@@ -155,9 +155,9 @@ class CacheService implements EventManagerAwareInterface
     public function getTags(MvcEvent $event)
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
-        $tags = array(
+        $tags = [
             self::TAG_PREFIX . 'route_' . $routeName
-        );
+        ];
         foreach ($event->getRouteMatch()->getParams() as $key => $value) {
             if ($key == 'controller') {
                 $tags[] = self::TAG_PREFIX . 'controller_' . $value;

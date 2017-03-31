@@ -32,6 +32,10 @@ class ModuleOptions extends AbstractOptions
      * @var string
      */
     protected $idGenerator = 'requesturi';
+    /**
+     * @var bool
+     */
+    protected $addDebugHeaders = true;
 
     /**
      * @return boolean
@@ -111,5 +115,21 @@ class ModuleOptions extends AbstractOptions
     public function setStrategies(array $strategies)
     {
         $this->strategies = $strategies;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAddDebugHeaders()
+    {
+        return $this->addDebugHeaders;
+    }
+
+    /**
+     * @param bool $addDebugHeaders
+     */
+    public function setAddDebugHeaders($addDebugHeaders)
+    {
+        $this->addDebugHeaders = $addDebugHeaders;
     }
 }

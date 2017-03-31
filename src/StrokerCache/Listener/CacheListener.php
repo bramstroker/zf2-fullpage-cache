@@ -12,6 +12,7 @@ use StrokerCache\Service\CacheService;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Http\PhpEnvironment\Request as HttpRequest;
+use Zend\Http\Response as HttpResponse;
 use Zend\Mvc\MvcEvent;
 
 class CacheListener extends AbstractListenerAggregate
@@ -60,14 +61,17 @@ class CacheListener extends AbstractListenerAggregate
     /**
      * Load the page contents from the cache and set the response.
      *
-     * @param  MvcEvent                            $e
-     * @return \Zend\Stdlib\ResponseInterface|void
+     * @param  MvcEvent $e
+     * @return HttpResponse
      */
     public function onRoute(MvcEvent $e)
     {
-        if (!$e->getRequest() instanceof HttpRequest) {
-            return;
+        if (!$e->getRequest() instanceof HttpRequest || !$e->getResponse() instanceof HttpResponse) {
+            return null;
         }
+
+        /** @var HttpResponse $response */
+        $response = $e->getResponse();
 
         $data = $this->getCacheService()->load($e);
 
@@ -81,11 +85,23 @@ class CacheListener extends AbstractListenerAggregate
                 $response->setContent($data);
             }
 
-            $response->getHeaders()->addHeaderLine('X-Stroker-Cache', 'Hit');
+            $this->addDebugResponseHeader($response, 'Hit');
 
             return $response;
         }
-        $e->getResponse()->getHeaders()->addHeaderLine('X-Stroker-Cache', 'Miss');
+
+        $this->addDebugResponseHeader($response, 'Miss');
+    }
+
+    /**
+     * @param HttpResponse $response
+     * @param string $value
+     */
+    private function addDebugResponseHeader(HttpResponse $response, $value)
+    {
+        if ($this->getOptions()->isAddDebugHeaders()) {
+            $response->getHeaders()->addHeaderLine('X-Stroker-Cache', $value);
+        }
     }
 
     /**

@@ -12,7 +12,6 @@ use Zend\Mvc\MvcEvent;
 use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventManagerAwareInterface;
 use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
 use Zend\Cache\Storage\StorageInterface;

@@ -12,7 +12,6 @@ use StrokerCache\Event\CacheEvent;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Stdlib\AbstractOptions;
-use Zend\Stdlib\CallbackHandler;
 
 abstract class AbstractStrategy extends AbstractOptions implements
     ListenerAggregateInterface,

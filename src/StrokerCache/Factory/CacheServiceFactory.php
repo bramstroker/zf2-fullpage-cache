@@ -8,7 +8,6 @@
 namespace StrokerCache\Factory;
 
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use StrokerCache\Exception\RuntimeException;
 use StrokerCache\IdGenerator\IdGeneratorPluginManager;
 use StrokerCache\Listener\ShouldCacheStrategyListener;
@@ -16,8 +15,6 @@ use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Strategy\CacheStrategyPluginManager;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

@@ -102,8 +102,9 @@ class CacheService implements EventManagerAwareInterface
 
         $this->getEventManager()->triggerEvent($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
 
-        if ($this->getCacheStorage() instanceof TaggableInterface) {
-            $this->getCacheStorage()->setTags($id, $this->getTags($mvcEvent));
+        $cacheStorage = $this->getCacheStorage();
+        if ($cacheStorage instanceof TaggableInterface) {
+            $cacheStorage->setTags($id, $this->getTags($mvcEvent));
         }
     }
 
@@ -135,7 +136,8 @@ class CacheService implements EventManagerAwareInterface
      */
     public function clearByTags(array $tags = array(), $disjunction = null)
     {
-        if (!$this->getCacheStorage() instanceof TaggableInterface) {
+        $cacheStorage = $this->getCacheStorage();
+        if (!$cacheStorage instanceof TaggableInterface) {
             return false;
         }
         $tags = array_map(
@@ -143,7 +145,7 @@ class CacheService implements EventManagerAwareInterface
             $tags
         );
 
-        return $this->getCacheStorage()->clearByTags($tags, $disjunction);
+        return $cacheStorage->clearByTags($tags, $disjunction);
     }
 
     /**
@@ -177,7 +179,9 @@ class CacheService implements EventManagerAwareInterface
     protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null)
     {
         $cacheEvent = new CacheEvent($eventName, $this);
-        $cacheEvent->setMvcEvent($mvcEvent);
+        if ($mvcEvent !== null) {
+            $cacheEvent->setMvcEvent($mvcEvent);
+        }
 
         return $cacheEvent;
     }
@@ -228,10 +232,7 @@ class CacheService implements EventManagerAwareInterface
      */
     public function setEventManager(EventManagerInterface $eventManager)
     {
-        $eventManager->setIdentifiers(array(
-            __CLASS__,
-            get_called_class()
-        ));
+        $eventManager->setIdentifiers([__CLASS__, get_called_class()]);
 
         $this->eventManager = $eventManager;
 
@@ -265,7 +266,7 @@ class CacheService implements EventManagerAwareInterface
     /**
      * @param IdGeneratorInterface $idGenerator
      */
-    public function setIdGenerator($idGenerator)
+    public function setIdGenerator($idGenerator = null)
     {
         $this->idGenerator = $idGenerator;
     }

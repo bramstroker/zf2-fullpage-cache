@@ -18,7 +18,7 @@ class File extends AbstractAdapter
      */
     public function setOptions($options)
     {
-        if (!$options instanceof FileOptions) {
+        if (!$options instanceof FileOptions && is_array($options)) {
             $options = new FileOptions($options);
         }
 
@@ -33,7 +33,10 @@ class File extends AbstractAdapter
     {
         $urlParts = parse_url($url);
 
-        $path = $this->getOptions()->getBaseDirectory() . DIRECTORY_SEPARATOR .
+        /** @var FileOptions $options */
+        $options = $this->getOptions();
+
+        $path = $options->getBaseDirectory() . DIRECTORY_SEPARATOR .
             $urlParts['scheme'] . DIRECTORY_SEPARATOR .
             $urlParts['host'] . DIRECTORY_SEPARATOR;
 

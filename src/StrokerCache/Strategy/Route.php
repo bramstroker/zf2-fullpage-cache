@@ -7,6 +7,7 @@
 
 namespace StrokerCache\Strategy;
 
+use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 use Zend\Router\RouteMatch;
 
@@ -103,9 +104,14 @@ class Route extends AbstractStrategy
      */
     protected function checkHttpMethod(MvcEvent $event, $routeConfig)
     {
+        $request = $event->getRequest();
+        if (!$request instanceof HttpRequest) {
+            return false;
+        }
+
         if (isset($routeConfig['http_methods'])) {
             $methods = (array) $routeConfig['http_methods'];
-            if (!in_array($event->getRequest()->getMethod(), $methods)) {
+            if (!in_array($request->getMethod(), $methods)) {
                 return false;
             }
         }

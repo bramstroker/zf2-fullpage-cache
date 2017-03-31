@@ -7,6 +7,7 @@
 
 namespace StrokerCache\Strategy;
 
+use Zend\Http\Request as HttpRequest;
 use Zend\Mvc\MvcEvent;
 
 class UriPath extends AbstractStrategy
@@ -21,7 +22,12 @@ class UriPath extends AbstractStrategy
      */
     public function shouldCache(MvcEvent $event)
     {
-        $uri = $event->getRequest()->getUri();
+        $request = $event->getRequest();
+        if (!$request instanceof HttpRequest) {
+            return false;
+        }
+
+        $uri = $request->getUri();
         foreach ($this->getRegexpes() as $regex) {
             if (preg_match($regex, $uri->getPath())) {
                 return true;

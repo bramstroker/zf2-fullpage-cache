@@ -17,7 +17,7 @@ use StrokerCache\Options\ModuleOptions;
 use Zend\Cache\Storage\TaggableInterface;
 use Zend\Cache\Storage\StorageInterface;
 
-class CacheService implements EventManagerAwareInterface
+class CacheService
 {
     /**
      * Prefix to use for the tag key
@@ -61,15 +61,18 @@ class CacheService implements EventManagerAwareInterface
 
     /**
      * Check if a page is saved in the cache and return contents. Return null when no item is found.
+     *
+     * @param MvcEvent $mvcEvent
+     * @return mixed|null
      */
-    public function load()
+    public function load(MvcEvent $mvcEvent)
     {
         $id = $this->getIdGenerator()->generate();
         if (!$this->getCacheStorage()->hasItem($id)) {
             return null;
         };
 
-        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD);
+        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD, $mvcEvent);
         $event->setCacheKey($id);
 
         $results = $this->getEventManager()->triggerEventUntil(function ($result) {

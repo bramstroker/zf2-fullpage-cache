@@ -44,13 +44,13 @@ class Module implements
      */
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
+        return [
+            'Zend\Loader\StandardAutoloader' => [
+                'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -60,9 +60,10 @@ class Module implements
     {
         /** @var $application \Zend\Mvc\Application */
         $application = $e->getParam('application');
-        $listener    = $application->getServiceManager()->get(CacheListener::class);
 
-        $application->getEventManager()->attach($listener);
+        /** @var CacheListener $listener */
+        $listener    = $application->getServiceManager()->get(CacheListener::class);
+        $listener->attach($application->getEventManager());
     }
 
     /**
@@ -78,11 +79,10 @@ class Module implements
      */
     public function getConsoleUsage(AdapterInterface $console)
     {
-        return array(
+        return [
             'Usage:',
             'strokercache clear <tags>' => 'Invalidate cache items by tags',
-
-            array('<tags>' => 'List of tags, optionally separated by commas')
-        );
+            ['<tags>' => 'List of tags, optionally separated by commas']
+        ];
     }
 }

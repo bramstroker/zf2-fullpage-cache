@@ -73,7 +73,7 @@ class CacheListener extends AbstractListenerAggregate
         /** @var HttpResponse $response */
         $response = $e->getResponse();
 
-        $data = $this->getCacheService()->load();
+        $data = $this->getCacheService()->load($e);
 
         if ($data !== null) {
             $this->loadedFromCache = true;

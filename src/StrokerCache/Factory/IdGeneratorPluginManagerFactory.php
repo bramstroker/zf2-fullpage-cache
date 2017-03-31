@@ -31,6 +31,8 @@ class IdGeneratorPluginManagerFactory implements FactoryInterface
         $config      = $container->get('Config');
         $configClass = new Config($config['strokercache']['id_generators']['plugin_manager']);
 
-        return new IdGeneratorPluginManager($configClass);
+        $pluginManager = new IdGeneratorPluginManager($configClass);
+        $pluginManager->setServiceLocator($container);
+        return $pluginManager;
     }
 }

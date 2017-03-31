@@ -23,7 +23,9 @@ class IdGeneratorPluginManager extends AbstractPluginManager
      */
     protected $aliases = [
         'requesturi' => RequestUriGenerator::class,
-        'fulluri'   => FullUriGenerator::class
+        'requestUri' => RequestUriGenerator::class,
+        'fulluri'   => FullUriGenerator::class,
+        'fullUri'   => FullUriGenerator::class
     ];
 
     /**

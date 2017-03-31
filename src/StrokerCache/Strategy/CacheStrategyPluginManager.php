@@ -13,19 +13,27 @@ use Zend\ServiceManager\AbstractPluginManager;
 class CacheStrategyPluginManager extends AbstractPluginManager
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function validatePlugin($plugin)
+    public function validate($instance)
     {
-        if ($plugin instanceof StrategyInterface) {
+        if ($instance instanceof StrategyInterface) {
             // we're okay
             return;
         }
 
         throw new Exception\InvalidStrategyException(sprintf(
             'Plugin of type %s is invalid; must implement %s\StrategyInterface',
-            (is_object($plugin) ? get_class($plugin) : gettype($plugin)),
+            (is_object($instance) ? get_class($instance) : gettype($instance)),
             __NAMESPACE__
         ));
+    }
+
+    /**
+     * @deprecated to support ServiceManager v2
+     */
+    public function validatePlugin($instance)
+    {
+        $this->validate($instance);
     }
 }

@@ -34,7 +34,7 @@
         "mikey179/vfsStream": "~1.6"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "StrokerCache\\": "src/",
             "StrokerCacheTest\\": "test/"
         },

@@ -4,7 +4,7 @@
     </logging>
     <testsuites>
         <testsuite name="StrokerCache Module Tests">
-            <directory>./tests/StrokerCacheTest</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
     <filter>

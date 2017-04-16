@@ -21,7 +21,7 @@ Installation of StrokerCache uses composer. For composer documentation, please r
      ```json
      {
          "require": {
-             "stroker/cache": "*"
+             "stroker/cache": "0.2.*"
          }
      }
      ```

@@ -15,19 +15,10 @@ use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Strategy\CacheStrategyPluginManager;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class CacheServiceFactory implements FactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return $this($serviceLocator, CacheService::class);
-    }
-
     /**
      * {@inheritDoc}
      */

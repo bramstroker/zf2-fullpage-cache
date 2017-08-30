@@ -9,30 +9,17 @@ namespace StrokerCache\Factory;
 
 use Interop\Container\ContainerInterface;
 use StrokerCache\IdGenerator\IdGeneratorPluginManager;
-use Zend\ServiceManager\Config;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class IdGeneratorPluginManagerFactory implements FactoryInterface
 {
     /**
      * {@inheritDoc}
      */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return $this($serviceLocator, IdGeneratorPluginManager::class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config      = $container->get('Config');
-        $configClass = new Config($config['strokercache']['id_generators']['plugin_manager']);
-
-        $pluginManager = new IdGeneratorPluginManager($configClass);
-        $pluginManager->setServiceLocator($container);
+        $pluginManager = new IdGeneratorPluginManager($container, $config['strokercache']['id_generators']['plugin_manager']);
         return $pluginManager;
     }
 }

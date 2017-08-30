@@ -21,7 +21,7 @@ namespace StrokerCacheTest;
 use Zend\Loader\AutoloaderFactory;
 use RuntimeException;
 
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_ALL);
 chdir(__DIR__);
 
 class Bootstrap

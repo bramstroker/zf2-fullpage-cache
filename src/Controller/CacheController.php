@@ -7,21 +7,16 @@
 
 namespace StrokerCache\Controller;
 
+use StrokerCache\Exception\UnsupportedAdapterException;
 use StrokerCache\Service\CacheService;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Console\Controller\AbstractConsoleController;
 
-class CacheController extends AbstractActionController
+class CacheController extends AbstractConsoleController
 {
     /**
      * @var CacheService
      */
     protected $cacheService;
-
-    /**
-     * @var Console
-     */
-    protected $console;
 
     /**
      * Default constructor
@@ -42,15 +37,23 @@ class CacheController extends AbstractActionController
     {
         $tags = $this->params('tags', null);
         if (null === $tags) {
-            return "\n\nYou should provide tags";
+            $this->console->writeLine('You should provide tags');
+            return;
         }
 
         $tags   = explode(',', $tags);
-        $result = $this->getCacheService()->clearByTags($tags);
+        $result = false;
+        try {
+            $result = $this->getCacheService()->clearByTags($tags);
+        } catch (UnsupportedAdapterException $exception) {
+            $this->console->writeLine($exception->getMessage());
+        }
 
-        return sprintf(
-            "\n\nCache invalidation %s\n\n",
-            $result ? 'succeeded' : 'failed'
+        $this->console->writeLine(
+            sprintf(
+                'Cache invalidation %s',
+                $result ? 'succeeded' : 'failed'
+            )
         );
     }
 

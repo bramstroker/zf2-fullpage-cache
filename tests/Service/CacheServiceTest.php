@@ -9,8 +9,11 @@ namespace StrokerCacheTest\Service;
 
 use Mockery;
 use Mockery\MockInterface;
+use StrokerCache\Exception\UnsupportedAdapterException;
 use StrokerCache\IdGenerator\IdGeneratorInterface;
+use Zend\Cache\Storage\Adapter\AbstractAdapter;
 use Zend\Cache\Storage\StorageInterface;
+use Zend\Cache\Storage\TaggableInterface;
 use Zend\EventManager\EventManager;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Service\CacheService;
@@ -195,20 +198,21 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testClearByTags()
     {
-        $tags = array('foo', 'bar');
+        $tags = ['foo', 'bar'];
 
-        $storageMock = Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+        $storageMock = Mockery::mock(TaggableInterface::class)
             ->shouldReceive('clearByTags')
-            ->with(array('strokercache_foo', 'strokercache_bar'), null)
+            ->with(['strokercache_foo', 'strokercache_bar'], null)
             ->getMock();
         $this->cacheService->setCacheStorage($storageMock);
 
         $this->cacheService->clearByTags($tags);
     }
 
-    public function testClearByTagsIsSkippedForNonTaggableStorageAdapters()
+    public function testClearByTagsThrowsExceptionForNonTaggableStorageAdapters()
     {
-        $this->cacheService->clearByTags(array('foo'));
+        $this->expectException(UnsupportedAdapterException::class);
+        $this->cacheService->clearByTags(['foo']);
     }
 
     public function testGetSetOptions()
@@ -222,7 +226,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
     {
         $self = $this;
         $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function ($e) use ($self) {
-            $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
+            $self->assertInstanceOf(CacheEvent::class, $e);
         });
 
         $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
@@ -239,7 +243,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
 
         $self = $this;
         $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_LOAD, function ($e) use ($self) {
-            $self->assertInstanceOf('StrokerCache\Event\CacheEvent', $e);
+            $self->assertInstanceOf(CacheEvent::class, $e);
             $self->assertEquals('foo-bar', $e->getCacheKey());
         });
 

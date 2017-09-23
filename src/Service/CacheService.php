@@ -7,6 +7,7 @@
 
 namespace StrokerCache\Service;
 
+use StrokerCache\Exception\UnsupportedAdapterException;
 use StrokerCache\IdGenerator\IdGeneratorInterface;
 use Zend\Mvc\MvcEvent;
 use StrokerCache\Event\CacheEvent;
@@ -132,15 +133,16 @@ class CacheService
     }
 
     /**
-     * @param  array     $tags
+     * @param  array $tags
      * @param  bool|null $disjunction
      * @return bool
+     * @throws UnsupportedAdapterException
      */
     public function clearByTags(array $tags = array(), $disjunction = null)
     {
         $cacheStorage = $this->getCacheStorage();
         if (!$cacheStorage instanceof TaggableInterface) {
-            return false;
+            throw new UnsupportedAdapterException('purging by tags is only supported on adapters implementing the TaggableInterface');
         }
         $tags = array_map(
             function ($tag) { return CacheService::TAG_PREFIX . $tag; },

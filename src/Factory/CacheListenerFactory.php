@@ -11,19 +11,10 @@ use Interop\Container\ContainerInterface;
 use StrokerCache\Listener\CacheListener;
 use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class CacheListenerFactory implements FactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return $this($serviceLocator, CacheListener::class);
-    }
-
     /**
      * {@inheritDoc}
      */

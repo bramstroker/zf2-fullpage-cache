@@ -10,19 +10,10 @@ namespace StrokerCache\Factory;
 use Interop\Container\ContainerInterface;
 use StrokerCache\Strategy\CacheStrategyPluginManager;
 use Zend\ServiceManager\Config as ServiceManagerConfig;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\ServiceManager\Factory\FactoryInterface;
 
 class CacheStrategyPluginManagerFactory implements FactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return $this($serviceLocator, CacheStrategyPluginManager::class);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -31,7 +22,8 @@ class CacheStrategyPluginManagerFactory implements FactoryInterface
         $config = $container->get('Config');
 
         return new CacheStrategyPluginManager(
-            new ServiceManagerConfig($config['strokercache']['strategies']['plugin_manager'])
+            $container,
+            $config['strokercache']['strategies']['plugin_manager']
         );
     }
 }

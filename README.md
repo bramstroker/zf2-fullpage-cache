@@ -279,4 +279,4 @@ public function onBootstrap(MvcEvent $e)
 
 ## Store directly to HTML files for max performance
 
-TODO ...
+This is still a bit expirimental. Please see [this issue](https://github.com/bramstroker/zf2-fullpage-cache/issues/33) for some pointers how to get this working.

@@ -9,5 +9,5 @@ namespace StrokerCache;
 
 class Version
 {
-    const VERSION = '1.0.0RC';
+    const VERSION = '2.0.0';
 }

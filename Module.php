@@ -19,6 +19,7 @@
 namespace StrokerCache;
 
 use StrokerCache\Listener\CacheListener;
+use StrokerCache\Options\ModuleOptions;
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\EventManager\EventInterface;
 use Zend\ModuleManager\Feature;
@@ -60,10 +61,15 @@ class Module implements
     {
         /** @var $application \Zend\Mvc\Application */
         $application = $e->getParam('application');
+        $serviceManager = $application->getServiceManager();
+        /** @var ModuleOptions $cacheOptions */
+        $cacheOptions = $serviceManager->get(ModuleOptions::class);
 
-        /** @var CacheListener $listener */
-        $listener    = $application->getServiceManager()->get(CacheListener::class);
-        $listener->attach($application->getEventManager());
+        if ($cacheOptions->isEnabled()) {
+            /** @var CacheListener $listener */
+            $listener = $serviceManager->get(CacheListener::class);
+            $listener->attach($application->getEventManager());
+        }
     }
 
     /**

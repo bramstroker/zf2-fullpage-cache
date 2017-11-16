@@ -146,7 +146,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @return boolean
      */
-    public function isEnabled(): bool
+    public function isEnabled()
     {
         return $this->enabled;
     }
@@ -154,7 +154,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @param boolean $enabled
      */
-    public function setEnabled(bool $enabled)
+    public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
     }

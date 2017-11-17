@@ -156,6 +156,25 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->cacheService->save($this->getMvcEvent());
     }
 
+    public function testSaveEventHasCacheKey()
+    {
+        $response = $this->getMvcEvent()->getResponse();
+        $response->setContent('mockContent');
+
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function (CacheEvent $e) {
+            $this->assertNotNull($e->getCacheKey());
+        });
+
+        $this->storageMock
+            ->shouldReceive('setItem')
+            ->once()
+            ->with('/foo/bar', $response->getContent());
+
+        $this->cacheService->getOptions()->setCacheResponse(false);
+        $this->cacheService->save($this->getMvcEvent());
+    }
+
     public function testResponseIsCachedWhenOneListenerReturnsTrue()
     {
         $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return false; });

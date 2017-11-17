@@ -27,6 +27,11 @@ class CacheEvent extends Event
     protected $mvcEvent;
 
     /**
+     * @var array
+     */
+    protected $tags = [];
+
+    /**
      * @return string
      */
     public function getCacheKey()
@@ -64,4 +69,19 @@ class CacheEvent extends Event
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param array $tags
+     */
+    public function setTags(array $tags)
+    {
+        $this->tags = $tags;
+    }
 }

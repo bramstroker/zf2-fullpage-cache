@@ -107,7 +107,8 @@ class CacheService
 
         $cacheStorage = $this->getCacheStorage();
         if ($cacheStorage instanceof TaggableInterface) {
-            $cacheStorage->setTags($id, $this->getTags($mvcEvent));
+            $tags = array_unique(array_merge($this->getTags($mvcEvent), $cacheEvent->getTags()));
+            $cacheStorage->setTags($id, $tags);
         }
     }
 

@@ -215,6 +215,37 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->cacheService->save($this->getMvcEvent());
     }
 
+    public function testSaveGeneratesCustomTags()
+    {
+        $expectedTags = array(
+            'strokercache_route_home',
+            'strokercache_controller_myTestController',
+            'strokercache_param_someParam_someValue',
+            'custom_tag',
+        );
+
+        $this->getMvcEvent()->getRouteMatch()->setMatchedRouteName('home');
+        $this->getMvcEvent()->getRouteMatch()->setParam('controller', 'myTestController');
+        $this->getMvcEvent()->getRouteMatch()->setParam('someParam', 'someValue');
+
+        // Storage mock should implement the TaggableInterface
+        $storageMock = Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+            ->shouldReceive('setItem')
+            ->once()
+            ->shouldReceive('setTags')
+            ->once()
+            ->with('/foo/bar', $expectedTags)
+            ->getMock();
+        $this->cacheService->setCacheStorage($storageMock);
+
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SHOULDCACHE, function () { return true; });
+        $this->cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function ($event) {
+            $event->setTags(['custom_tag']);
+        });
+
+        $this->cacheService->save($this->getMvcEvent());
+    }
+
     public function testClearByTags()
     {
         $tags = ['foo', 'bar'];

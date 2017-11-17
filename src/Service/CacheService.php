@@ -103,7 +103,10 @@ class CacheService
 
         $this->getCacheStorage()->setItem($id, $item);
 
-        $this->getEventManager()->triggerEvent($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
+        $cacheEvent = $this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent);
+        $cacheEvent->setCacheKey($id);
+
+        $this->getEventManager()->triggerEvent($cacheEvent);
 
         $cacheStorage = $this->getCacheStorage();
         if ($cacheStorage instanceof TaggableInterface) {

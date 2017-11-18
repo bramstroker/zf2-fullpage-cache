@@ -72,8 +72,7 @@ class CacheService
             return null;
         };
 
-        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD, $mvcEvent);
-        $event->setCacheKey($id);
+        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD, $mvcEvent, $id);
 
         $results = $this->getEventManager()->triggerEventUntil(function ($result) {
             return ($result === false);
@@ -103,9 +102,7 @@ class CacheService
 
         $this->getCacheStorage()->setItem($id, $item);
 
-        $cacheEvent = $this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent);
-        $cacheEvent->setCacheKey($id);
-
+        $cacheEvent = $this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent, $id);
         $this->getEventManager()->triggerEvent($cacheEvent);
 
         $cacheStorage = $this->getCacheStorage();
@@ -179,13 +176,15 @@ class CacheService
     }
 
     /**
-     * @param  string        $eventName
+     * @param  string $eventName
+     * @param  string $cacheKey
      * @param  MvcEvent|null $mvcEvent
      * @return CacheEvent
      */
-    protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null)
+    protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null, $cacheKey = null)
     {
         $cacheEvent = new CacheEvent($eventName, $this);
+        $cacheEvent->setCacheKey($cacheKey);
         if ($mvcEvent !== null) {
             $cacheEvent->setMvcEvent($mvcEvent);
         }

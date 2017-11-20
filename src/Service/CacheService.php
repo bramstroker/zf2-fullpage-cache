@@ -107,7 +107,8 @@ class CacheService
 
         $cacheStorage = $this->getCacheStorage();
         if ($cacheStorage instanceof TaggableInterface) {
-            $cacheStorage->setTags($id, $this->getTags($mvcEvent));
+            $tags = array_unique(array_merge($this->getTags($mvcEvent), $cacheEvent->getTags()));
+            $cacheStorage->setTags($id, $this->prefixTags($tags));
         }
     }
 
@@ -144,10 +145,7 @@ class CacheService
         if (!$cacheStorage instanceof TaggableInterface) {
             throw new UnsupportedAdapterException('purging by tags is only supported on adapters implementing the TaggableInterface');
         }
-        $tags = array_map(
-            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
-            $tags
-        );
+        $tags = $this->prefixTags($tags);
 
         return $cacheStorage->clearByTags($tags, $disjunction);
     }
@@ -162,17 +160,30 @@ class CacheService
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         $tags = [
-            self::TAG_PREFIX . 'route_' . $routeName
+            'route_' . $routeName
         ];
         foreach ($event->getRouteMatch()->getParams() as $key => $value) {
             if ($key == 'controller') {
-                $tags[] = self::TAG_PREFIX . 'controller_' . $value;
+                $tags[] = 'controller_' . $value;
             } else {
-                $tags[] = self::TAG_PREFIX . 'param_' . $key . '_' . $value;
+                $tags[] = 'param_' . $key . '_' . $value;
             }
         }
 
         return $tags;
+    }
+
+    /**
+     * @param array $tags
+     *
+     * @return array
+     */
+    private function prefixTags(array $tags)
+    {
+         return array_map(
+            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
+            $tags
+        );
     }
 
     /**

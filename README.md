@@ -221,6 +221,19 @@ The events are listed as constants in the [CacheEvent](https://github.com/bramst
 
 ### Examples
 
+Setting custom tags example
+
+```php
+public function onBootstrap(MvcEvent $e)
+{
+    $serviceManager = $e->getApplication()->getServiceManager();
+    $cacheService = $serviceManager->get('strokercache_service');
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function (CacheEvent $e) {
+        $e->setTags(['custom_tag']);
+    });
+}
+```
+
 Log to file whenever a page is written to the cache storage
 
 ```php

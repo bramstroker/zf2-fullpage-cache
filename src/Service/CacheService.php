@@ -107,7 +107,10 @@ class CacheService
 
         $cacheStorage = $this->getCacheStorage();
         if ($cacheStorage instanceof TaggableInterface) {
-            $tags = array_unique(array_merge($this->getTags($mvcEvent), $cacheEvent->getTags()));
+            $tags = array_map(
+                function ($tag) { return CacheService::TAG_PREFIX . $tag; },
+                array_unique(array_merge($this->getTags($mvcEvent), $cacheEvent->getTags()))
+            );
             $cacheStorage->setTags($id, $tags);
         }
     }
@@ -163,13 +166,13 @@ class CacheService
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         $tags = [
-            self::TAG_PREFIX . 'route_' . $routeName
+            'route_' . $routeName
         ];
         foreach ($event->getRouteMatch()->getParams() as $key => $value) {
             if ($key == 'controller') {
-                $tags[] = self::TAG_PREFIX . 'controller_' . $value;
+                $tags[] = 'controller_' . $value;
             } else {
-                $tags[] = self::TAG_PREFIX . 'param_' . $key . '_' . $value;
+                $tags[] = 'param_' . $key . '_' . $value;
             }
         }
 

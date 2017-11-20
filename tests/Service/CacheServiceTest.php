@@ -221,7 +221,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
             'strokercache_route_home',
             'strokercache_controller_myTestController',
             'strokercache_param_someParam_someValue',
-            'custom_tag',
+            'strokercache_custom_tag',
         );
 
         $this->getMvcEvent()->getRouteMatch()->setMatchedRouteName('home');

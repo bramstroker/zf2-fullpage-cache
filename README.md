@@ -50,41 +50,41 @@ Caching the home route:
 
 ```php
 <?php
-return array(
-    'strokercache' => array(
-        'strategies' => array(
-            'enabled' => array(
-                'StrokerCache\Strategy\RouteName' => array(
-                    'routes' => array(
+return [
+    'strokercache' => [
+        'strategies' => [
+            'enabled' => [
+                'StrokerCache\Strategy\RouteName' => [
+                    'routes' => [
                         'home'
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
 ```
 
 Caching the `foo/bar` route, but only for a GET request and only when the param `id` equals 60
 
 ```php
 <?php
-return array(
-    'strokercache' => array(
-        'strategies' => array(
-            'enabled' => array(
-                'StrokerCache\Strategy\RouteName' => array(
-                    'routes' => array(
-                        'foo/bar' => array(
-                            'http_methods' => array('GET'),
-                            'params' => array('id' => 60)
-                        )
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+return [
+    'strokercache' => [
+        'strategies' => [
+            'enabled' => [
+                'StrokerCache\Strategy\RouteName' => [
+                    'routes' => [
+                        'foo/bar' => [
+                            'http_methods' => ['GET'],
+                            'params' => ['id' => 60]
+                        ]
+                    ],
+                ],
+            ],
+        ],
+    ],
+];
 ```
 
 ## Change storage adapter
@@ -96,12 +96,12 @@ Example using APC:
 ```php
 <?php
 return array(
-    'strokercache' => array(
-        'storage_adapter' => array(
+    'strokercache' => [
+        'storage_adapter' => [
             'name' => 'Zend\Cache\Storage\Adapter\Apc',
-        ),
-    ),
-);
+        ],
+    ],
+];
 ```
 
 ## TTL
@@ -110,16 +110,16 @@ You can set the TTL (Time to live) for the cache items by specifying the option 
 
 ```php
 <?php
-return array(
-    'strokercache' => array(
-        'storage_adapter' => array(
+return [
+    'strokercache' => [
+        'storage_adapter' => [
             'name' => 'filesystem',
             'options' => [
               'cache_dir' => __DIR__ . '/../../data/cache'
             ],
-        ),
-    ),
-);
+        ],
+    ],
+];
 ```
 
 ## Clearing the cache
@@ -149,18 +149,18 @@ Now register your generator to the PluginManager:
 
 ```php
 <?php
-return array(
-    'strokercache' => array(
-        'id_generators' => array(
-            'plugin_manager' => array(
-                'invokables' => array(
+return [
+    'strokercache' => [
+        'id_generators' => [
+            'plugin_manager' => [
+                'invokables' => [
                     'myGenerator' => 'MyNamespace\MyGenerator'
-                ),
-            ),
-        ),
+                ],
+            ],
+        ],
         'id_generator' => 'myGenerator'
-    ),
-);
+    ],
+];
 ```
 
 ## Custom strategies
@@ -169,32 +169,45 @@ You can create your own strategies by implementing the StrokerCache\Strategy\Str
 
 ```php
 <?php
-return array(
-    'strokercache' => array(
-        'strategies' => array(
-            'plugin_manager' => array(
-                'invokables' => array(
+return [
+    'strokercache' => [
+        'strategies' => [
+            'plugin_manager' => [
+                'invokables' => [
                     'MyNamespace\MyCustomStrategy'
-                ),
-            ),
-        ),
-    ),
-);
+                ],
+            ],
+        ],
+    ],
+];
 ```
 
 Next you need to enable the strategy
 
 ```php
 <?php
-return array(
-    'strokercache' => array(
-        'strategies' => array(
-            'enabled' => array(
+return [
+    'strokercache' => [
+        'strategies' => [
+            'enabled' => [
                 'MyNamespace\MyCustomStrategy'
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];
+```
+
+## Disable FPC
+
+You can disable the Caching solution all together by using the following configuration. This comes in handy on your development environment where you obviously don't want any caching to happen.
+
+```php
+<?php
+return [
+    'strokercache' => [
+        'enabled' => false        
+    ]
+];
 ```
 
 ## Events
@@ -207,6 +220,19 @@ The events are listed as constants in the [CacheEvent](https://github.com/bramst
 - `EVENT_SHOULDCACHE`: this event is used to determine if a page should be stored into the cache. You can listen to this event if you don't want the page to be cached. All the strategies are attached to this event as well.
 
 ### Examples
+
+Setting custom tags example
+
+```php
+public function onBootstrap(MvcEvent $e)
+{
+    $serviceManager = $e->getApplication()->getServiceManager();
+    $cacheService = $serviceManager->get('strokercache_service');
+    $cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function (CacheEvent $e) {
+        $e->setTags(['custom_tag']);
+    });
+}
+```
 
 Log to file whenever a page is written to the cache storage
 

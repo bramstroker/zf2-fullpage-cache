@@ -72,8 +72,7 @@ class CacheService
             return null;
         };
 
-        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD, $mvcEvent);
-        $event->setCacheKey($id);
+        $event = $this->createCacheEvent(CacheEvent::EVENT_LOAD, $mvcEvent, $id);
 
         $results = $this->getEventManager()->triggerEventUntil(function ($result) {
             return ($result === false);
@@ -103,11 +102,13 @@ class CacheService
 
         $this->getCacheStorage()->setItem($id, $item);
 
-        $this->getEventManager()->triggerEvent($this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent));
+        $cacheEvent = $this->createCacheEvent(CacheEvent::EVENT_SAVE, $mvcEvent, $id);
+        $this->getEventManager()->triggerEvent($cacheEvent);
 
         $cacheStorage = $this->getCacheStorage();
         if ($cacheStorage instanceof TaggableInterface) {
-            $cacheStorage->setTags($id, $this->getTags($mvcEvent));
+            $tags = array_unique(array_merge($this->getTags($mvcEvent), $cacheEvent->getTags()));
+            $cacheStorage->setTags($id, $this->prefixTags($tags));
         }
     }
 
@@ -144,10 +145,7 @@ class CacheService
         if (!$cacheStorage instanceof TaggableInterface) {
             throw new UnsupportedAdapterException('purging by tags is only supported on adapters implementing the TaggableInterface');
         }
-        $tags = array_map(
-            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
-            $tags
-        );
+        $tags = $this->prefixTags($tags);
 
         return $cacheStorage->clearByTags($tags, $disjunction);
     }
@@ -162,13 +160,13 @@ class CacheService
     {
         $routeName = $event->getRouteMatch()->getMatchedRouteName();
         $tags = [
-            self::TAG_PREFIX . 'route_' . $routeName
+            'route_' . $routeName
         ];
         foreach ($event->getRouteMatch()->getParams() as $key => $value) {
             if ($key == 'controller') {
-                $tags[] = self::TAG_PREFIX . 'controller_' . $value;
+                $tags[] = 'controller_' . $value;
             } else {
-                $tags[] = self::TAG_PREFIX . 'param_' . $key . '_' . $value;
+                $tags[] = 'param_' . $key . '_' . $value;
             }
         }
 
@@ -176,13 +174,28 @@ class CacheService
     }
 
     /**
-     * @param  string        $eventName
+     * @param array $tags
+     *
+     * @return array
+     */
+    private function prefixTags(array $tags)
+    {
+         return array_map(
+            function ($tag) { return CacheService::TAG_PREFIX . $tag; },
+            $tags
+        );
+    }
+
+    /**
+     * @param  string $eventName
+     * @param  string $cacheKey
      * @param  MvcEvent|null $mvcEvent
      * @return CacheEvent
      */
-    protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null)
+    protected function createCacheEvent($eventName, MvcEvent $mvcEvent = null, $cacheKey = null)
     {
         $cacheEvent = new CacheEvent($eventName, $this);
+        $cacheEvent->setCacheKey($cacheKey);
         if ($mvcEvent !== null) {
             $cacheEvent->setMvcEvent($mvcEvent);
         }

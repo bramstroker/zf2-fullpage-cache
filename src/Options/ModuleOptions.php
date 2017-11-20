@@ -16,26 +16,36 @@ class ModuleOptions extends AbstractOptions
      * @var array
      */
     protected $idGenerators;
+
     /**
      * @var array
      */
     protected $strategies;
+
     /**
      * @var array
      */
     protected $storageAdapter;
+
     /**
      * @var bool
      */
     protected $cacheResponse = true;
+
     /**
      * @var string
      */
     protected $idGenerator = 'requesturi';
+
     /**
      * @var bool
      */
     protected $addDebugHeaders = true;
+
+    /**
+     * @var bool
+     */
+    protected $enabled = true;
 
     /**
      * @return boolean
@@ -131,5 +141,21 @@ class ModuleOptions extends AbstractOptions
     public function setAddDebugHeaders($addDebugHeaders)
     {
         $this->addDebugHeaders = $addDebugHeaders;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
     }
 }

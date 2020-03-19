@@ -9,7 +9,7 @@
 namespace StrokerCache\Storage\Adapter;
 
 use RuntimeException;
-use Zend\Cache\Storage\Adapter\AdapterOptions;
+use Laminas\Cache\Storage\Adapter\AdapterOptions;
 
 class FileOptions extends AdapterOptions
 {

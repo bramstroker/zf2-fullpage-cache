@@ -14,8 +14,8 @@ use StrokerCache\Listener\ShouldCacheStrategyListener;
 use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Strategy\CacheStrategyPluginManager;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class CacheServiceFactory implements FactoryInterface
 {

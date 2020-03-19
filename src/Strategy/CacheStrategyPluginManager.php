@@ -8,7 +8,7 @@
 namespace StrokerCache\Strategy;
 
 use StrokerCache\Exception;
-use Zend\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\AbstractPluginManager;
 
 class CacheStrategyPluginManager extends AbstractPluginManager
 {

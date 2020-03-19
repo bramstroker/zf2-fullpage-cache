@@ -9,7 +9,7 @@ namespace StrokerCache\Controller;
 
 use StrokerCache\Exception\UnsupportedAdapterException;
 use StrokerCache\Service\CacheService;
-use Zend\Mvc\Console\Controller\AbstractConsoleController;
+use Laminas\Mvc\Console\Controller\AbstractConsoleController;
 
 class CacheController extends AbstractConsoleController
 {

@@ -13,10 +13,10 @@ use PHPUnit_Framework_TestCase;
 use StrokerCache\Listener\CacheListener;
 use StrokerCache\Module;
 use StrokerCache\Options\ModuleOptions;
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\Application;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceManager;
 
 class ModuleTest extends PHPUnit_Framework_TestCase
 {

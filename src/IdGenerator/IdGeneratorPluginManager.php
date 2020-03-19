@@ -8,8 +8,8 @@
 namespace StrokerCache\IdGenerator;
 
 use StrokerCache\Exception;
-use Zend\ServiceManager\AbstractPluginManager;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 class IdGeneratorPluginManager extends AbstractPluginManager
 {

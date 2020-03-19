@@ -20,9 +20,9 @@ namespace StrokerCache;
 
 use StrokerCache\Listener\CacheListener;
 use StrokerCache\Options\ModuleOptions;
-use Zend\Console\Adapter\AdapterInterface;
-use Zend\EventManager\EventInterface;
-use Zend\ModuleManager\Feature;
+use Laminas\Console\Adapter\AdapterInterface;
+use Laminas\EventManager\EventInterface;
+use Laminas\ModuleManager\Feature;
 
 class Module implements
     Feature\ConfigProviderInterface,
@@ -46,7 +46,7 @@ class Module implements
     public function getAutoloaderConfig()
     {
         return [
-            'Zend\Loader\StandardAutoloader' => [
+            'Laminas\Loader\StandardAutoloader' => [
                 'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                 ],
@@ -59,7 +59,7 @@ class Module implements
      */
     public function onBootstrap(EventInterface $e)
     {
-        /** @var $application \Zend\Mvc\Application */
+        /** @var $application \Laminas\Mvc\Application */
         $application = $e->getParam('application');
         $serviceManager = $application->getServiceManager();
         /** @var ModuleOptions $cacheOptions */

@@ -9,7 +9,7 @@ namespace StrokerCache\Factory;
 
 use Interop\Container\ContainerInterface;
 use StrokerCache\IdGenerator\IdGeneratorPluginManager;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class IdGeneratorPluginManagerFactory implements FactoryInterface
 {

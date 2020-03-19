@@ -11,15 +11,15 @@ use Mockery;
 use Mockery\MockInterface;
 use StrokerCache\Exception\UnsupportedAdapterException;
 use StrokerCache\IdGenerator\IdGeneratorInterface;
-use Zend\Cache\Storage\Adapter\AbstractAdapter;
-use Zend\Cache\Storage\StorageInterface;
-use Zend\Cache\Storage\TaggableInterface;
-use Zend\EventManager\EventManager;
+use Laminas\Cache\Storage\Adapter\AbstractAdapter;
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Cache\Storage\TaggableInterface;
+use Laminas\EventManager\EventManager;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Service\CacheService;
 use StrokerCache\Options\ModuleOptions;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 
 class CacheServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -202,7 +202,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->getMvcEvent()->getRouteMatch()->setParam('someParam', 'someValue');
 
         // Storage mock should implement the TaggableInterface
-        $storageMock = Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+        $storageMock = Mockery::mock('Laminas\Cache\Storage\TaggableInterface')
             ->shouldReceive('setItem')
             ->shouldReceive('setTags')
             ->once()
@@ -229,7 +229,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         $this->getMvcEvent()->getRouteMatch()->setParam('someParam', 'someValue');
 
         // Storage mock should implement the TaggableInterface
-        $storageMock = Mockery::mock('Zend\Cache\Storage\TaggableInterface')
+        $storageMock = Mockery::mock('Laminas\Cache\Storage\TaggableInterface')
             ->shouldReceive('setItem')
             ->once()
             ->shouldReceive('setTags')
@@ -322,7 +322,7 @@ class CacheServiceTest extends \PHPUnit_Framework_TestCase
         if ($this->mvcEvent === null) {
             $this->mvcEvent = new MvcEvent();
             $this->mvcEvent->setRouteMatch(new RouteMatch([]));
-            $this->mvcEvent->setResponse(new \Zend\Http\Response());
+            $this->mvcEvent->setResponse(new \Laminas\Http\Response());
         }
 
         return $this->mvcEvent;

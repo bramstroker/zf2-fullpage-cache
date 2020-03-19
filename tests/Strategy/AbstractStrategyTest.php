@@ -10,8 +10,8 @@ namespace StrokerCacheTest\Strategy;
 use Mockery;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Strategy\AbstractStrategy;
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\MvcEvent;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\MvcEvent;
 
 class AbstractStrategyTest extends \PHPUnit_Framework_TestCase
 {

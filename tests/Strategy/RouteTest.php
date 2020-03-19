@@ -8,9 +8,9 @@
 namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\Route;
-use Zend\Http\Request;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
+use Laminas\Http\Request;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 
 class RouteTest extends \PHPUnit_Framework_TestCase
 {

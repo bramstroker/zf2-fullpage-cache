@@ -8,10 +8,10 @@
 namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\UriPath;
-use Zend\Mvc\MvcEvent;
-use Zend\Uri\Http;
-use Zend\Uri\Uri;
-use Zend\Http\Request as HttpRequest;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Uri\Http;
+use Laminas\Uri\Uri;
+use Laminas\Http\Request as HttpRequest;
 
 class UrlTest extends \PHPUnit_Framework_TestCase
 {

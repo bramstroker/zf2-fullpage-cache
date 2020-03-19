@@ -9,8 +9,8 @@ namespace StrokerCache\Listener;
 
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Strategy\StrategyInterface;
-use Zend\EventManager\AbstractListenerAggregate;
-use Zend\EventManager\EventManagerInterface;
+use Laminas\EventManager\AbstractListenerAggregate;
+use Laminas\EventManager\EventManagerInterface;
 
 class ShouldCacheStrategyListener extends AbstractListenerAggregate
 {

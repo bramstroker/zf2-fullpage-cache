@@ -8,7 +8,7 @@
 namespace StrokerCacheTest\Event;
 
 use StrokerCache\Event\CacheEvent;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 
 class CacheEventTest extends \PHPUnit_Framework_TestCase
 {

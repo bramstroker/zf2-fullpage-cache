@@ -7,8 +7,8 @@
 
 namespace StrokerCache\Event;
 
-use Zend\EventManager\Event;
-use Zend\Mvc\MvcEvent;
+use Laminas\EventManager\Event;
+use Laminas\Mvc\MvcEvent;
 
 class CacheEvent extends Event
 {

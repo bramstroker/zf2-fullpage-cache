@@ -98,7 +98,7 @@ Example using APC:
 return array(
     'strokercache' => [
         'storage_adapter' => [
-            'name' => 'Zend\Cache\Storage\Adapter\Apc',
+            'name' => 'Laminas\Cache\Storage\Adapter\Apc',
         ],
     ],
 ];
@@ -240,8 +240,8 @@ Log to file whenever a page is written to the cache storage
 public function onBootstrap(MvcEvent $e)
 {
     $serviceManager = $e->getApplication()->getServiceManager();
-    $logger = new \Zend\Log\Logger();
-    $logger->addWriter(new \Zend\Log\Writer\Stream('/log/strokercache.log'));
+    $logger = new \Laminas\Log\Logger();
+    $logger->addWriter(new \Laminas\Log\Writer\Stream('/log/strokercache.log'));
     $cacheService = $serviceManager->get('strokercache_service');
     $cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function (CacheEvent $e) use ($logger) {
         $logger->debug('Saving page to cache with ID: ' . $e->getCacheKey());

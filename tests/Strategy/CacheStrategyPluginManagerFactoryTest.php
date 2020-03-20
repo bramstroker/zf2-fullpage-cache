@@ -10,8 +10,8 @@ namespace StrokerCacheTest\IdGenerator;
 
 use StrokerCache\Factory\CacheStrategyPluginManagerFactory;
 use StrokerCache\Strategy\CacheStrategyPluginManager;
-use Zend\ServiceManager\Factory\InvokableFactory;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\ServiceManager\ServiceManager;
 
 class CacheStrategyPluginManagerFactoryTest extends \PHPUnit_Framework_TestCase
 {

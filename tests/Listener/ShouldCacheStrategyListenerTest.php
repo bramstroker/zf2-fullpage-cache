@@ -10,7 +10,7 @@ namespace StrokerCacheTest\Listener;
 use Mockery as M;
 use StrokerCache\Event\CacheEvent;
 use StrokerCache\Listener\ShouldCacheStrategyListener;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 
 class ShouldCacheStrategyListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +31,7 @@ class ShouldCacheStrategyListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->eventManagerMock = M::mock('Zend\EventManager\EventManagerInterface');
+        $this->eventManagerMock = M::mock('Laminas\EventManager\EventManagerInterface');
         $this->strategyMock = M::mock('StrokerCache\Strategy\StrategyInterface');
         $this->listener = new ShouldCacheStrategyListener($this->strategyMock);
     }

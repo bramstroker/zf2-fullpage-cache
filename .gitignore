@@ -2,6 +2,5 @@ INSTALL.txt
 LICENSE.txt
 README.txt
 vendor
-composer.lock
 composer.phar
 build/**

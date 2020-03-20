@@ -16,8 +16,8 @@ use StrokerCache\Strategy\CacheStrategyPluginManager;
 use StrokerCache\Strategy\Controller;
 use StrokerCache\Strategy\Route;
 use StrokerCache\Strategy\UriPath;
-use Zend\Cache\Storage\Adapter\Filesystem;
-use Zend\ServiceManager\Factory\InvokableFactory;
+use Laminas\Cache\Storage\Adapter\Filesystem;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 
 return [
     'service_manager' => [

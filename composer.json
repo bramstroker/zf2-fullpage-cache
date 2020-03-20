@@ -1,9 +1,9 @@
 {
     "name": "stroker/cache",
-    "description": "Provides a full page cache solution for ZF2",
+    "description": "Provides a full page cache solution for Laminas",
     "type": "library",
     "keywords": [
-        "zf2",
+        "laminas",
         "cache",
         "fpc"
     ],
@@ -19,20 +19,24 @@
         }
     ],
     "require": {
-        "php": ">=5.6",
-        "zendframework/zend-modulemanager": "^2.7",
-        "zendframework/zend-eventmanager": "^3.1",
-        "zendframework/zend-servicemanager": "^3.2",
-        "zendframework/zend-http": "^2.6",
-        "zendframework/zend-mvc": "^3.0",
-        "zendframework/zend-cache": "^2.7",
-        "zendframework/zend-console": "^2.6",
-        "zendframework/zend-mvc-console": "^1.1"
+        "php": ">=7.2",
+        "laminas/laminas-modulemanager": "^2.7",
+        "laminas/laminas-eventmanager": "^3.1",
+        "laminas/laminas-servicemanager": "^3.2",
+        "laminas/laminas-http": "^2.6",
+        "laminas/laminas-mvc": "^3.0",
+        "laminas/laminas-cache": "^2.7",
+        "laminas/laminas-console": "^2.6",
+        "laminas/laminas-mvc-console": "^1.1",
+        "laminas/laminas-dependency-plugin": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~5",
         "mockery/mockery": "*",
-        "mikey179/vfsStream": "~1.6"
+        "mikey179/vfsstream": "~1.6"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {

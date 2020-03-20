@@ -10,7 +10,7 @@ namespace StrokerCache\Factory;
 use Interop\Container\ContainerInterface;
 use StrokerCache\Controller\CacheController;
 use StrokerCache\Service\CacheService;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class CacheControllerFactory implements FactoryInterface
 {

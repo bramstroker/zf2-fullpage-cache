@@ -9,8 +9,8 @@ namespace StrokerCache\Factory;
 
 use Interop\Container\ContainerInterface;
 use StrokerCache\Strategy\CacheStrategyPluginManager;
-use Zend\ServiceManager\Config as ServiceManagerConfig;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Config as ServiceManagerConfig;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class CacheStrategyPluginManagerFactory implements FactoryInterface
 {

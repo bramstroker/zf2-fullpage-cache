@@ -11,7 +11,7 @@ use Interop\Container\ContainerInterface;
 use StrokerCache\Listener\CacheListener;
 use StrokerCache\Options\ModuleOptions;
 use StrokerCache\Service\CacheService;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class CacheListenerFactory implements FactoryInterface
 {

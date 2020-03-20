@@ -9,13 +9,13 @@ namespace StrokerCache\Service;
 
 use StrokerCache\Exception\UnsupportedAdapterException;
 use StrokerCache\IdGenerator\IdGeneratorInterface;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 use StrokerCache\Event\CacheEvent;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerInterface;
 use StrokerCache\Options\ModuleOptions;
-use Zend\Cache\Storage\TaggableInterface;
-use Zend\Cache\Storage\StorageInterface;
+use Laminas\Cache\Storage\TaggableInterface;
+use Laminas\Cache\Storage\StorageInterface;
 
 class CacheService
 {

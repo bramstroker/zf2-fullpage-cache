@@ -3,8 +3,8 @@
 namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\CacheAllExcept;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 
 class CacheAllExceptTest extends \PHPUnit_Framework_TestCase
 {

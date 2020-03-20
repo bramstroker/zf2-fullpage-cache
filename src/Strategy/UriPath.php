@@ -7,8 +7,8 @@
 
 namespace StrokerCache\Strategy;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Mvc\MvcEvent;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Mvc\MvcEvent;
 
 class UriPath extends AbstractStrategy
 {

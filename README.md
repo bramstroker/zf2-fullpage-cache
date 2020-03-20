@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/stroker/cache/downloads.svg)](https://packagist.org/packages/stroker/cache)
 [![Latest Stable Version](https://poser.pugx.org/stroker/cache/v/stable.svg)](https://packagist.org/packages/stroker/cache)
 
-This module provides a full page cache solution for ZF 2 and ZF 3.
+This module provides a full page cache solution for Laminas.
 
 ## Installation
 
@@ -89,7 +89,7 @@ return [
 
 ## Change storage adapter
 
-Storage adapter can be changed by configuration. Configuration structure is the same a StorageFactory consumes. See the [ZF2 reference guide](http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html).
+Storage adapter can be changed by configuration. Configuration structure is the same a StorageFactory consumes. See the [Laminas reference guide](https://docs.laminas.dev/laminas-cache/storage/adapter/).
 By default filesystem storage is used.
 
 Example using APC:
@@ -98,7 +98,7 @@ Example using APC:
 return array(
     'strokercache' => [
         'storage_adapter' => [
-            'name' => 'Zend\Cache\Storage\Adapter\Apc',
+            'name' => 'Laminas\Cache\Storage\Adapter\Apc',
         ],
     ],
 ];
@@ -106,7 +106,7 @@ return array(
 
 ## TTL
 
-You can set the TTL (Time to live) for the cache items by specifying the option on the storage adapter configuration. Not all ZF2 storage adapters support TTL, which also is the reason why StrokerCache doesn't support per item TTL at the moment.
+You can set the TTL (Time to live) for the cache items by specifying the option on the storage adapter configuration. Not all Laminas storage adapters support TTL, which also is the reason why StrokerCache doesn't support per item TTL at the moment.
 
 ```php
 <?php
@@ -240,8 +240,8 @@ Log to file whenever a page is written to the cache storage
 public function onBootstrap(MvcEvent $e)
 {
     $serviceManager = $e->getApplication()->getServiceManager();
-    $logger = new \Zend\Log\Logger();
-    $logger->addWriter(new \Zend\Log\Writer\Stream('/log/strokercache.log'));
+    $logger = new \Laminas\Log\Logger();
+    $logger->addWriter(new \Laminas\Log\Writer\Stream('/log/strokercache.log'));
     $cacheService = $serviceManager->get('strokercache_service');
     $cacheService->getEventManager()->attach(CacheEvent::EVENT_SAVE, function (CacheEvent $e) use ($logger) {
         $logger->debug('Saving page to cache with ID: ' . $e->getCacheKey());

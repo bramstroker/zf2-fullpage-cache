@@ -9,8 +9,8 @@ namespace StrokerCacheTest\Strategy;
 
 use StrokerCache\Strategy\AbstractStrategy;
 use StrokerCache\Strategy\Controller;
-use Zend\Mvc\MvcEvent;
-use Zend\Router\RouteMatch;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteMatch;
 
 class ControllerTest extends \PHPUnit_Framework_TestCase
 {

@@ -9,7 +9,7 @@
 namespace StrokerCache\Storage\Adapter;
 
 use SplFileInfo;
-use Zend\Cache\Storage\Adapter\AbstractAdapter;
+use Laminas\Cache\Storage\Adapter\AbstractAdapter;
 
 class File extends AbstractAdapter
 {

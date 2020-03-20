@@ -9,7 +9,7 @@ namespace StrokerCache\Factory;
 
 use Interop\Container\ContainerInterface;
 use StrokerCache\Options\ModuleOptions;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class ModuleOptionsFactory implements FactoryInterface
 {

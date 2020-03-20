@@ -7,7 +7,7 @@
 
 namespace StrokerCache\Strategy;
 
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 
 use StrokerCache\Exception\BadConfigurationException;
 

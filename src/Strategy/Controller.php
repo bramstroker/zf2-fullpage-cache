@@ -7,7 +7,7 @@
 
 namespace StrokerCache\Strategy;
 
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 
 class Controller extends AbstractStrategy
 {

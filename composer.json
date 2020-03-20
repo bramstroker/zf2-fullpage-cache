@@ -1,5 +1,5 @@
 {
-    "name": "ewilde-imperial/strokercache",
+    "name": "stroker/cache",
     "description": "Provides a full page cache solution for Laminas",
     "type": "library",
     "keywords": [
@@ -7,7 +7,7 @@
         "cache",
         "fpc"
     ],
-    "homepage": "https://github.com/ewilde-imperial/zf2-fullpage-cache",
+    "homepage": "https://github.com/bramstroker/zf2-fullpage-cache",
     "license": "MIT",
     "authors": [
         {
